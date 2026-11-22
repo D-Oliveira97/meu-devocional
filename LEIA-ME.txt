@@ -1,0 +1,24 @@
+MEU DEVOCIONAL — protótipo de aplicativo web instalável (PWA)
+
+O que já funciona:
+- Estudo inicial do Dia 01 (Gênesis 1).
+- Navegação entre Devocional, Anotações, Favoritos e Progresso.
+- Anotações, favoritos e marcações salvos no armazenamento local do aparelho.
+- Estrutura PWA com manifesto e service worker para uso offline após o primeiro acesso.
+
+IMPORTANTE:
+Este pacote é o código-fonte do aplicativo, não um app Android (.apk) e não está publicado na internet.
+Para instalar como aplicativo no Android, os arquivos precisam ser publicados em um endereço HTTPS.
+Depois, abra o endereço no Chrome e escolha "Instalar app" ou "Adicionar à tela inicial".
+Também pode ser publicado em hospedagem estática como GitHub Pages, Netlify ou Cloudflare Pages.
+
+LIMITAÇÃO DE CONTEÚDO:
+O protótipo contém o primeiro estudo. Ele não gera automaticamente novos estudos bíblicos.
+Os próximos devocionais serão preparados na conversa do ChatGPT e podem ser adicionados em atualizações futuras.
+Os dados locais (anotações, favoritos e progresso) ficam no navegador/aparelho e não sincronizam entre dispositivos.
+
+Para personalizar:
+- index.html: conteúdo e estrutura.
+- styles.css: aparência.
+- app.js: interações e armazenamento.
+- manifest.webmanifest: nome e configuração de instalação.
