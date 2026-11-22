@@ -18,6 +18,7 @@
    if(!sample||!player||!state)return;
    const status=text=>{state.textContent=text};
    player.addEventListener('play',()=>{
+      window.DevocionalCharon?.pause?.();
       window.DevocionalAudio?.stop?.('Amostra Benício em reprodução.');
       status('Reproduzindo a amostra de 1 minuto e 15 segundos.');
       if('mediaSession' in navigator && typeof window.MediaMetadata==='function'){

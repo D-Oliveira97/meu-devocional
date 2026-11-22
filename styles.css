@@ -97,3 +97,21 @@
 .benicio-meta{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;font-size:12px}
 .benicio-meta a{font-weight:700;color:#235a43;text-decoration:underline;text-underline-offset:3px}
 .benicio-sample .benicio-footnote{font-size:11px;color:#5e7065;margin:10px 0 0}
+
+/* Versão 2.7 — integração segura da voz Charon via Firebase AI Logic (Spark) */
+.charon-panel{margin:16px 0 22px;border:1px solid #b4cfc0;border-top:4px solid #c29c58;border-radius:14px;background:#f6faf5;padding:18px}
+.charon-heading{display:flex;gap:10px;align-items:center}.charon-icon{font-size:24px;width:42px;height:42px;display:grid;place-items:center;background:#e3efe3;border-radius:11px}
+.charon-heading h3{margin:2px 0 0;font-size:21px}.charon-panel>p{font-size:13px}
+.charon-actions,.charon-config-actions{display:flex;flex-wrap:wrap;gap:8px;margin:13px 0}.charon-actions button{min-height:42px}
+#charonAudio{width:100%;height:53px;margin:13px 0 4px}
+.charon-status{font-size:12px!important;font-weight:700;color:#27533e;line-height:1.55;overflow-wrap:anywhere}
+.charon-meta,.charon-tip{font-size:11px!important;color:#637168;line-height:1.6}
+.charon-notice{font-size:12px;border-radius:9px;background:#e9f1e8;border:1px solid #c5dcc9;padding:10px 13px}
+.charon-notice[data-type="error"]{background:#fff1eb;border-color:#e5bdb0;color:#8d482e}
+.charon-config{border-top:1px solid #dce8de;margin-top:14px;padding-top:9px}
+.charon-config summary{font-size:13px;font-weight:800;color:#1e593b;cursor:pointer;padding:9px 0}
+.charon-config p{font-size:12px!important}.charon-config input{width:100%;font-size:13px;min-width:0}
+.charon-config .charon-confirm{display:flex!important;gap:9px;align-items:flex-start;font-weight:500!important;line-height:1.55;font-size:12px!important}
+.charon-config .charon-confirm input{width:17px;flex:0 0 17px;margin-top:4px;accent-color:#225a3d}
+.charon-config button{font-size:12px}
+@media(max-width:600px){.charon-actions{display:grid;grid-template-columns:1fr 1fr}.charon-actions #charonStudy{grid-column:1/-1}.charon-config-actions{flex-direction:column}.charon-config-actions button{width:100%}}

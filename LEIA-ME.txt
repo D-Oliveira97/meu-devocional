@@ -1,57 +1,69 @@
-MEU DEVOCIONAL 2.5 — CÂNON PROTESTANTE + PREFERÊNCIA DE VOZ SERENA
+MEU DEVOCIONAL 2.7 — VOZ CHARON AUTOMÁTICA (GEMINI / FIREBASE)
+=========================================================
+
+O que mudou:
+- A nova opção "Ouvir com Charon" aparece no estudo diário dos 365 dias;
+- "Ouvir estudo completo" e "Ouvir só a oração" usam Charon após configurar o Firebase;
+- Bíblia ONBV continua com a voz do Android, sem enviar o texto da ONBV ao Gemini;
+- MP3 Benício (Dia 01), 365 estudos, favoritos, notas, progresso, lembretes e Bíblia permanecem;
+- Trechos gerados são armazenados no IndexedDB do navegador para escutar depois, mesmo offline.
+
+IMPORTANTE: SEM COBRANÇA
+========================
+Somente configure o Firebase no plano gratuito Spark, SEM Conta de faturamento/Blaze.
+Firebase AI Logic com Gemini Developer API oferece uma modalidade gratuita limitada.
+Quando a cota se esgotar, a geração poderá falhar, mas não significa que você deva pagar.
+A integração está preparada, mas não pode ser usada até você criar seu próprio projeto Firebase Spark.
+Não é possível garantir funcionalidade completa antes da configuração e teste reais no POCO F7.
+
+CONFIGURAÇÃO (UMA VEZ, EM CADA NAVEGADOR/APARELHO)
+=================================================
+1. Abra https://console.firebase.google.com e crie projeto novo chamado, por exemplo, Meu Devocional Audio.
+2. Mantenha projeto no plano Spark. NÃO clique em Adicionar faturamento, Blaze ou avaliação paga.
+3. Registre aplicativo Web em Configurações do projeto > Geral > Seus apps > ícone </>.
+   Utilize nome Meu Devocional. Não é necessário Firebase Hosting; o site continua no GitHub Pages.
+4. Em AI Services > AI Logic, toque em Começar e selecione "Gemini Developer API".
+   Não selecione Agent Platform Gemini API / Vertex, que requer faturamento.
+5. Em Segurança > App Check, registre o app Web com reCAPTCHA Enterprise.
+   No Google Cloud, crie uma CHAVE DE SITE Web de pontuação para o domínio d-oliveira97.github.io
+   (não coloque https:// nem a rota /meu-devocional/).
+   Não inclua localhost nas permissões de produção. Faça o registro e mantenha App Check ativo.
+6. Abra o Meu Devocional 2.7, na seção "⚙ Configurar o Firebase gratuito / Charon".
+   Preencha quatro campos da configuração pública:
+   - Project ID (projectId do firebaseConfig)
+   - App ID (appId do firebaseConfig)
+   - Firebase Web API Key (apiKey do firebaseConfig; NÃO uma chave secreta Gemini)
+   - Site key pública do reCAPTCHA Enterprise
+   Confirme que o projeto está Spark sem faturamento e salve no aparelho.
+7. Teste Dia 01 > "Ouvir estudo com Charon". O primeiro uso precisa de internet e
+   poderá gerar vários trechos. Após o primeiro uso, os trechos ficam salvos localmente.
+
+PROTEÇÃO
+========
+- Nunca cole chave privada Gemini nem credenciais da conta Google em código ou GitHub.
+- Firebase Web config e site key são identificadores públicos próprios para clientes web;
+  configure App Check e restrições de API, como explica a documentação Firebase.
+- A proteção do App Check é fundamental em um app público, e não substitui regras de uso e cotas.
+- O app estabelece limite local adicional de 12 solicitações por dia; esse controle local
+  NÃO protege sozinho contra terceiros ou uso em outros dispositivos.
+- O Gemini processa apenas o texto dos estudos e orações narrados; suas anotações NÃO são enviadas.
+- O áudio será gerado com uma voz sintética; não é a voz literal de Deus.
+- O modelo Gemini TTS e a configuração Firebase estão sujeitos a mudanças do Google.
 
 PUBLICAÇÃO
-1. Faça backup de suas anotações no aplicativo atual (Progresso > Exportar).
-2. Extraia este ZIP no computador.
-3. Envie todos os arquivos desta pasta para a raiz do repositório GitHub Pages, substituindo os existentes.
-4. Abra o site publicado no Android, conectado à internet, e atualize a página.
-5. A nova aba 📘 Bíblia ONBV permite importar a tradução oficial.
+==========
+1. Antes de atualizar, faça backup das anotações na aba Progresso.
+2. No GitHub, abra D-Oliveira97/meu-devocional > Add file > Upload files.
+3. Envie os 15 arquivos DESCOMPACTADOS (não envie o ZIP) diretamente para a raiz.
+4. Commit changes. Aguarde GitHub Pages publicar a versão.
+5. Feche e reabra o app no Android com internet, sem limpar dados e sem reinstalar.
+6. Configure a conexão Charon UMA VEZ no Android (o app instalado e o Chrome
+   poderão ter armazenamento separado).
 
-PRIMEIRA IMPORTAÇÃO DA BÍBLIA (UMA VEZ POR DISPOSITIVO)
-1. Na aba 📘 Bíblia ONBV, tente "Importar automaticamente". Se falhar, é normal: o servidor oficial pode bloquear downloads entre domínios.
-2. Toque em "1 · Baixar ZIP oficial". Fonte: https://ebible.org/Scriptures/poronbv_usfm.zip
-3. NÃO extraia o arquivo poronbv_usfm.zip.
-4. Volte ao Meu Devocional e toque em "2 · Importar ZIP baixado". Selecione o ZIP em Downloads.
-5. O aplicativo verificará 66 livros e 1.189 capítulos e salvará os textos em IndexedDB no próprio aparelho.
-6. A partir de então, as passagens e os capítulos podem ser lidos e narrados sem internet, enquanto os dados locais permanecerem no aparelho.
-
-OBSERVAÇÕES
-- O texto integral da ONBV NÃO acompanha este pacote; é importado pelo usuário do distribuidor oficial. Os 365 estudos e o sistema de áudio ACOMPANHAM este ZIP.
-- A edição bíblica exibida é a Biblica® Open Nova Bíblia Viva™, NÃO a NVI. Os estudos usam a NVI como referência e não a reproduzem integralmente.
-- Narração: síntese de voz do Android/navegador. Tela bloqueada ou app em segundo plano pode interromper a fala.
-- Nenhuma conta, senha, anúncio, servidor ou sincronização é exigida.
-- Bíblia importada fica em IndexedDB; anotações, progresso e favoritos permanecem no localStorage legado, sem substituição.
-- Backup de anotações não inclui o texto da Bíblia; em outro aparelho, importe o arquivo oficial novamente.
-- Os marcadores USFM e as notas de rodapé são omitidos na visualização; os versículos permanecem na redação original, salvo conversão de formatação. Verifique as passagens importantes na fonte original.
-
-CRÉDITOS E LICENÇA DA BÍBLIA
-Biblica® Open Nova Bíblia Viva™
-Copyright © 2007, 2010 by Biblica, Inc.
-“Biblica” é uma marca registrada na Oficina de Patentes e Marcas dos Estados Unidos por Biblica, Inc. Usado com permissão.
-“Biblica” is a trademark registered in the United States Patent and Trademark Office by Biblica, Inc. Used with permission.
-A obra original está disponível gratuitamente em www.biblica.com e open.bible.
-Licença: https://creativecommons.org/licenses/by-sa/4.0/
-Adaptações: conversão de apresentação USFM para capítulos e versículos, ocultação de marcações gráficas e notas, narração por voz sintetizada; disponíveis sob CC BY-SA 4.0. A Biblica não endossa este aplicativo.
-Biblioteca de leitura ZIP JSZip 3.10.1, licença MIT (ver JSZip-LICENSE.md).
-
-VERSÃO 2.5 — O QUE FOI ALTERADO
-- O seletor mostra 39 livros do Antigo Testamento e 27 do Novo Testamento, separados por grupos.
-- A importação passa a verificar a quantidade de capítulos por livro, além do total dos 66 livros e 1.189 capítulos.
-- O leitor só aceita registros correspondentes aos 66 livros do cânon protestante. O ZIP oficial ONBV já tem exatamente esses livros.
-- Não é necessário importar novamente a Bíblia se ela já estiver instalada.
-- Opção "Tom da narração": "Grave e sereno" ajusta ligeiramente tom/velocidade da voz local; a naturalidade continua limitada pelo mecanismo do Android. NÃO é voz neural, não garante voz masculina.
-- Esta versão NÃO inclui arquivos de áudio neurais nem envia textos a serviços externos.
-- Antes de criar e publicar uma nova narração neural do texto bíblico da ONBV, revisar a autorização/licença da Biblica para geração de áudio com IA. Para os comentários autorais do devocional, é possível planejar narração neural separadamente.
-- Todos os dados existentes, incluindo progresso, anotações e Bíblia importada, permanecem nos mesmos locais, sem migração.
-
-
-VERSÃO 2.6 — AMOSTRA BENÍCIO (MP3 DO DIA 01)
-- Gravação de aproximadamente 1 minuto e 15 segundos enviada pelo usuário; é uma AMOSTRA RESUMIDA do Dia 01, não o estudo aprofundado completo.
-- Na aba Estudo, selecione Dia 001 e use o novo player "Ouvir o Dia 01 com Benício".
-- A gravação é arquivo MP3 real; não usa chave, API paga nem voz robótica do Android.
-- O arquivo dia-001-benicio.mp3 acompanha este ZIP e é armazenado no cache do aplicativo para ouvir offline após a atualização completa.
-- Ao tocar no áudio Benício, o leitor de texto do aparelho para, evitando duas vozes simultâneas. Ao voltar ao leitor do aparelho, o MP3 pausa.
-- Os Dias 002 a 365 seguem com narração por voz do dispositivo: ainda não existem MP3s gravados desses dias.
-- O áudio é disponibilizado como demonstração; para publicação ampla de gravações geradas por serviço externo, consulte os direitos e termos do gerador utilizado.
-- Recurso: controles nativos de áudio; teste o bloqueio de tela e a reprodução em segundo plano no POCO F7. Não é garantido por todos os navegadores.
-- IMPORTANTE: não exclua as anotações ou dados do site para instalar; nenhuma chave de armazenamento de dados foi modificada.
+DOCS OFICIAIS
+=============
+https://firebase.google.com/docs/ai-logic/pricing?api=dev
+https://firebase.google.com/docs/ai-logic/get-started?platform=web
+https://firebase.google.com/docs/ai-logic/generate-speech
+https://firebase.google.com/docs/app-check/web/recaptcha-enterprise-provider
+https://ai.google.dev/gemini-api/docs/pricing

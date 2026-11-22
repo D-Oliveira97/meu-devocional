@@ -8,8 +8,8 @@
   <meta name="color-scheme" content="light">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=9.0">
-  <title>Meu Devocional · 365 estudos e teste de áudio Benício</title>
+  <link rel="stylesheet" href="styles.css?v=10.0">
+  <title>Meu Devocional · 365 estudos · Charon e Benício</title>
 </head>
 <body>
   <a href="#main" class="skip-link">Pular para o conteúdo</a>
@@ -49,6 +49,28 @@
           <div><p class="section-kicker">NOVO · ÁUDIO DOS ESTUDOS</p><h2>Escute a Palavra, reflita e ore.</h2></div>
         </div>
         <p>Ouça a passagem bíblica ONBV, os comentários e a oração em português. A Bíblia deve ser importada uma única vez do distribuidor oficial.</p>
+
+        <section class="charon-panel" id="charonPanel" aria-labelledby="charonHeading">
+          <div class="charon-heading"><span class="charon-icon" aria-hidden="true">🎙️</span><div><p class="section-kicker">VOZ NEURAL SOB DEMANDA · GEMINI</p><h3 id="charonHeading">Ouvir com Charon</h3></div></div>
+          <p>A voz Charon narra os <strong>comentários e orações dos 365 estudos</strong>, sem narrar a Bíblia ONBV. Usa a modalidade gratuita do Gemini, quando disponível. A primeira execução precisa de configuração do Firebase.</p>
+          <div id="charonSetupNotice" class="charon-notice" role="status">Ainda não configurado. A voz do Android e o MP3 Benício continuam disponíveis.</div>
+          <div class="charon-actions"><button type="button" id="charonStudy" class="primary">▶ Ouvir estudo com Charon</button><button type="button" class="outline" id="charonPrayer">🙏 Oração com Charon</button><button type="button" class="outline" id="charonStop">■ Parar Charon</button><button type="button" class="outline" id="charonLocal">🔊 Usar voz do Android</button></div>
+          <audio id="charonAudio" controls preload="none" aria-label="Player da narração neural Charon"></audio>
+          <p class="charon-status" id="charonStatus" role="status" aria-live="polite">Configure a conexão gratuita uma única vez para começar.</p>
+          <p class="charon-meta">Os trechos já gerados são armazenados neste aparelho para ouvir novamente sem gastar a cota. Uma geração nova exige internet. A reprodução com a tela apagada deve ser testada no Android.</p>
+          <details class="charon-config" id="charonConfigDetails"><summary>⚙ Configurar o Firebase gratuito (Spark) / Charon</summary>
+            <p>Configure um projeto <strong>Firebase Spark sem faturamento</strong> e ative <strong>AI Logic — Gemini Developer API</strong> com <strong>App Check / reCAPTCHA Enterprise</strong> para o domínio do seu site. Use somente as configurações <strong>públicas do aplicativo Web Firebase</strong>. Não use uma chave privada da API do Gemini aqui.</p>
+            <form id="charonConfigForm" autocomplete="off">
+              <label for="charonProjectId">Project ID (ID do projeto Firebase)</label><input required id="charonProjectId" name="projectId" placeholder="meu-devocional-12345" inputmode="text" spellcheck="false">
+              <label for="charonAppId">App ID (identificador do aplicativo Web Firebase)</label><input required id="charonAppId" name="appId" placeholder="1:123456789:web:abc..." spellcheck="false">
+              <label for="charonApiKey">Firebase Web API key (chave de configuração Web, não chave secreta Gemini)</label><input required id="charonApiKey" name="apiKey" placeholder="AIza..." spellcheck="false">
+              <label for="charonSiteKey">Site key do reCAPTCHA Enterprise (pública)</label><input required id="charonSiteKey" name="siteKey" placeholder="6L..." spellcheck="false">
+              <label class="charon-confirm"><input id="charonSparkConfirm" type="checkbox" required> Confirmo que o projeto está no <strong>plano Spark, sem conta de faturamento vinculada</strong>, e que o App Check está configurado para este domínio.</label>
+              <div class="charon-config-actions"><button type="submit" class="primary">Salvar configuração neste aparelho</button><button type="button" class="outline" id="charonClear">Desvincular configuração Charon</button></div>
+            </form>
+            <p class="charon-tip">As configurações ficam neste navegador, não são enviadas ao GitHub. A chave Web Firebase é identificadora pública; sua proteção depende do App Check e das restrições de API do projeto. O limite gratuito pode se esgotar e o áudio não será gerado até a cota voltar. Nunca ative o plano Blaze ou uma cobrança para este teste.</p>
+          </details>
+        </section>
         <section class="benicio-sample" id="benicioSample" hidden aria-labelledby="benicioTitle">
           <div class="benicio-heading">
             <span class="benicio-symbol" aria-hidden="true">🎧</span>
@@ -77,7 +99,7 @@
           <div class="audio-track" aria-hidden="true"><div id="audioTrackBar"></div></div>
           <div class="audio-progress-bottom"><span id="audioProgressLabel">Pronto para ouvir · Dia 001</span><div class="audio-skip"><button id="audioPrev" type="button" class="audio-skip-btn" disabled>← Parte anterior</button><button id="audioNext" type="button" class="audio-skip-btn" disabled>Próxima parte →</button></div></div>
         </div>
-        <p class="audio-disclaimer">A narração bíblica usa o texto <b>ONBV importado</b>, não o texto integral da NVI. O modo grave e sereno reduz levemente o tom e o ritmo da voz, mas <b>não transforma a síntese local em uma voz neural masculina</b>; isso depende de um serviço de narração separado. <b>Se bloquear a tela ou colocar o app em segundo plano, a narração pode parar</b>, dependendo do Android e do navegador.</p>
+        <p class="audio-disclaimer">A narração bíblica usa o texto <b>ONBV importado</b>, não o texto integral da NVI. A voz local do Android continua disponível. A voz neural Charon só narra estudos e orações, nunca o texto integral da ONBV, e depende de uma configuração Firebase Spark protegida por App Check. <b>Se bloquear a tela ou colocar o app em segundo plano, a narração pode parar</b>, dependendo do Android e do navegador.</p>
       </article>
       <article class="card onbv-study-card">
         <p class="section-kicker">LEITURA NA MESMA TELA · EDIÇÃO ONBV</p>
@@ -228,9 +250,10 @@
     </section>
   </main>
   <footer><span>“Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.”</span><br><b>Salmos 119:105 · referência NVI</b><p>Meu Devocional · jornada anual</p></footer>
-  <script src="app.js?v=9.0" defer></script>
-  <script src="audio.js?v=9.0" defer></script>
-  <script src="benicio-player.js?v=9.0" defer></script>
+  <script src="app.js?v=10.0" defer></script>
+  <script src="audio.js?v=10.0" defer></script>
+  <script src="benicio-player.js?v=10.0" defer></script>
+  <script type="module" src="charon-firebase.js?v=10.0"></script>
   <script src="jszip.min.js?v=8.0" defer></script>
   <script src="bible.js?v=8.0" defer></script>
 </body>

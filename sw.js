@@ -1,6 +1,6 @@
-/* Meu Devocional 2.6 · offline e reprodução MP3 com pedidos Range */
-const CACHE_NAME='meu-devocional-365-v9';
-const ASSETS=['./','./index.html','./styles.css?v=9.0','./app.js?v=9.0','./audio.js?v=9.0','./benicio-player.js?v=9.0','./jszip.min.js?v=8.0','./bible.js?v=8.0','./studies.json','./manifest.webmanifest','./icon.svg','./dia-001-benicio.mp3'];
+/* Meu Devocional 2.7 · offline e reprodução MP3 com pedidos Range */
+const CACHE_NAME='meu-devocional-365-v10';
+const ASSETS=['./','./index.html','./styles.css?v=10.0','./app.js?v=10.0','./audio.js?v=10.0','./benicio-player.js?v=10.0','./charon-firebase.js?v=10.0','./jszip.min.js?v=8.0','./bible.js?v=8.0','./studies.json','./manifest.webmanifest','./icon.svg','./dia-001-benicio.mp3'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(names=>Promise.all(names.filter(name=>name.startsWith('meu-devocional-')&&name!==CACHE_NAME).map(name=>caches.delete(name)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{

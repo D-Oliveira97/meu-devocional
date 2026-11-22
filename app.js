@@ -72,6 +72,7 @@ function showTab(name){
 function selectDay(n,{switchTab=true,scroll=false}={}){
  selectedDay=Math.max(1,Math.min(MAX_DAYS,Math.floor(Number(n)||1)));
  window.DevocionalAudio?.setDay?.(selectedDay);
+ window.DevocionalCharon?.setDay?.(selectedDay);
  data.lastDay=selectedDay;persist();
  if(switchTab)showTab('study');
  renderStudy();renderJournal();renderProgress();
@@ -205,7 +206,8 @@ async function importBackup(file){
  if(parsed?.app!=='Meu Devocional'||!parsed.data||!Array.isArray(parsed.data.completed)||!parsed.data.notesByDay){$('#backupMsg').textContent='Este arquivo não parece ser um backup válido do Meu Devocional.';return}
  const confirmed=confirm('Restaurar esta cópia substituirá as anotações, favoritos e progresso deste aparelho. Deseja continuar?');
  if(!confirmed){$('#backupMsg').textContent='Restauração cancelada. Seus registros não foram alterados.';return}
- data=normalizeData(parsed.data);persist();selectedDay=data.lastDay;window.DevocionalAudio?.setDay?.(selectedDay);$('#daySelect').value=String(selectedDay);renderStudy();renderJournal();renderFavorites();renderProgress();
+ data=normalizeData(parsed.data);persist();selectedDay=data.lastDay;window.DevocionalAudio?.setDay?.(selectedDay);
+ window.DevocionalCharon?.setDay?.(selectedDay);$('#daySelect').value=String(selectedDay);renderStudy();renderJournal();renderFavorites();renderProgress();
  $('#backupMsg').textContent='Cópia restaurada com sucesso. Confira seus registros.';
 }
 
