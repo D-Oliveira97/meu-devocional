@@ -43,3 +43,15 @@ VERSÃO 2.5 — O QUE FOI ALTERADO
 - Esta versão NÃO inclui arquivos de áudio neurais nem envia textos a serviços externos.
 - Antes de criar e publicar uma nova narração neural do texto bíblico da ONBV, revisar a autorização/licença da Biblica para geração de áudio com IA. Para os comentários autorais do devocional, é possível planejar narração neural separadamente.
 - Todos os dados existentes, incluindo progresso, anotações e Bíblia importada, permanecem nos mesmos locais, sem migração.
+
+
+VERSÃO 2.6 — AMOSTRA BENÍCIO (MP3 DO DIA 01)
+- Gravação de aproximadamente 1 minuto e 15 segundos enviada pelo usuário; é uma AMOSTRA RESUMIDA do Dia 01, não o estudo aprofundado completo.
+- Na aba Estudo, selecione Dia 001 e use o novo player "Ouvir o Dia 01 com Benício".
+- A gravação é arquivo MP3 real; não usa chave, API paga nem voz robótica do Android.
+- O arquivo dia-001-benicio.mp3 acompanha este ZIP e é armazenado no cache do aplicativo para ouvir offline após a atualização completa.
+- Ao tocar no áudio Benício, o leitor de texto do aparelho para, evitando duas vozes simultâneas. Ao voltar ao leitor do aparelho, o MP3 pausa.
+- Os Dias 002 a 365 seguem com narração por voz do dispositivo: ainda não existem MP3s gravados desses dias.
+- O áudio é disponibilizado como demonstração; para publicação ampla de gravações geradas por serviço externo, consulte os direitos e termos do gerador utilizado.
+- Recurso: controles nativos de áudio; teste o bloqueio de tela e a reprodução em segundo plano no POCO F7. Não é garantido por todos os navegadores.
+- IMPORTANTE: não exclua as anotações ou dados do site para instalar; nenhuma chave de armazenamento de dados foi modificada.

@@ -84,3 +84,16 @@
 .canon-summary strong{border-left:3px solid #98b79d;padding-left:10px;line-height:1.55}
 .canon-summary small{grid-column:1/-1;color:#506c59;line-height:1.5}
 @media(max-width:530px){.canon-summary{grid-template-columns:1fr}.canon-summary span,.canon-summary small{grid-column:auto}}
+
+/* Versão 2.6 — amostra Benício em áudio gravado */
+.benicio-sample{margin:14px 0 22px;padding:18px;border:1px solid #b2cab6;border-radius:14px;background:linear-gradient(135deg,#e7f0e4,#f8fbf7);box-shadow:0 2px 12px #173d3208}
+.benicio-sample[hidden]{display:none!important}
+.benicio-heading{display:flex;gap:10px;align-items:center;margin:0 0 8px}
+.benicio-heading .section-kicker{margin:0;color:#75602d}
+.benicio-heading h3{margin:2px 0 0;font-size:clamp(17px,3vw,22px);line-height:1.3}
+.benicio-symbol{display:grid;place-items:center;width:43px;height:43px;border-radius:12px;background:#d8e7da;font-size:21px;flex:none}
+.benicio-sample p{font-size:13px;margin:7px 0 12px}
+#benicioAudio{display:block;width:100%;height:54px;margin:12px 0 8px}
+.benicio-meta{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;font-size:12px}
+.benicio-meta a{font-weight:700;color:#235a43;text-decoration:underline;text-underline-offset:3px}
+.benicio-sample .benicio-footnote{font-size:11px;color:#5e7065;margin:10px 0 0}

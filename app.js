@@ -76,6 +76,7 @@ function selectDay(n,{switchTab=true,scroll=false}={}){
  if(switchTab)showTab('study');
  renderStudy();renderJournal();renderProgress();
  $('#daySelect').value=String(selectedDay);
+ window.DevocionalBenicio?.updateForDay?.(selectedDay);
  if(scroll)$('#study').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function refsHtml(s){return '<p class="refs"><b>Referências para aprofundar:</b> '+h(s)+'</p>'}

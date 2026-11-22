@@ -8,8 +8,8 @@
   <meta name="color-scheme" content="light">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=8.0">
-  <title>Meu Devocional · 365 estudos e Bíblia protestante</title>
+  <link rel="stylesheet" href="styles.css?v=9.0">
+  <title>Meu Devocional · 365 estudos e teste de áudio Benício</title>
 </head>
 <body>
   <a href="#main" class="skip-link">Pular para o conteúdo</a>
@@ -49,6 +49,16 @@
           <div><p class="section-kicker">NOVO · ÁUDIO DOS ESTUDOS</p><h2>Escute a Palavra, reflita e ore.</h2></div>
         </div>
         <p>Ouça a passagem bíblica ONBV, os comentários e a oração em português. A Bíblia deve ser importada uma única vez do distribuidor oficial.</p>
+        <section class="benicio-sample" id="benicioSample" hidden aria-labelledby="benicioTitle">
+          <div class="benicio-heading">
+            <span class="benicio-symbol" aria-hidden="true">🎧</span>
+            <div><p class="section-kicker">AMOSTRA DE VOZ NEURAL · DIA 001</p><h3 id="benicioTitle">Ouvir o Dia 01 com Benício</h3></div>
+          </div>
+          <p>Escute a gravação de teste com voz masculina em português brasileiro. <strong>Esta é uma versão resumida</strong> do estudo (cerca de 1 minuto e 15 segundos), não a narração integral do conteúdo do dia.</p>
+          <audio id="benicioAudio" controls preload="none" src="dia-001-benicio.mp3" aria-label="Áudio de teste do estudo do Dia 01, voz Benício"></audio>
+          <div class="benicio-meta"><span id="benicioStatus" role="status" aria-live="polite">Toque em reproduzir para ouvir.</span><a href="dia-001-benicio.mp3" download="Meu_Devocional_Dia_01_Benicio.mp3">Baixar MP3</a></div>
+          <p class="benicio-footnote">Gravação demonstrativa gerada por IA. O texto completo da Bíblia ONBV não faz parte deste MP3. Outros dias ainda utilizam a voz do aparelho.</p>
+        </section>
         <div class="audio-actions">
           <button id="audioPlay" type="button" class="primary">▶ Ouvir estudo completo</button>
           <button id="audioBible" type="button" class="outline">📖 Ouvir passagem ONBV</button>
@@ -218,8 +228,9 @@
     </section>
   </main>
   <footer><span>“Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.”</span><br><b>Salmos 119:105 · referência NVI</b><p>Meu Devocional · jornada anual</p></footer>
-  <script src="app.js?v=8.0" defer></script>
-  <script src="audio.js?v=8.0" defer></script>
+  <script src="app.js?v=9.0" defer></script>
+  <script src="audio.js?v=9.0" defer></script>
+  <script src="benicio-player.js?v=9.0" defer></script>
   <script src="jszip.min.js?v=8.0" defer></script>
   <script src="bible.js?v=8.0" defer></script>
 </body>

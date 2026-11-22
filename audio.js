@@ -139,6 +139,7 @@
   try{synth.speak(utterance)}catch(_){playing=false;paused=true;status('Não foi possível iniciar a voz. Verifique a síntese de voz do Android e tente novamente.');updateUI();}
  }
  function start(modeArg){
+  window.DevocionalBenicio?.pause?.();
   if(!supported){status('Este navegador não oferece leitura em voz alta. Experimente abrir o app pelo Chrome atualizado.');return;}
   const day=window.DevocionalAudio?.selectedDay?.()||currentDay;
   const s=window.DevocionalAudio?.study?.(day);
@@ -153,6 +154,7 @@
   updateUI();speakNext(runToken);
  }
  function playBibleParts(bibleParts,withStudy=false){
+  window.DevocionalBenicio?.pause?.();
   if(!supported){status('Este aparelho não oferece síntese de voz disponível.');return}
   if(!Array.isArray(bibleParts)||!bibleParts.length){status('Importe a Bíblia ONBV antes de iniciar a narração.');return}
   const nextMode=withStudy?'bible-study':'bible';
