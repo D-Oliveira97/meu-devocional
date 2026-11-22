@@ -8,8 +8,8 @@
   <meta name="color-scheme" content="light">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=4.0">
-  <title>Meu Devocional · 365 dias aprofundados</title>
+  <link rel="stylesheet" href="styles.css?v=5.0">
+  <title>Meu Devocional · 365 dias · lembretes</title>
 </head>
 <body>
   <a href="#main" class="skip-link">Pular para o conteúdo</a>
@@ -23,6 +23,7 @@
       <h1>Um ano inteiro para crescer na fé.</h1>
       <p>365 estudos com comentários ampliados, contexto, leitura guiada e aplicação, do Gênesis ao Apocalipse. NVI como referência.</p>
       <div class="welcome-foot"><span id="today"></span><span class="stat-chip"><span id="topDone">0</span>/365 concluídos</span></div>
+      <button class="reminder-shortcut" id="reminderShortcut" type="button">🔔 Configurar lembrete diário</button>
     </section>
     <nav class="tabs" aria-label="Navegação principal">
       <button class="tab active" data-tab="study" aria-controls="study" aria-selected="true">📖 Estudo</button>
@@ -30,6 +31,7 @@
       <button class="tab" data-tab="journal" aria-controls="journal" aria-selected="false">✍️ Anotações</button>
       <button class="tab" data-tab="saved" aria-controls="saved" aria-selected="false">☆ Favoritos</button>
       <button class="tab" data-tab="progress" aria-controls="progress" aria-selected="false">◷ Progresso</button>
+      <button class="tab" data-tab="reminders" aria-controls="reminders" aria-selected="false">🔔 Lembretes</button>
     </nav>
     <div id="alert" class="alert hidden" role="status" aria-live="polite"></div>
 
@@ -101,8 +103,40 @@
         <p>O aplicativo funciona offline após o primeiro carregamento completo. Atualizações do conteúdo precisam ser publicadas no GitHub; as mensagens diárias do ChatGPT não entram automaticamente aqui.</p>
       </article>
     </section>
+    <section id="reminders" class="panel hidden" aria-label="Lembretes de estudo diário">
+      <article class="card reminder-hero">
+        <div class="reminder-header"><span class="reminder-icon" aria-hidden="true">🔔</span><div><p class="section-kicker">NOVA FUNÇÃO · VERSÃO 2.2</p><h2>Lembre-se da Palavra todos os dias.</h2></div></div>
+        <p>Escolha um horário e crie na sua agenda um lembrete diário para os próximos 365 dias. Você receberá o aviso pelo <b>calendário do celular</b>, mesmo quando o Meu Devocional estiver fechado, desde que as notificações da agenda estejam ativadas.</p>
+        <div class="reminder-grid">
+          <div><label for="reminderTime">Horário do devocional</label><input id="reminderTime" type="time" value="08:00" required></div>
+          <div><label for="reminderStart">Data do primeiro aviso</label><input id="reminderStart" type="date" required></div>
+        </div>
+        <div class="reminder-preview" id="reminderPreview" aria-live="polite">Preparando a programação do seu lembrete...</div>
+        <div class="reminder-buttons">
+          <a id="googleReminderLink" class="primary reminder-link" target="_blank" rel="noopener noreferrer" href="https://calendar.google.com/">📆 Criar no Google Agenda</a>
+          <button id="downloadReminder" class="outline" type="button">⬇ Baixar lembrete (.ics)</button>
+        </div>
+        <p class="small-note" id="reminderMessage" role="status" aria-live="polite">O lembrete só estará ativado depois que você salvar o evento no calendário. Escolher um horário aqui, sozinho, não ativa notificações.</p>
+      </article>
+      <article class="card">
+        <h3>Como receber o aviso no Android</h3>
+        <ol>
+          <li>Escolha a hora (sugerimos <b>8h da manhã</b>) e a data de início.</li>
+          <li>Toque em <b>Criar no Google Agenda</b>; revise a programação diária de <b>365 ocorrências</b> e confirme <b>Salvar</b>.</li>
+          <li>No evento do Google Agenda, confira se existe uma <b>notificação no horário do evento</b>. Ajuste para “no momento do evento” se necessário.</li>
+          <li>Nas configurações do Android, permita notificações do <b>Google Agenda</b> e mantenha a conta sincronizada.</li>
+        </ol>
+        <p class="study-note"><b>Outra agenda?</b> Use “Baixar lembrete (.ics)” para importar no calendário de sua preferência. O Google Agenda geralmente exige um computador para importar arquivos .ics: abra as configurações da agenda, escolha <b>Importar e exportar</b> e selecione o arquivo.</p>
+        <p class="small-note"><b>Evite lembretes duplicados:</b> depois de criar o evento, altere-o diretamente no seu calendário. Repetir o processo pode criar outra série de avisos.</p>
+      </article>
+      <article class="card info-card">
+        <h3>Como os avisos funcionam?</h3>
+        <p>Este aplicativo está hospedado gratuitamente no GitHub Pages. Ele não mantém um servidor de notificações push, por isso <b>não envia notificações diretamente quando está fechado</b>. A notificação é gerenciada pelo calendário que você escolher, e pode depender das configurações de som, economia de bateria e notificações do Android.</p>
+        <p>Não é necessário compartilhar suas anotações ou conceder acesso ao aplicativo à sua conta Google. O botão apenas abre a tela de criação de evento da sua agenda.</p>
+      </article>
+    </section>
   </main>
   <footer><span>“Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.”</span><br><b>Salmos 119:105 · referência NVI</b><p>Meu Devocional · jornada anual</p></footer>
-  <script src="app.js?v=4.0" defer></script>
+  <script src="app.js?v=5.0" defer></script>
 </body>
 </html>

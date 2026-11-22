@@ -1,42 +1,43 @@
-MEU DEVOCIONAL — VERSÃO 2.1 | 365 ESTUDOS APROFUNDADOS
-=====================================================
+MEU DEVOCIONAL — VERSÃO 2.2 | 365 ESTUDOS + LEMBRETES DIÁRIOS
+============================================================
 
-O QUE ESTA VERSÃO INCLUI
-- 365 estudos bíblicos com comentário autoral e roteiro de leitura.
-- Dias 01 e 02: estudos especiais previamente aprofundados e preservados.
-- Dias 03 a 365: novo aprofundamento com contexto literário e histórico,
-  leitura comentada específica por passagem, interpretação bíblica,
-  conexões, exercícios de leitura, aplicação, perguntas e oração.
-- Biblioteca de 365 passagens selecionadas, do Gênesis ao Apocalipse.
-  Não substitui uma leitura completa de todos os capítulos da Bíblia.
-- NVI como tradução de referência: o texto integral da NVI não é distribuído.
+NOVIDADE
+- Uma nova aba “🔔 Lembretes” configura horários e datas de início.
+- O botão “Criar no Google Agenda” abre um evento diário de 15 minutos, para 365 ocorrências.
+- O botão “Baixar lembrete (.ics)” permite importar a recorrência em outra agenda.
+- Horário padrão sugerido: 08:00; altere antes de criar o evento.
+- Após abrir o Google Agenda, confira a recorrência, a notificação no início e confirme Salvar.
+- O lembrete só existe depois que o usuário o cria no calendário.
+- O Google Agenda pode exigir um computador para importar arquivos .ics. O botão direto “Criar no Google Agenda” é a opção mais fácil para Android.
+
+IMPORTANTE SOBRE NOTIFICAÇÕES
+- GitHub Pages hospeda páginas estáticas. O Meu Devocional NÃO emite notificações push automaticamente quando está fechado.
+- Os alertas são enviados pelo calendário do telefone, conforme suas permissões e configurações.
+- Permita notificações ao Google Agenda no Android e sincronize sua conta.
+- Criar mais de uma série pode causar alertas duplicados; edite o evento existente no calendário.
+- O botão de Google Agenda não recebe acesso às suas anotações, estudos marcados ou credenciais.
+- A agenda poderá armazenar as informações do evento na sua conta Google.
+
+O QUE FOI PRESERVADO
+- Todos os 365 estudos aprofundados da versão 2.1; nenhuma passagem foi removida.
 - Anotações por dia, favoritos, progresso e backup em JSON.
-- Funciona em Android e computador; offline após carregar uma vez conectado.
+- Mesma chave local 'meuDevocional.v2' para preservar dados anteriores.
+- Mesma origem/URL, ícone e instalação no Android; não reinstale nem limpe dados.
+- O serviço offline foi atualizado para cache v5.
 
-COMO PUBLICAR EM SEU GITHUB PAGES
-1. Extraia este ZIP no computador.
-2. Entre em https://github.com/D-Oliveira97/meu-devocional
-3. Clique em Add file > Upload files.
-4. Envie os arquivos que estão DENTRO da pasta, não o ZIP e não a pasta.
-5. O repositório deve ter index.html, styles.css, app.js, sw.js,
-   studies.json, manifest.webmanifest, icon.svg e LEIA-ME.txt na raiz.
-6. Clique em Commit changes para substituir os arquivos existentes.
-7. Verifique https://d-oliveira97.github.io/meu-devocional/
-8. Se o Android mostrar o estudo antigo, feche o app e abra-o com internet.
-   Se necessário, atualize o site no navegador; NÃO limpe os dados do site.
+COMO PUBLICAR NO GITHUB PAGES
+1. Extraia o ZIP no computador.
+2. Abra https://github.com/D-Oliveira97/meu-devocional
+3. Em Add file > Upload files, selecione os 8 arquivos que estão DENTRO da pasta.
+4. Envie index.html, styles.css, app.js, sw.js, studies.json,
+   manifest.webmanifest, icon.svg e LEIA-ME.txt para a RAIZ do repositório.
+5. Clique em Commit changes, espere o Pages publicar e abra:
+   https://d-oliveira97.github.io/meu-devocional/
+6. Clique em 🔔 Lembretes e configure no celular.
+7. Se o app instalado mostrar a versão anterior, feche-o e abra-o conectado à internet; não limpe os dados do site.
 
-DADOS E PRIVACIDADE
-- A chave local 'meuDevocional.v2' é mantida; dados da versão 2.0 permanecem.
-- A migração da versão 1 também continua suportada.
-- Anotações e progresso ficam só neste aparelho/navegador, sem sincronização.
-- Antes de trocar de aparelho, exporte seu backup em Progresso.
-- Nunca publique backups com anotações pessoais em um repositório público.
-- O plano diário de mensagens do ChatGPT não atualiza o aplicativo sozinho.
-
-OBSERVAÇÕES SOBRE OS ESTUDOS
-- Os estudos têm análise específica por passagem e aprofundamento temático
-  de cada etapa. Como o plano é anual, algumas notas de contexto de uma
-  mesma semana são compartilhadas; os comentários centrais são individuais.
-- As interpretações devem ser conferidas com a Bíblia e podem ser
-  complementadas com material de referência e comunidade de fé.
-- Questões difíceis são tratadas sem autorizar violência ou abuso.
+PRIVACIDADE
+- Anotações e progresso ficam no navegador do dispositivo, sem sincronização.
+- Exporte periodicamente uma cópia de segurança na aba Progresso.
+- NÃO envie o backup pessoal JSON ao repositório público.
+- A NVI é apenas referência de leitura; não há reprodução integral da tradução.

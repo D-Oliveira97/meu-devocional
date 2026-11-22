@@ -3,6 +3,8 @@ const $=selector=>document.querySelector(selector);
 const $$=selector=>Array.from(document.querySelectorAll(selector));
 const STORAGE_V2='meuDevocional.v2';
 const STORAGE_V1='meuDevocional.v1';
+const REMINDER_PREFS_KEY='meuDevocional.reminders.v1';
+const DEVOTIONAL_URL='https://d-oliveira97.github.io/meu-devocional/';
 const INITIAL_DATE={year:2026,month:10,day:22};
 const MAX_DAYS=365;
 let studies=[];
@@ -64,6 +66,7 @@ function showTab(name){
  if(name==='journal')renderJournal();
  if(name==='saved')renderFavorites();
  if(name==='progress')renderProgress();
+ if(name==='reminders')updateReminderPreview();
 }
 function selectDay(n,{switchTab=true,scroll=false}={}){
  selectedDay=Math.max(1,Math.min(MAX_DAYS,Math.floor(Number(n)||1)));
@@ -201,7 +204,103 @@ async function importBackup(file){
  data=normalizeData(parsed.data);persist();selectedDay=data.lastDay;$('#daySelect').value=String(selectedDay);renderStudy();renderJournal();renderFavorites();renderProgress();
  $('#backupMsg').textContent='Cópia restaurada com sucesso. Confira seus registros.';
 }
+
+// Os avisos de longo prazo são agendados no calendário do usuário, não por timers do navegador.
+function localIsoDate(date){
+ return [date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-');
+}
+function formatLocalDate(date){return new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'long',year:'numeric'}).format(date)}
+function reminderConfig(){
+ const time=$('#reminderTime').value;
+ const start=$('#reminderStart').value;
+ if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)||!/^\d{4}-\d{2}-\d{2}$/.test(start))return null;
+ const [year,month,day]=start.split('-').map(Number);
+ const [hours,minutes]=time.split(':').map(Number);
+ const date=new Date(year,month-1,day,hours,minutes,0,0);
+ if(date.getFullYear()!==year||date.getMonth()!==month-1||date.getDate()!==day)return null;
+ const end=new Date(date.getTime()+15*60000);
+ const last=new Date(date);last.setDate(last.getDate()+364);
+ return {date,end,last,time,start,hours,minutes};
+}
+function storedReminder(){try{return JSON.parse(localStorage.getItem(REMINDER_PREFS_KEY))}catch(_){return null}}
+function saveReminderPreferences(){
+ try{localStorage.setItem(REMINDER_PREFS_KEY,JSON.stringify({time:$('#reminderTime').value,start:$('#reminderStart').value}))}catch(_){/* as opções ainda funcionam sem armazenamento */}
+}
+function initReminders(){
+ const now=new Date();
+ const stored=storedReminder();
+ const time=stored&&/^([01]\d|2[0-3]):[0-5]\d$/.test(stored.time)?stored.time:'08:00';
+ let start=stored&&/^\d{4}-\d{2}-\d{2}$/.test(stored.start)?stored.start:null;
+ if(!start){const tomorrow=new Date(now);tomorrow.setHours(0,0,0,0);
+   if(now.getHours()*60+now.getMinutes()>=Number(time.slice(0,2))*60+Number(time.slice(3)))tomorrow.setDate(tomorrow.getDate()+1);
+   start=localIsoDate(tomorrow);
+ }
+ $('#reminderTime').value=time;
+ $('#reminderStart').value=start;
+ $('#reminderTime').addEventListener('change',updateReminderPreview);
+ $('#reminderStart').addEventListener('change',updateReminderPreview);
+ $('#downloadReminder').addEventListener('click',downloadCalendarReminder);
+ updateReminderPreview();
+}
+function calendarTime(date){return localIsoDate(date).replace(/-/g,'')+'T'+String(date.getHours()).padStart(2,'0')+String(date.getMinutes()).padStart(2,'0')+'00'}
+function calendarGoogleUrl(config){
+ const p=new URLSearchParams();
+ p.set('action','TEMPLATE');
+ p.set('text','Meu Devocional | Leitura e oração');
+ p.set('dates',calendarTime(config.date)+'/'+calendarTime(config.end));
+ p.set('ctz',Intl.DateTimeFormat().resolvedOptions().timeZone||'America/Sao_Paulo');
+ p.set('recur','RRULE:FREQ=DAILY;COUNT=365');
+ p.set('details','Separe 15 minutos para o seu devocional bíblico diário. Abra o Meu Devocional: '+DEVOTIONAL_URL+'\n\nConfira a notificação no início do evento e a repetição diária antes de salvar.');
+ return 'https://calendar.google.com/calendar/render?'+p.toString();
+}
+function updateReminderPreview(){
+ const config=reminderConfig();
+ const preview=$('#reminderPreview');const link=$('#googleReminderLink');
+ if(!config){preview.classList.add('error');preview.textContent='Selecione uma data e um horário válidos.';link.removeAttribute('href');link.setAttribute('aria-disabled','true');return}
+ if(config.date.getTime()<Date.now()-60000){preview.classList.add('error');preview.textContent='Essa data e horário já passaram. Escolha um horário futuro.';link.removeAttribute('href');link.setAttribute('aria-disabled','true');return}
+ preview.classList.remove('error');
+ const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'horário local';
+ preview.textContent=`Todos os dias às ${config.time}, de ${formatLocalDate(config.date)} até ${formatLocalDate(config.last)} (365 ocorrências previstas; salve no calendário para ativar). Fuso do dispositivo: ${tz}.`;
+ link.href=calendarGoogleUrl(config);link.removeAttribute('aria-disabled');
+ saveReminderPreferences();
+}
+function icsEscape(text){return String(text).replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;')}
+function icsUtc(date){return date.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z')}
+function foldIcsLine(value){
+ // Evita linhas extensas e preserva os caracteres Unicode em UTF-8.
+ const chars=Array.from(value);const result=[];let line='';let bytes=0;
+ for(const ch of chars){const size=new TextEncoder().encode(ch).length;if(bytes+size>73){result.push(line);line=' ';bytes=1}line+=ch;bytes+=size}
+ result.push(line);return result.join('\r\n');
+}
+function makeIcsReminder(config){
+ const uid='meu-devocional-'+config.start.replace(/-/g,'')+'-'+config.time.replace(':','')+'@d-oliveira97.github.io';
+ const lines=[
+  'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Meu Devocional//Lembretes 2.2//PT-BR',
+  'CALSCALE:GREGORIAN','METHOD:PUBLISH','BEGIN:VEVENT','UID:'+uid,
+  'DTSTAMP:'+icsUtc(new Date()),
+  'DTSTART:'+icsUtc(config.date),'DTEND:'+icsUtc(config.end),
+  'RRULE:FREQ=DAILY;COUNT=365',
+  'SUMMARY:'+icsEscape('Meu Devocional - leitura e oração'),
+  'DESCRIPTION:'+icsEscape('Estude a Palavra por 15 minutos. Abra '+DEVOTIONAL_URL),
+  'URL:'+DEVOTIONAL_URL,
+  'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEscape('Hora do Meu Devocional'),
+  'TRIGGER:PT0S','END:VALARM','END:VEVENT','END:VCALENDAR'
+ ];
+ return lines.map(foldIcsLine).join('\r\n')+'\r\n';
+}
+function downloadCalendarReminder(){
+ const config=reminderConfig();
+ if(!config||config.date.getTime()<Date.now()-60000){updateReminderPreview();$('#reminderMessage').textContent='Escolha uma data e um horário futuros antes de baixar.';return}
+ const blob=new Blob([makeIcsReminder(config)],{type:'text/calendar;charset=utf-8'});
+ const url=URL.createObjectURL(blob);const link=document.createElement('a');
+ link.href=url;link.download='meu-devocional-lembrete-365-dias.ics';document.body.append(link);link.click();link.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),30000);
+ $('#reminderMessage').textContent='Arquivo .ics preparado. Importe-o na sua agenda e confira se os avisos estão ativados. Somente baixar não agenda o lembrete.';
+}
+
 async function init(){
+ initReminders();
+ $('#reminderShortcut').addEventListener('click',()=>{showTab('reminders');$('#reminders').scrollIntoView({behavior:'smooth',block:'start'})});
  $('#today').textContent=new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());
  $$('.tab').forEach(btn=>btn.addEventListener('click',()=>showTab(btn.dataset.tab)));
  $('#prevDay').addEventListener('click',()=>selectDay(selectedDay-1,{scroll:true}));
