@@ -8,8 +8,8 @@
   <meta name="color-scheme" content="light">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=5.0">
-  <title>Meu Devocional · 365 dias · lembretes</title>
+  <link rel="stylesheet" href="styles.css?v=7.0">
+  <title>Meu Devocional · Bíblia ONBV e 365 estudos</title>
 </head>
 <body>
   <a href="#main" class="skip-link">Pular para o conteúdo</a>
@@ -21,12 +21,13 @@
     <section class="welcome" aria-label="Boas-vindas">
       <p class="eyebrow">SUA JORNADA NA PALAVRA</p>
       <h1>Um ano inteiro para crescer na fé.</h1>
-      <p>365 estudos com comentários ampliados, contexto, leitura guiada e aplicação, do Gênesis ao Apocalipse. NVI como referência.</p>
+      <p>365 estudos aprofundados, leitura da Bíblia ONBV no próprio aplicativo e narração em português. NVI como referência dos estudos.</p>
       <div class="welcome-foot"><span id="today"></span><span class="stat-chip"><span id="topDone">0</span>/365 concluídos</span></div>
       <button class="reminder-shortcut" id="reminderShortcut" type="button">🔔 Configurar lembrete diário</button>
     </section>
     <nav class="tabs" aria-label="Navegação principal">
       <button class="tab active" data-tab="study" aria-controls="study" aria-selected="true">📖 Estudo</button>
+      <button class="tab" data-tab="bible" aria-controls="bible" aria-selected="false">📘 Bíblia ONBV</button>
       <button class="tab" data-tab="library" aria-controls="library" aria-selected="false">📚 365 dias</button>
       <button class="tab" data-tab="journal" aria-controls="journal" aria-selected="false">✍️ Anotações</button>
       <button class="tab" data-tab="saved" aria-controls="saved" aria-selected="false">☆ Favoritos</button>
@@ -42,7 +43,84 @@
         <button class="outline" id="nextDay" type="button" aria-label="Próximo estudo">Próximo →</button>
       </div>
       <div class="today-wrap"><button id="goToday" class="text-btn" type="button">Ir ao dia de hoje no plano</button><span id="selectionHint" class="small-note"></span></div>
+      <article class="audio-card card" id="audioCard" aria-label="Ouvir o estudo em áudio">
+        <div class="audio-heading">
+          <div class="audio-icon" aria-hidden="true">🔊</div>
+          <div><p class="section-kicker">NOVO · ÁUDIO DOS ESTUDOS</p><h2>Escute a Palavra, reflita e ore.</h2></div>
+        </div>
+        <p>Ouça a passagem bíblica ONBV, os comentários e a oração em português. A Bíblia deve ser importada uma única vez do distribuidor oficial.</p>
+        <div class="audio-actions">
+          <button id="audioPlay" type="button" class="primary">▶ Ouvir estudo completo</button>
+          <button id="audioBible" type="button" class="outline">📖 Ouvir passagem ONBV</button>
+          <button id="audioFull" type="button" class="outline">🎧 Passagem + estudo</button>
+          <button id="audioPrayer" type="button" class="outline">🙏 Ouvir só a oração</button>
+          <button id="audioPause" type="button" class="outline" disabled>⏸ Pausar</button>
+          <button id="audioStop" type="button" class="outline" disabled>■ Parar</button>
+        </div>
+        <div class="audio-settings">
+          <div><label for="audioSpeed">Velocidade</label><select id="audioSpeed"><option value="0.8">0,8× · devagar</option><option value="1" selected>1× · normal</option><option value="1.15">1,15×</option><option value="1.3">1,3×</option><option value="1.5">1,5× · rápido</option></select></div>
+          <div><label for="audioVoice">Voz em português</label><select id="audioVoice"><option value="auto">Automática (voz do aparelho)</option></select></div>
+        </div>
+        <div class="audio-progress" role="group" aria-label="Progresso da narração">
+          <p id="audioStatus" role="status" aria-live="polite">Escolha uma opção para começar a ouvir.</p>
+          <div class="audio-track" aria-hidden="true"><div id="audioTrackBar"></div></div>
+          <div class="audio-progress-bottom"><span id="audioProgressLabel">Pronto para ouvir · Dia 001</span><div class="audio-skip"><button id="audioPrev" type="button" class="audio-skip-btn" disabled>← Parte anterior</button><button id="audioNext" type="button" class="audio-skip-btn" disabled>Próxima parte →</button></div></div>
+        </div>
+        <p class="audio-disclaimer">A narração bíblica usa o texto <b>ONBV importado</b>, não o texto integral da NVI. A voz é gerada pela síntese de voz do aparelho. <b>Se bloquear a tela ou colocar o app em segundo plano, a narração pode parar</b>, dependendo do Android e do navegador.</p>
+      </article>
+      <article class="card onbv-study-card">
+        <p class="section-kicker">LEITURA NA MESMA TELA · EDIÇÃO ONBV</p>
+        <h2>Leia a passagem bíblica aqui</h2>
+        <p class="small-note">A leitura abaixo é da <b>Open Nova Bíblia Viva (ONBV)</b>. Os comentários do estudo continuam usando a NVI como referência. As traduções podem diferir em sua redação.</p>
+        <div id="bibleStudyContent" aria-live="polite">Carregando leitor bíblico...</div>
+        <p class="bible-attribution">Biblica® Open Nova Bíblia Viva™ © 2007, 2010 Biblica, Inc. · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt_BR" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></p>
+      </article>
       <div id="studyContent" aria-live="polite"></div>
+    </section>
+
+    <section id="bible" class="panel hidden" aria-label="Bíblia completa Open Nova Bíblia Viva">
+      <article class="card bible-hero">
+        <p class="section-kicker">NOVIDADE · EDIÇÃO 2.4</p>
+        <h2>📘 A Bíblia completa dentro do Meu Devocional</h2>
+        <p>Consulte os <b>66 livros</b> da Bíblia ONBV, escute capítulos em português e acompanhe a leitura sem alternar aplicativos. A importação é feita uma única vez; depois, os textos ficam guardados no seu dispositivo para leitura offline.</p>
+        <div id="bibleInstall" class="bible-install">
+          <h3>Preparação inicial · uma única vez</h3>
+          <p>O texto bíblico não acompanha o ZIP do aplicativo: para respeitar a origem e a integridade da edição, faça o download oficial abaixo e importe o arquivo <strong>poronbv_usfm.zip</strong> diretamente aqui.</p>
+          <div class="bible-buttons">
+            <button class="primary" id="bibleAuto" type="button">⬇ Tentar importar automaticamente</button>
+            <a class="outline as-link" href="https://ebible.org/Scriptures/poronbv_usfm.zip" target="_blank" rel="noopener noreferrer" download>1 · Baixar ZIP oficial</a>
+            <button class="outline" id="bibleImport" type="button">2 · Importar ZIP baixado</button>
+          </div>
+          <input id="bibleFile" type="file" accept=".zip,application/zip,application/x-zip-compressed" class="hidden" aria-label="Selecionar arquivo USFM oficial da ONBV">
+          <p class="small-note">Se o download automático não for permitido pelo servidor, use os botões 1 e 2. Não descompacte o ZIP. O texto será guardado no aparelho; nenhuma anotação é enviada.</p>
+        </div>
+        <div id="bibleReady" class="bible-ready hidden"><strong>✓ Bíblia ONBV preparada</strong><p id="bibleAvailable">66 livros disponíveis offline</p></div>
+        <p class="bible-status" id="bibleImportStatus" role="status" aria-live="polite">Verificando a Bíblia instalada...</p>
+      </article>
+      <article class="card bible-reader-card">
+        <h2>Ler ou ouvir um capítulo</h2>
+        <div class="bible-controls">
+          <div><label for="bibleBook">Livro</label><select id="bibleBook"></select></div>
+          <div><label for="bibleChapterSelect">Capítulo</label><select id="bibleChapterSelect"></select></div>
+        </div>
+        <div class="bible-buttons bible-navigation">
+          <button type="button" class="outline" id="biblePrev">← Anterior</button>
+          <button type="button" class="outline" id="bibleListenChapter">🔊 Ouvir capítulo</button>
+          <button type="button" class="outline" id="bibleToggleAudio">⏯ Pausar / retomar áudio</button>
+          <button type="button" class="outline" id="bibleStopAudio">■ Parar áudio</button>
+          <button type="button" class="outline" id="bibleNext">Próximo →</button>
+        </div>
+        <h3 id="bibleChapterTitle">Gênesis 1</h3>
+        <div id="bibleChapter" class="onbv-verses" aria-live="polite">Carregando capítulo...</div>
+      </article>
+      <article class="card info-card bible-credits">
+        <h2>Créditos e licença da tradução</h2>
+        <p><strong>Biblica® Open Nova Bíblia Viva™</strong><br>Copyright © 2007, 2010 by Biblica, Inc.</p>
+        <p>“Biblica” é uma marca registrada na Oficina de Patentes e Marcas dos Estados Unidos por Biblica, Inc. Usado com permissão.<br>“Biblica” is a trademark registered in the United States Patent and Trademark Office by Biblica, Inc. Used with permission.</p>
+        <p>Este texto é disponibilizado sob a licença <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">Creative Commons Atribuição-CompartilhaIgual 4.0 Internacional (CC BY-SA 4.0)</a>. <a href="https://open.bible/bibles/biblica-open-nova-b%C3%ADblia-viva-2007" target="_blank" rel="noopener noreferrer">A obra original está disponível gratuitamente em open.bible</a> e <a href="https://www.biblica.com/" target="_blank" rel="noopener noreferrer">biblica.com</a>.</p>
+        <p><b>Adaptações de apresentação:</b> importação do arquivo USFM original para leitura por capítulos e versículos, ocultação de marcações de formatação, cabeçalhos e notas editoriais, e reprodução por voz sintetizada no próprio aparelho. O aplicativo não altera intencionalmente as palavras dos versículos. A adaptação do texto é disponibilizada sob CC BY-SA 4.0. A Biblica não endossa este aplicativo.</p>
+        <p>O áudio é gerado no momento da leitura: não são distribuídas gravações de terceiros. A voz, o uso offline e a reprodução com a tela bloqueada dependem dos recursos e restrições do aparelho.</p>
+      </article>
     </section>
 
     <section id="library" class="panel hidden" aria-label="Biblioteca dos estudos">
@@ -99,7 +177,7 @@
       </article>
       <article class="card info-card">
         <h2>Sobre a jornada</h2>
-        <p>Este é um plano aprofundado de <b>365 passagens selecionadas</b> ao longo de toda a Bíblia protestante, não uma leitura integral de todos os seus capítulos. Os estudos são textos explicativos originais; a NVI é referência para a leitura na sua Bíblia.</p>
+        <p>Este é um plano aprofundado de <b>365 passagens selecionadas</b> ao longo de toda a Bíblia protestante, não uma leitura integral de todos os seus capítulos. Os estudos são textos explicativos originais, com a NVI como referência. O texto da Bíblia exibido dentro do aplicativo, após importação, é a Open Nova Bíblia Viva (ONBV) licenciada separadamente.</p>
         <p>O aplicativo funciona offline após o primeiro carregamento completo. Atualizações do conteúdo precisam ser publicadas no GitHub; as mensagens diárias do ChatGPT não entram automaticamente aqui.</p>
       </article>
     </section>
@@ -137,6 +215,9 @@
     </section>
   </main>
   <footer><span>“Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.”</span><br><b>Salmos 119:105 · referência NVI</b><p>Meu Devocional · jornada anual</p></footer>
-  <script src="app.js?v=5.0" defer></script>
+  <script src="app.js?v=7.0" defer></script>
+  <script src="audio.js?v=7.0" defer></script>
+  <script src="jszip.min.js?v=7.0" defer></script>
+  <script src="bible.js?v=7.0" defer></script>
 </body>
 </html>

@@ -25,3 +25,54 @@
 .reminder-link[aria-disabled="true"]{opacity:.45;pointer-events:none}
 #reminderMessage{margin:12px 0 0}
 @media(max-width:600px){.reminder-header{align-items:flex-start}.reminder-grid{grid-template-columns:1fr;gap:9px}.reminder-buttons{flex-direction:column}.reminder-buttons>*{width:100%;min-height:46px}}
+
+/* Leitura em áudio · versão 2.3 */
+.audio-card{border:1px solid #c7d9c9;background:linear-gradient(135deg,#f4f8f1,#ffffff)}
+.audio-card h2{font-size:clamp(20px,3.4vw,26px);margin:2px 0 6px}
+.audio-heading{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+.audio-heading .section-kicker{margin:0}
+.audio-icon{width:47px;height:47px;display:flex;align-items:center;justify-content:center;background:#dce9dd;border-radius:12px;font-size:25px;flex-shrink:0}
+.audio-card>p{margin:8px 0 13px}
+.audio-actions{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0 18px}
+.audio-actions button{min-height:43px;padding:9px 14px;font-size:13px}
+.audio-settings{display:grid;grid-template-columns:minmax(130px,180px) minmax(180px,1fr);gap:12px;margin:10px 0 15px}
+.audio-settings label{display:block;font-size:12px;font-weight:700;color:var(--green);margin-bottom:5px}
+.audio-settings select{width:100%;max-width:100%;min-height:42px;background:#fff;border:1px solid #bfcfc2;border-radius:9px;padding:8px;color:var(--ink);font-size:13px}
+.audio-progress{border:1px solid #d8e5d5;background:#f8fbf7;padding:13px 14px;border-radius:12px}
+#audioStatus{margin:0 0 10px;font-weight:600;font-size:13px;color:#214f3c;line-height:1.5}
+.audio-track{height:7px;border-radius:100px;background:#e2eae2;overflow:hidden}
+#audioTrackBar{height:100%;width:0;background:#387557;border-radius:100px;transition:width .2s linear}
+.audio-progress-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:9px}
+#audioProgressLabel{font-size:11px;color:#516b59}
+.audio-skip{display:flex;gap:6px;flex-wrap:wrap}
+.audio-skip-btn{background:transparent;border:0;color:var(--green2);font-weight:700;font-size:11px;padding:5px}
+.audio-skip-btn:disabled{opacity:.35}
+.audio-card p.audio-disclaimer{color:#5e7065;font-size:12px;line-height:1.6;margin:14px 0 0}
+@media(max-width:600px){.audio-settings{grid-template-columns:1fr}.audio-actions{display:grid;grid-template-columns:1fr 1fr}.audio-actions button{min-height:44px;font-size:12px;padding:8px}.audio-actions #audioPlay{grid-column:1/-1}.audio-progress-bottom{display:block}.audio-skip{justify-content:space-between;margin-top:8px}}
+
+/* Leitor bíblico ONBV · versão 2.4 */
+.bible-hero{background:linear-gradient(140deg,#f2f7ef,#ffffff);border-color:#bbd3bd}
+.bible-ready{background:#e1efe1;border:1px solid #bbd3bd;border-radius:12px;padding:12px 16px;margin:14px 0;color:#1f573b}
+.bible-ready strong{font-size:15px}.bible-ready p{margin:4px 0;font-size:13px}
+.bible-install{padding:14px;border:1px dashed #c0d3c2;border-radius:12px;margin:16px 0;background:#f9fcf7}
+.bible-buttons{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:15px 0}
+.bible-buttons .as-link{display:inline-flex;align-items:center;text-decoration:none;min-height:40px}
+.bible-buttons>*{min-height:40px}
+.bible-status{padding:12px 14px;border-radius:9px;background:#e9f0e7;font-size:12px!important;color:#3f614d}
+.bible-status[data-type="error"]{background:#fff0eb;color:#994a28}
+.bible-status[data-type="ok"]{background:#e1f0e0;color:#25613b}
+.bible-controls{display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:14px}
+.bible-controls label{display:block;margin:0 0 7px!important}
+.bible-controls select{width:100%;background:white}
+.bible-navigation{justify-content:space-between;margin-bottom:22px}
+.bible-reader-card #bibleChapterTitle{font-family:'Playfair Display',Georgia,serif;font-size:24px}
+.onbv-study-card{border-top:4px solid #cbac77}
+.bible-reading-tools{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.onbv-verses{max-width:760px;max-height:660px;overflow-y:auto;border:1px solid #e1e8dd;border-radius:12px;padding:13px 18px;background:#fffefb;overscroll-behavior:contain}
+.onbv-chapter{margin-bottom:20px}
+.onbv-chapter h4{font-size:14px;color:#245b43;border-bottom:1px solid #dce7d8;padding-bottom:7px}
+.onbv-verse{font-family:Georgia,'Times New Roman',serif!important;font-size:clamp(15px,2vw,18px)!important;line-height:1.78;letter-spacing:.04px;margin:5px 0 9px!important}
+.onbv-verse sup{color:#377353;font-size:11px;margin-right:6px;font-family:system-ui,sans-serif;font-weight:700}
+.bible-attribution{font-size:11px!important;color:#668075}
+.bible-credits{font-size:12px}.bible-credits p{font-size:12px;line-height:1.6}
+@media(max-width:600px){.bible-controls{grid-template-columns:1fr 115px;gap:8px}.bible-buttons>*{width:100%;justify-content:center}.bible-navigation{display:grid;grid-template-columns:1fr 1fr}.bible-navigation #bibleListenChapter{grid-column:1/-1;grid-row:1}.onbv-verses{padding:10px 13px;max-height:520px}.audio-actions{grid-template-columns:1fr 1fr}.audio-actions #audioPlay{grid-column:1/-1}.audio-actions #audioBible,.audio-actions #audioFull{grid-column:auto}}

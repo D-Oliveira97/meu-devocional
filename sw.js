@@ -1,5 +1,5 @@
-const CACHE_NAME='meu-devocional-365-v5';
-const ASSETS=['./','./index.html','./styles.css?v=5.0','./app.js?v=5.0','./studies.json','./manifest.webmanifest','./icon.svg'];
+const CACHE_NAME='meu-devocional-365-v7';
+const ASSETS=['./','./index.html','./styles.css?v=7.0','./app.js?v=7.0','./audio.js?v=7.0','./jszip.min.js?v=7.0','./bible.js?v=7.0','./studies.json','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(names=>Promise.all(names.filter(name=>name.startsWith('meu-devocional-')&&name!==CACHE_NAME).map(name=>caches.delete(name)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{

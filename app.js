@@ -67,9 +67,11 @@ function showTab(name){
  if(name==='saved')renderFavorites();
  if(name==='progress')renderProgress();
  if(name==='reminders')updateReminderPreview();
+ if(name==='bible')window.DevocionalBible?.renderChapter?.();
 }
 function selectDay(n,{switchTab=true,scroll=false}={}){
  selectedDay=Math.max(1,Math.min(MAX_DAYS,Math.floor(Number(n)||1)));
+ window.DevocionalAudio?.setDay?.(selectedDay);
  data.lastDay=selectedDay;persist();
  if(switchTab)showTab('study');
  renderStudy();renderJournal();renderProgress();
@@ -77,7 +79,7 @@ function selectDay(n,{switchTab=true,scroll=false}={}){
  if(scroll)$('#study').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function refsHtml(s){return '<p class="refs"><b>Referências para aprofundar:</b> '+h(s)+'</p>'}
-function checkItems(){return selectedDay===1?[['read','Reli Gênesis 1 com calma.'],['john','Li João 1:1–14.'],['thanks','Agradeci a Deus por três coisas.'],['care','Demonstrei respeito e amor a alguém.']]:[['read','Li a passagem principal na minha Bíblia NVI.'],['cross','Consultei ao menos uma referência complementar.'],['reflect','Registrei uma descoberta ou aplicação pessoal.'],['pray','Reservei tempo para orar sobre o texto.']]}
+function checkItems(){return selectedDay===1?[['read','Reli Gênesis 1 com calma.'],['john','Li João 1:1–14.'],['thanks','Agradeci a Deus por três coisas.'],['care','Demonstrei respeito e amor a alguém.']]:[['read','Li a passagem principal (ONBV no aplicativo ou NVI na minha Bíblia).'],['cross','Consultei ao menos uma referência complementar.'],['reflect','Registrei uma descoberta ou aplicação pessoal.'],['pray','Reservei tempo para orar sobre o texto.']]}
 function renderStudy(){
  const s=study(selectedDay);if(!s)return;
  const completed=data.completed.includes(selectedDay),fav=data.favorites.includes(selectedDay);
@@ -97,7 +99,7 @@ function renderStudy(){
     <h3>Preparando o coração</h3>
     <p>Separe alguns minutos para o silêncio. Peça a Deus humildade, atenção e coragem para viver aquilo que a passagem ensina. Leia o texto inteiro antes de consultar o comentário.</p>
     <h3>Leitura principal</h3>
-    <p><strong>${h(s.reference)}</strong> — encontre a passagem na sua Bíblia, preferencialmente na tradução NVI. O aplicativo apresenta referências e comentários originais, não reproduz o texto integral da tradução.</p>
+    <p><strong>${h(s.reference)}</strong> — leia o texto completo da ONBV no quadro acima, depois de importar a tradução. Os comentários usam a NVI como referência; para comparar as redações, consulte sua Bíblia NVI.</p>
     <p class="study-note"><b>Ideia central:</b> ${h(s.insight)}</p>
   </article>
   <article class="card">
@@ -127,6 +129,7 @@ function renderStudy(){
   </article>
   ${next?`<article class="card next-card"><div class="section-kicker">PRÓXIMO ESTUDO</div><h3>Dia ${d(next.day)} — ${h(next.title)}</h3><p>Leitura: ${h(next.reference)}</p><button id="nextFromCard" class="outline" type="button">Ir para o próximo estudo →</button></article>`:`<article class="card next-card"><div class="section-kicker">JORNADA COMPLETA</div><h3>365 dias de aprendizado</h3><p>Você chegou à última etapa. Volte aos estudos, mantenha seu caderno e continue crescendo na Palavra.</p></article>`}`;
  $('#studyContent').innerHTML=html;
+ window.DevocionalBible?.renderStudyPassage?.();
  $('#favoriteStudy').addEventListener('click',()=>{data.favorites=fav?data.favorites.filter(x=>x!==selectedDay):uniqueDays([...data.favorites,selectedDay]);persist();renderStudy()});
  $('#openJournal').addEventListener('click',()=>showTab('journal'));
  $$('[data-task]').forEach(el=>el.addEventListener('change',()=>{data.checklistByDay[selectedDay]={...(data.checklistByDay[selectedDay]||{}),[el.dataset.task]:el.checked};persist()}));
@@ -201,7 +204,7 @@ async function importBackup(file){
  if(parsed?.app!=='Meu Devocional'||!parsed.data||!Array.isArray(parsed.data.completed)||!parsed.data.notesByDay){$('#backupMsg').textContent='Este arquivo não parece ser um backup válido do Meu Devocional.';return}
  const confirmed=confirm('Restaurar esta cópia substituirá as anotações, favoritos e progresso deste aparelho. Deseja continuar?');
  if(!confirmed){$('#backupMsg').textContent='Restauração cancelada. Seus registros não foram alterados.';return}
- data=normalizeData(parsed.data);persist();selectedDay=data.lastDay;$('#daySelect').value=String(selectedDay);renderStudy();renderJournal();renderFavorites();renderProgress();
+ data=normalizeData(parsed.data);persist();selectedDay=data.lastDay;window.DevocionalAudio?.setDay?.(selectedDay);$('#daySelect').value=String(selectedDay);renderStudy();renderJournal();renderFavorites();renderProgress();
  $('#backupMsg').textContent='Cópia restaurada com sucesso. Confira seus registros.';
 }
 
