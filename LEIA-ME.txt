@@ -1,3 +1,21 @@
+MEU DEVOCIONAL 2.8 — CHARON CONTÍNUA, SEM BENÍCIO
+
+Nova opção: REPRODUÇÃO CONTÍNUA (AUDIOBOOK), marcada por padrão no painel Charon. O aplicativo prepara todos os trechos existentes (usando o cache de voz do aparelho) e une a fala em um único WAV. Não abre nova API nem gera áudio extra para unir: as chamadas à IA continuam sendo feitas por trecho conforme a versão anterior.
+
+Vantagem: reprodução em uma só faixa, sem intervalos de troca de trecho; a tela pode ficar apagada onde o navegador permita.
+Atenção: é preciso esperar o preparo da faixa completa no primeiro uso; a geração pode atingir a cota gratuita. Quem preferir começar imediatamente pode DESMARCAR reprodução contínua e usar o modo antigo.
+
+Os trechos ficam salvos no IndexedDB do aparelho. O WAV unido é gerado temporariamente ao tocar, evitando duplicar o armazenamento. A ONBV continua separada, sem narração neural. Mantidos os 365 estudos, as anotações, os favoritos, os lembretes e a leitura local. A amostra Benício foi retirada.
+
+PARA PUBLICAR NO GITHUB PAGES:
+1. Faça backup das anotações antes de atualizar.
+2. Descompacte o ZIP. Envie os 13 arquivos para a raiz do repositório GitHub em Add file > Upload files. Confirme Commit changes.
+3. Depois de publicado, abra o app conectado à internet e atualize; feche e reabra se o Service Worker mantiver a versão anterior.
+4. No Dia 01, em Ouvir com Charon, deixe marcada a opção Reprodução contínua e toque Ouvir estudo com Charon.
+5. Não desinstale, não apague os dados locais e não acrescente chaves privadas ao GitHub. O projeto Spark não tem garantia de cota ilimitada.
+
+LIMITAÇÃO: as vozes e pausas internas são determinadas pelo modelo; reunir o áudio elimina os intervalos entre requisições, mas não pode corrigir divergências de entonação nas fronteiras entre trechos. Para estudar sem a espera inicial, prefira o modo por partes.
+
 MEU DEVOCIONAL 2.7 — VOZ CHARON AUTOMÁTICA (GEMINI / FIREBASE)
 =========================================================
 
@@ -54,7 +72,7 @@ PUBLICAÇÃO
 ==========
 1. Antes de atualizar, faça backup das anotações na aba Progresso.
 2. No GitHub, abra D-Oliveira97/meu-devocional > Add file > Upload files.
-3. Envie os 15 arquivos DESCOMPACTADOS (não envie o ZIP) diretamente para a raiz.
+3. Envie os 13 arquivos DESCOMPACTADOS (não envie o ZIP) diretamente para a raiz.
 4. Commit changes. Aguarde GitHub Pages publicar a versão.
 5. Feche e reabra o app no Android com internet, sem limpar dados e sem reinstalar.
 6. Configure a conexão Charon UMA VEZ no Android (o app instalado e o Chrome
@@ -67,3 +85,12 @@ https://firebase.google.com/docs/ai-logic/get-started?platform=web
 https://firebase.google.com/docs/ai-logic/generate-speech
 https://firebase.google.com/docs/app-check/web/recaptcha-enterprise-provider
 https://ai.google.dev/gemini-api/docs/pricing
+
+RETIRADA DA AMOSTRA BENÍCIO
+O player, o script e o arquivo MP3 de Benício NÃO estão neste ZIP e o app não os utiliza mais.
+Atenção: enviar novos arquivos para um repositório GitHub não apaga os arquivos antigos.
+Para retirar a amostra também do repositório público, abra cada arquivo antigo no GitHub e use Delete file > Commit changes:
+  benicio-player.js
+  dia-001-benicio.mp3
+Só faça isso APÓS publicar esta versão, que já não depende deles.
+O novo Service Worker troca para cache v12 e apaga os caches antigos da aplicação, sem limpar as anotações, favoritos, importação da Bíblia ou áudios Charon salvos em IndexedDB.

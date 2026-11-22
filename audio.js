@@ -140,7 +140,6 @@
  }
  function start(modeArg){
   window.DevocionalCharon?.pause?.();
-  window.DevocionalBenicio?.pause?.();
   if(!supported){status('Este navegador não oferece leitura em voz alta. Experimente abrir o app pelo Chrome atualizado.');return;}
   const day=window.DevocionalAudio?.selectedDay?.()||currentDay;
   const s=window.DevocionalAudio?.study?.(day);
@@ -156,7 +155,6 @@
  }
  function playBibleParts(bibleParts,withStudy=false){
   window.DevocionalCharon?.pause?.();
-  window.DevocionalBenicio?.pause?.();
   if(!supported){status('Este aparelho não oferece síntese de voz disponível.');return}
   if(!Array.isArray(bibleParts)||!bibleParts.length){status('Importe a Bíblia ONBV antes de iniciar a narração.');return}
   const nextMode=withStudy?'bible-study':'bible';
