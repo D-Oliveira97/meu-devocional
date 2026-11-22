@@ -1,24 +1,42 @@
-MEU DEVOCIONAL — protótipo de aplicativo web instalável (PWA)
+MEU DEVOCIONAL — VERSÃO 2.1 | 365 ESTUDOS APROFUNDADOS
+=====================================================
 
-O que já funciona:
-- Estudo inicial do Dia 01 (Gênesis 1).
-- Navegação entre Devocional, Anotações, Favoritos e Progresso.
-- Anotações, favoritos e marcações salvos no armazenamento local do aparelho.
-- Estrutura PWA com manifesto e service worker para uso offline após o primeiro acesso.
+O QUE ESTA VERSÃO INCLUI
+- 365 estudos bíblicos com comentário autoral e roteiro de leitura.
+- Dias 01 e 02: estudos especiais previamente aprofundados e preservados.
+- Dias 03 a 365: novo aprofundamento com contexto literário e histórico,
+  leitura comentada específica por passagem, interpretação bíblica,
+  conexões, exercícios de leitura, aplicação, perguntas e oração.
+- Biblioteca de 365 passagens selecionadas, do Gênesis ao Apocalipse.
+  Não substitui uma leitura completa de todos os capítulos da Bíblia.
+- NVI como tradução de referência: o texto integral da NVI não é distribuído.
+- Anotações por dia, favoritos, progresso e backup em JSON.
+- Funciona em Android e computador; offline após carregar uma vez conectado.
 
-IMPORTANTE:
-Este pacote é o código-fonte do aplicativo, não um app Android (.apk) e não está publicado na internet.
-Para instalar como aplicativo no Android, os arquivos precisam ser publicados em um endereço HTTPS.
-Depois, abra o endereço no Chrome e escolha "Instalar app" ou "Adicionar à tela inicial".
-Também pode ser publicado em hospedagem estática como GitHub Pages, Netlify ou Cloudflare Pages.
+COMO PUBLICAR EM SEU GITHUB PAGES
+1. Extraia este ZIP no computador.
+2. Entre em https://github.com/D-Oliveira97/meu-devocional
+3. Clique em Add file > Upload files.
+4. Envie os arquivos que estão DENTRO da pasta, não o ZIP e não a pasta.
+5. O repositório deve ter index.html, styles.css, app.js, sw.js,
+   studies.json, manifest.webmanifest, icon.svg e LEIA-ME.txt na raiz.
+6. Clique em Commit changes para substituir os arquivos existentes.
+7. Verifique https://d-oliveira97.github.io/meu-devocional/
+8. Se o Android mostrar o estudo antigo, feche o app e abra-o com internet.
+   Se necessário, atualize o site no navegador; NÃO limpe os dados do site.
 
-LIMITAÇÃO DE CONTEÚDO:
-O protótipo contém o primeiro estudo. Ele não gera automaticamente novos estudos bíblicos.
-Os próximos devocionais serão preparados na conversa do ChatGPT e podem ser adicionados em atualizações futuras.
-Os dados locais (anotações, favoritos e progresso) ficam no navegador/aparelho e não sincronizam entre dispositivos.
+DADOS E PRIVACIDADE
+- A chave local 'meuDevocional.v2' é mantida; dados da versão 2.0 permanecem.
+- A migração da versão 1 também continua suportada.
+- Anotações e progresso ficam só neste aparelho/navegador, sem sincronização.
+- Antes de trocar de aparelho, exporte seu backup em Progresso.
+- Nunca publique backups com anotações pessoais em um repositório público.
+- O plano diário de mensagens do ChatGPT não atualiza o aplicativo sozinho.
 
-Para personalizar:
-- index.html: conteúdo e estrutura.
-- styles.css: aparência.
-- app.js: interações e armazenamento.
-- manifest.webmanifest: nome e configuração de instalação.
+OBSERVAÇÕES SOBRE OS ESTUDOS
+- Os estudos têm análise específica por passagem e aprofundamento temático
+  de cada etapa. Como o plano é anual, algumas notas de contexto de uma
+  mesma semana são compartilhadas; os comentários centrais são individuais.
+- As interpretações devem ser conferidas com a Bíblia e podem ser
+  complementadas com material de referência e comunidade de fé.
+- Questões difíceis são tratadas sem autorizar violência ou abuso.

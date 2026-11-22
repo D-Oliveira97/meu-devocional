@@ -2,166 +2,107 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#173d32">
-  <meta name="description" content="Seu espaço diário de leitura, estudo e reflexão bíblica.">
-  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="description" content="365 devocionais bíblicos aprofundados: estudos guiados, anotações, favoritos e progresso. Referências na NVI.">
+  <meta name="color-scheme" content="light">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
-  <title>Meu Devocional</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css?v=4.0">
+  <title>Meu Devocional · 365 dias aprofundados</title>
 </head>
 <body>
+  <a href="#main" class="skip-link">Pular para o conteúdo</a>
   <header class="top">
-    <div class="brand"><span class="brand-mark">✦</span><div><strong>Meu Devocional</strong><small>Uma jornada diária com a Palavra</small></div></div>
-    <button id="installBtn" class="install hidden" type="button">Instalar app</button>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span><div><strong>Meu Devocional</strong><small>Uma jornada diária com a Palavra</small></div></div>
+    <div class="top-actions"><span class="version">365 DIAS</span><button class="install hidden" id="installBtn" type="button">Instalar</button></div>
   </header>
-  <main>
-    <section class="welcome">
-      <p class="eyebrow">SUA PAUSA COM DEUS</p>
-      <h1>Bom dia. Vamos crescer na Palavra?</h1>
-      <p>Um espaço para ler, compreender, refletir e colocar a fé em prática.</p>
-      <div class="date" id="today"></div>
+  <main id="main">
+    <section class="welcome" aria-label="Boas-vindas">
+      <p class="eyebrow">SUA JORNADA NA PALAVRA</p>
+      <h1>Um ano inteiro para crescer na fé.</h1>
+      <p>365 estudos com comentários ampliados, contexto, leitura guiada e aplicação, do Gênesis ao Apocalipse. NVI como referência.</p>
+      <div class="welcome-foot"><span id="today"></span><span class="stat-chip"><span id="topDone">0</span>/365 concluídos</span></div>
     </section>
-
     <nav class="tabs" aria-label="Navegação principal">
-      <button class="tab active" data-tab="study">Devocional</button>
-      <button class="tab" data-tab="journal">Anotações</button>
-      <button class="tab" data-tab="saved">Favoritos</button>
-      <button class="tab" data-tab="progress">Progresso</button>
+      <button class="tab active" data-tab="study" aria-controls="study" aria-selected="true">📖 Estudo</button>
+      <button class="tab" data-tab="library" aria-controls="library" aria-selected="false">📚 365 dias</button>
+      <button class="tab" data-tab="journal" aria-controls="journal" aria-selected="false">✍️ Anotações</button>
+      <button class="tab" data-tab="saved" aria-controls="saved" aria-selected="false">☆ Favoritos</button>
+      <button class="tab" data-tab="progress" aria-controls="progress" aria-selected="false">◷ Progresso</button>
     </nav>
+    <div id="alert" class="alert hidden" role="status" aria-live="polite"></div>
 
-    <section id="study" class="panel">
-      <article class="card hero-card">
-        <div class="pill">DIA 01 · ESTUDO DE ABERTURA</div>
-        <h2>O princípio de tudo: conhecer a Deus verdadeiramente</h2>
-        <p class="lead">Antes de conhecer os caminhos de Deus, precisamos conhecer o próprio Deus.</p>
-        <blockquote>“No princípio Deus criou os céus e a terra.”<cite>Gênesis 1:1 · NVI</cite></blockquote>
-        <div class="meta"><span>📖 Leitura: Gênesis 1:1–31</span><span>⏱ 15–20 min</span></div>
-      </article>
+    <section id="study" class="panel" aria-label="Estudo selecionado">
+      <div class="day-navigation" aria-label="Navegar pelos dias">
+        <button class="outline" id="prevDay" type="button" aria-label="Estudo anterior">← Anterior</button>
+        <div class="day-middle"><label for="daySelect">Selecionar dia</label><select id="daySelect" aria-label="Selecionar dia do estudo"></select></div>
+        <button class="outline" id="nextDay" type="button" aria-label="Próximo estudo">Próximo →</button>
+      </div>
+      <div class="today-wrap"><button id="goToday" class="text-btn" type="button">Ir ao dia de hoje no plano</button><span id="selectionHint" class="small-note"></span></div>
+      <div id="studyContent" aria-live="polite"></div>
+    </section>
 
+    <section id="library" class="panel hidden" aria-label="Biblioteca dos estudos">
       <article class="card">
-        <h3>1. Preparando o coração</h3>
-        <p>Encontre um lugar tranquilo. Desacelere e peça a Deus entendimento para receber sua Palavra e disposição para praticá-la.</p>
-        <h3>2. Contexto histórico e bíblico</h3>
-        <p>Gênesis é o primeiro livro da Bíblia. Seu nome significa “origem” ou “princípio”. A tradição judaica e cristã associa sua autoria a Moisés. O livro apresenta as origens do universo, da humanidade, do pecado e da história do povo de Israel.</p>
-        <p>O texto começa afirmando Deus como realidade fundamental: ele não depende da criação para existir; a criação é que depende dele.</p>
-        <h3>3. Estudo de Gênesis 1:1</h3>
-        <h4>“No princípio”</h4>
-        <p>A expressão aponta para o início da criação. O tempo, como o conhecemos, pertence à ordem criada. Deus, porém, é eterno e não está limitado pelo tempo.</p>
-        <p class="refs">Leia também: Salmos 90:2; João 1:1–3; Apocalipse 1:8.</p>
-        <h4>“Deus criou”</h4>
-        <p>Deus é apresentado como a origem de todas as coisas. O universo não é uma divindade nem está fora de seu governo. A criação depende do Criador.</p>
-        <p class="refs">Leia também: Salmos 33:6–9; Isaías 40:28; Colossenses 1:16–17.</p>
-        <h4>“Os céus e a terra”</h4>
-        <p>Essa expressão comunica a totalidade da criação. Deus não é Senhor apenas de uma parte da vida: nossa família, trabalho, relacionamentos, decisões e futuro também devem ser vividos diante dele.</p>
-        <p class="refs">Leia também: Salmos 24:1; Colossenses 1:16–17.</p>
-      </article>
-
-      <article class="card">
-        <h3>4. A criação em Gênesis 1:2–31</h3>
-        <h4>Gênesis 1:2 — A terra sem forma e vazia</h4>
-        <p>A narrativa descreve a terra ainda não organizada e o Espírito de Deus pairando sobre as águas. A desordem inicial não ameaça a soberania divina: Deus está presente e conduz a criação.</p>
-        <p class="refs">Leia também: Salmos 104:30; João 1:1–3.</p>
-        <h4>Gênesis 1:3–5 — Deus cria a luz</h4>
-        <p>Deus ordena que haja luz. A luz aparece antes dos luminares descritos no quarto dia. O texto deixa claro que Sol e Lua são criaturas, não deuses. Aquilo que parece poderoso na criação não deve ocupar o lugar do Criador.</p>
-        <h4>Gênesis 1:6–25 — Deus estabelece ordem</h4>
-        <p>A narrativa apresenta a organização dos céus, mares, terra, vegetação, astros e animais. A repetição de que Deus viu que era bom comunica o valor da criação em sua origem.</p>
-        <p class="refs">Leia também: Salmos 24:1; 1 Timóteo 4:4.</p>
-        <h4>Gênesis 1:26–27 — A imagem de Deus</h4>
-        <p>Ser criado à imagem e semelhança de Deus não significa que Deus tenha aparência física humana. A expressão aponta para a dignidade singular da humanidade e sua vocação para representar Deus, relacionar-se, agir moralmente e cuidar da criação.</p>
-        <p>Por isso, a dignidade humana não depende de riqueza, aparência, profissão ou posição social.</p>
-        <p class="refs">Leia também: Gênesis 9:6; Salmos 8:4–6; Tiago 3:9.</p>
-        <h4>Gênesis 1:28–31 — Responsabilidade e bondade</h4>
-        <p>A humanidade recebe a responsabilidade de administrar a criação. Dominar não significa destruir: somos administradores daquilo que pertence a Deus. O capítulo termina declarando muito boa a criação.</p>
-      </article>
-
-      <article class="card">
-        <h3>5. Jesus e a criação</h3>
-        <p>João 1:1–14 retoma a linguagem do princípio e apresenta o Verbo, identificado com Jesus, como aquele por meio de quem todas as coisas foram feitas. Jesus não é apenas um mestre que aparece na história: na fé cristã, é o Filho eterno de Deus, participante da criação e centro da redenção.</p>
-        <p class="refs">Leia também: Colossenses 1:15–20; Hebreus 1:1–3; Filipenses 2:5–11.</p>
-        <h3>6. O que aprendemos sobre Deus?</h3>
-        <ul class="attribute-list">
-          <li><b>Eternidade:</b> Deus não teve princípio.</li>
-          <li><b>Soberania:</b> governa sobre toda a criação.</li>
-          <li><b>Poder:</b> sua palavra realiza sua vontade.</li>
-          <li><b>Sabedoria:</b> sua criação apresenta ordem e propósito.</li>
-          <li><b>Bondade:</b> a criação original é declarada boa.</li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h3>7. Aplicação prática</h3>
-        <ol>
-          <li><b>Reconheça quem ocupa o primeiro lugar.</b> A fé deve influenciar decisões e atitudes, não ficar restrita a um momento religioso.</li>
-          <li><b>Não diminua seu valor.</b> Seu valor não é determinado por salário, emprego ou opinião alheia. Gênesis 1:27 fundamenta a dignidade humana na criação divina.</li>
-          <li><b>Confie em Deus quando não compreender tudo.</b> O texto apresenta um Deus soberano diante do que ainda não está ordenado. Isso não promete solução imediata para todo problema, mas nos chama à confiança.</li>
-        </ol>
-        <h3>8. Reflexão pessoal</h3>
-        <p>Responda com sinceridade no seu caderno:</p>
-        <ol>
-          <li>Deus realmente ocupa o primeiro lugar na minha vida?</li>
-          <li>Tenho reconhecido meu valor como alguém criado à imagem de Deus?</li>
-          <li>Minhas atitudes demonstram respeito pela dignidade das outras pessoas?</li>
-          <li>Quando não compreendo minhas circunstâncias, consigo confiar em Deus?</li>
-        </ol>
-      </article>
-
-      <article class="card prayer">
-        <div class="pill">ORAÇÃO DO DIA</div>
-        <h3>Senhor, ensina-me a te conhecer</h3>
-        <p>Senhor meu Deus e meu Pai, obrigado porque tu és o Criador de todas as coisas, eterno, poderoso, sábio e soberano. Perdoa-me pelas vezes em que coloquei outras coisas acima de ti. Ajuda-me a compreender que minha vida pertence a ti e que minhas escolhas precisam refletir tua vontade. Ensina-me a reconhecer meu valor diante de ti e a enxergar as outras pessoas com amor, respeito e misericórdia. Que eu não seja alguém que apenas conhece versículos, mas alguém que compreende teus ensinamentos e procura praticá-los. Dá-me sabedoria, disciplina e perseverança para continuar estudando tua Palavra. Em nome de Jesus, amém.</p>
-      </article>
-
-      <article class="card challenge">
-        <h3>9. Desafio espiritual</h3>
-        <label class="check"><input type="checkbox" data-task="read"> Reli Gênesis 1 com calma.</label>
-        <label class="check"><input type="checkbox" data-task="john"> Li João 1:1–14.</label>
-        <label class="check"><input type="checkbox" data-task="thanks"> Agradeci a Deus por três coisas.</label>
-        <label class="check"><input type="checkbox" data-task="care"> Demonstrei respeito e amor a alguém.</label>
-        <button id="completeBtn" class="primary">Marcar estudo como concluído</button>
-        <p id="completeMsg" class="small-note" aria-live="polite"></p>
-      </article>
-
-      <article class="card next">
-        <div class="pill">PRÓXIMO ESTUDO</div>
-        <h3>Dia 02 — O caráter de Deus: quem Ele realmente é?</h3>
-        <p>Leituras previstas: Êxodo 34:5–7, Salmos 103 e Isaías 6:1–8.</p>
-        <p class="small-note">Este protótipo contém o primeiro estudo. Os próximos devocionais serão preparados na conversa do ChatGPT e poderão ser adicionados ao aplicativo em futuras versões.</p>
+        <h2>Biblioteca dos 365 dias</h2>
+        <p>Todos os estudos estão disponíveis desde já. Leia no seu ritmo ou acompanhe a sequência diária iniciada em 22/11/2026.</p>
+        <label for="searchStudies">Buscar tema, livro ou passagem</label>
+        <input type="search" id="searchStudies" placeholder="Ex.: misericórdia, Gênesis, Jesus..." autocomplete="off">
+        <div class="library-tools"><label for="weekFilter">Etapa da jornada</label><select id="weekFilter"><option value="all">Todas as etapas</option></select></div>
+        <p id="resultsCount" class="small-note" aria-live="polite"></p>
+        <div id="studyList" class="study-list"></div>
       </article>
     </section>
 
-    <section id="journal" class="panel hidden">
+    <section id="journal" class="panel hidden" aria-label="Caderno de anotações">
       <article class="card">
         <h2>Meu caderno espiritual</h2>
-        <p>Registre o que aprendeu, suas dúvidas e aquilo que deseja colocar em prática.</p>
-        <label for="notes">Anotações do Dia 01</label>
-        <textarea id="notes" rows="10" placeholder="O que Deus me ensinou hoje? O que quero praticar?"></textarea>
-        <p class="small-note">Suas anotações ficam salvas neste aparelho.</p>
-        <button id="saveNotes" class="primary">Salvar anotações</button>
-        <span id="savedMsg" class="small-note" aria-live="polite"></span>
+        <p id="journalContext"></p>
+        <label for="notes">O que aprendi? Que dúvidas ficaram? O que vou praticar?</label>
+        <textarea id="notes" rows="13" spellcheck="true" placeholder="Escreva sua reflexão com liberdade..."></textarea>
+        <p class="small-note">Salvamento automático neste aparelho. Para maior segurança, exporte um backup no painel Progresso.</p>
+        <button id="saveNotes" class="primary" type="button">Salvar anotações</button>
+        <p id="savedMsg" class="small-note" role="status" aria-live="polite"></p>
       </article>
     </section>
 
-    <section id="saved" class="panel hidden">
+    <section id="saved" class="panel hidden" aria-label="Favoritos">
       <article class="card">
-        <h2>Versículos favoritos</h2>
-        <p>Guarde referências bíblicas para voltar a elas durante sua caminhada.</p>
-        <div class="save-row"><input id="verseInput" placeholder="Ex.: Salmos 119:105" aria-label="Referência bíblica"><button id="addVerse" class="primary">Adicionar</button></div>
+        <h2>Estudos favoritos</h2>
+        <p>Guarde dias que deseja reler e encontre-os rapidamente.</p>
+        <div id="favoriteDays" class="study-list"></div>
+      </article>
+      <article class="card">
+        <h2>Referências bíblicas favoritas</h2>
+        <p>Guarde passagens que marcaram sua caminhada.</p>
+        <div class="save-row"><input id="verseInput" placeholder="Ex.: Salmos 119:105" aria-label="Referência bíblica"><button id="addVerse" type="button" class="primary">Adicionar</button></div>
         <ul id="verseList" class="verse-list"></ul>
       </article>
     </section>
 
-    <section id="progress" class="panel hidden">
+    <section id="progress" class="panel hidden" aria-label="Progresso e dados">
       <article class="card">
         <h2>Minha caminhada</h2>
-        <div class="progress-number"><span id="doneCount">0</span><small>estudos concluídos</small></div>
-        <div class="progress-track"><div id="progressBar"></div></div>
-        <p class="small-note">Seu progresso é salvo localmente neste aparelho. O protótipo começa com o Dia 01.</p>
-        <button id="resetProgress" class="quiet">Reiniciar marcação do Dia 01</button>
+        <div class="progress-header"><div class="progress-number"><span id="doneCount">0</span><small>de 365 estudos concluídos</small></div><div class="percent" id="donePercent">0%</div></div>
+        <div class="progress-track" role="progressbar" aria-label="Progresso de estudos concluídos" aria-valuemin="0" aria-valuemax="365" aria-valuenow="0" id="progressTrack"><div id="progressBar"></div></div>
+        <p class="small-note" id="progressCaption">Cada estudo concluído é uma etapa da jornada.</p>
+        <div id="monthlyStats" class="monthly-stats"></div>
+      </article>
+      <article class="card">
+        <h2>Proteja suas anotações</h2>
+        <p>Os registros ficam somente no navegador deste aparelho, não em uma conta online. Se você limpar os dados do site ou trocar de celular, poderá perdê-los.</p>
+        <div class="backup-actions"><button class="primary" type="button" id="exportData">⬇ Exportar cópia de segurança</button><button class="outline" type="button" id="importData">↥ Restaurar cópia</button><input type="file" id="importFile" accept=".json,application/json" class="hidden"></div>
+        <p id="backupMsg" class="small-note" aria-live="polite"></p>
+      </article>
+      <article class="card info-card">
+        <h2>Sobre a jornada</h2>
+        <p>Este é um plano aprofundado de <b>365 passagens selecionadas</b> ao longo de toda a Bíblia protestante, não uma leitura integral de todos os seus capítulos. Os estudos são textos explicativos originais; a NVI é referência para a leitura na sua Bíblia.</p>
+        <p>O aplicativo funciona offline após o primeiro carregamento completo. Atualizações do conteúdo precisam ser publicadas no GitHub; as mensagens diárias do ChatGPT não entram automaticamente aqui.</p>
       </article>
     </section>
   </main>
-  <footer>“Lâmpada para os meus pés é a tua palavra e, luz para o meu caminho.”<br><b>Salmos 119:105</b></footer>
-  <script src="app.js"></script>
+  <footer><span>“Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.”</span><br><b>Salmos 119:105 · referência NVI</b><p>Meu Devocional · jornada anual</p></footer>
+  <script src="app.js?v=4.0" defer></script>
 </body>
 </html>
