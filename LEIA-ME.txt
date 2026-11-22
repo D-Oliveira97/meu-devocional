@@ -1,4 +1,4 @@
-MEU DEVOCIONAL 2.4 — 365 ESTUDOS + ÁUDIO + BÍBLIA ONBV
+MEU DEVOCIONAL 2.5 — CÂNON PROTESTANTE + PREFERÊNCIA DE VOZ SERENA
 
 PUBLICAÇÃO
 1. Faça backup de suas anotações no aplicativo atual (Progresso > Exportar).
@@ -33,3 +33,13 @@ A obra original está disponível gratuitamente em www.biblica.com e open.bible.
 Licença: https://creativecommons.org/licenses/by-sa/4.0/
 Adaptações: conversão de apresentação USFM para capítulos e versículos, ocultação de marcações gráficas e notas, narração por voz sintetizada; disponíveis sob CC BY-SA 4.0. A Biblica não endossa este aplicativo.
 Biblioteca de leitura ZIP JSZip 3.10.1, licença MIT (ver JSZip-LICENSE.md).
+
+VERSÃO 2.5 — O QUE FOI ALTERADO
+- O seletor mostra 39 livros do Antigo Testamento e 27 do Novo Testamento, separados por grupos.
+- A importação passa a verificar a quantidade de capítulos por livro, além do total dos 66 livros e 1.189 capítulos.
+- O leitor só aceita registros correspondentes aos 66 livros do cânon protestante. O ZIP oficial ONBV já tem exatamente esses livros.
+- Não é necessário importar novamente a Bíblia se ela já estiver instalada.
+- Opção "Tom da narração": "Grave e sereno" ajusta ligeiramente tom/velocidade da voz local; a naturalidade continua limitada pelo mecanismo do Android. NÃO é voz neural, não garante voz masculina.
+- Esta versão NÃO inclui arquivos de áudio neurais nem envia textos a serviços externos.
+- Antes de criar e publicar uma nova narração neural do texto bíblico da ONBV, revisar a autorização/licença da Biblica para geração de áudio com IA. Para os comentários autorais do devocional, é possível planejar narração neural separadamente.
+- Todos os dados existentes, incluindo progresso, anotações e Bíblia importada, permanecem nos mesmos locais, sem migração.

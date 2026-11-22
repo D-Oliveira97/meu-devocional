@@ -76,3 +76,11 @@
 .bible-attribution{font-size:11px!important;color:#668075}
 .bible-credits{font-size:12px}.bible-credits p{font-size:12px;line-height:1.6}
 @media(max-width:600px){.bible-controls{grid-template-columns:1fr 115px;gap:8px}.bible-buttons>*{width:100%;justify-content:center}.bible-navigation{display:grid;grid-template-columns:1fr 1fr}.bible-navigation #bibleListenChapter{grid-column:1/-1;grid-row:1}.onbv-verses{padding:10px 13px;max-height:520px}.audio-actions{grid-template-columns:1fr 1fr}.audio-actions #audioPlay{grid-column:1/-1}.audio-actions #audioBible,.audio-actions #audioFull{grid-column:auto}}
+
+/* Versão 2.5 — sinalização do cânon protestante e timbre sereno */
+.audio-settings .audio-profile-field{grid-column:1/-1;max-width:460px}
+.canon-summary{margin:17px 0;padding:14px 17px;border:1px solid #bad4bf;border-radius:12px;background:#f6fbf4;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 14px;color:#214b34;font-size:13px}
+.canon-summary span{grid-column:1/-1;letter-spacing:.04em;text-transform:uppercase;font-weight:800;font-size:11px;color:#276244}
+.canon-summary strong{border-left:3px solid #98b79d;padding-left:10px;line-height:1.55}
+.canon-summary small{grid-column:1/-1;color:#506c59;line-height:1.5}
+@media(max-width:530px){.canon-summary{grid-template-columns:1fr}.canon-summary span,.canon-summary small{grid-column:auto}}

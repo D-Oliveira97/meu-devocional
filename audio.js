@@ -1,4 +1,4 @@
-/* Meu Devocional · Narração local dos 365 estudos e Bíblia ONBV · 2.4 */
+/* Meu Devocional · Narração local e preferência de timbre sereno · 2.5 */
 'use strict';
 (function(){
  const SETTINGS_KEY='meuDevocional.audio.v1';
@@ -15,15 +15,17 @@
  let mode='study';
  let speed=1;
  let voiceURI='auto';
+ let tone='sereno'; // preferência local, não é um motor de voz neural
 
  function readSettings(){
   try{
    const value=JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}');
    if([0.8,1,1.15,1.3,1.5].includes(Number(value.rate)))speed=Number(value.rate);
    if(typeof value.voiceURI==='string'&&value.voiceURI.length<250)voiceURI=value.voiceURI;
+   if(['sereno','normal'].includes(value.tone))tone=value.tone;
   }catch(_){}
  }
- function saveSettings(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify({rate:speed,voiceURI}))}catch(_){}}
+ function saveSettings(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify({rate:speed,voiceURI,tone}))}catch(_){}}
  function textOnly(html){
   const target=document.createElement('div');target.innerHTML=html||'';
   target.querySelectorAll('script,style,button,a').forEach(el=>el.remove());
@@ -123,7 +125,7 @@
   }
   const item=queue[index];
   const utterance=new SpeechSynthesisUtterance(item.text);
-  utterance.lang='pt-BR';utterance.rate=speed;utterance.pitch=1;utterance.volume=1;
+  utterance.lang='pt-BR';utterance.rate=Math.max(0.5,Math.min(1.7,speed*(tone==='sereno'?0.94:1)));utterance.pitch=tone==='sereno'?0.86:1;utterance.volume=1;
   const selectedVoice=getVoice();if(selectedVoice)utterance.voice=selectedVoice;
   utterance.onend=()=>{if(!playing||runToken!==token)return;index++;updateUI();speakNext(token)};
   utterance.onerror=e=>{
@@ -186,6 +188,11 @@
  function initialize(){
   readSettings();
   byId('audioSpeed').value=String(speed);
+  byId('audioTone').value=tone;
+  byId('audioTone').addEventListener('change',e=>{
+   tone=e.target.value==='normal'?'normal':'sereno';saveSettings();
+   if(playing){cancelAudio();speakNext(runToken);}
+  });
   byId('audioSpeed').addEventListener('change',e=>{
    speed=Number(e.target.value)||1;saveSettings();
    if(playing){cancelAudio();speakNext(runToken);}
@@ -201,7 +208,7 @@
   byId('audioPrev').addEventListener('click',()=>jump(-1));
   byId('audioNext').addEventListener('click',()=>jump(1));
   if(supported){populateVoices();synth.addEventListener?.('voiceschanged',populateVoices)}
-  else{['audioPlay','audioPrayer','audioSpeed','audioVoice'].forEach(id=>byId(id).disabled=true);status('Leitura por voz não disponível neste navegador.');}
+  else{['audioPlay','audioPrayer','audioSpeed','audioVoice','audioTone'].forEach(id=>byId(id).disabled=true);status('Leitura por voz não disponível neste navegador.');}
   updateUI();
   window.addEventListener('pagehide',()=>{if(playing)cancelAudio()});
  }

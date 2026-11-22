@@ -1,4 +1,4 @@
-/* Meu Devocional 2.4 · Leitor local da Biblica Open Nova Bíblia Viva (CC BY-SA 4.0)
+/* Meu Devocional 2.5 · Leitor local protestante da Biblica Open Nova Bíblia Viva (CC BY-SA 4.0)
  * A tradução NÃO está embutida neste pacote: o usuário importa o ZIP oficial da Biblica/eBible uma vez.
  * O texto dos versículos é preservado; marcadores de diagramação USFM e notas editoriais não são exibidos.
  */
@@ -22,6 +22,11 @@ const BOOKS=[
  ['JAS','Tiago',5],['1PE','1 Pedro',5],['2PE','2 Pedro',3],['1JN','1 João',5],['2JN','2 João',1],
  ['3JN','3 João',1],['JUD','Judas',1],['REV','Apocalipse',22]
 ];
+// Lista fechada do cânon protestante. Nenhum arquivo adicional do ZIP é aceito.
+const OT_COUNT=39, NT_COUNT=27;
+if(BOOKS.length!==OT_COUNT+NT_COUNT || BOOKS.slice(0,OT_COUNT).reduce((n,b)=>n+b[2],0)!==929 || BOOKS.slice(OT_COUNT).reduce((n,b)=>n+b[2],0)!==260){
+ throw Error('A lista de livros protestantes está inconsistente.');
+}
 const aliases={"salmo":"PSA","salmos":"PSA","cantares":"SNG","cantico dos canticos":"SNG","cânticos":"SNG","oseias":"HOS","miqueias":"MIC","filemom":"PHM","apocalipse":"REV","revelacao":"REV"};
 const byCode=new Map(BOOKS.map(b=>[b[0],b]));
 function norm(s){return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim()}
@@ -45,7 +50,7 @@ async function saveAll(records){
  const d=await db();return new Promise((resolve,reject)=>{
   const tx=d.transaction(['chapters','meta'],'readwrite');tx.onerror=()=>reject(tx.error||Error('Falha ao salvar a Bíblia.'));
   tx.oncomplete=()=>resolve();const verses=tx.objectStore('chapters');verses.clear();
-  records.forEach(v=>verses.put(v));tx.objectStore('meta').put({key:'ready',books:66,chapters:1189,date:new Date().toISOString(),edition:'poronbv',source:BIBLE_SOURCE});
+  records.filter(v=>byCode.has(v.book)&&Number.isInteger(v.chapter)&&v.chapter>=1&&v.chapter<=byCode.get(v.book)[2]).forEach(v=>verses.put(v));tx.objectStore('meta').put({key:'ready',books:66,chapters:1189,date:new Date().toISOString(),edition:'poronbv',source:BIBLE_SOURCE});
  });
 }
 function textClean(s){
@@ -84,7 +89,7 @@ function status(text,type='info'){
 function updated(){
  installed=true;
  el('bibleInstall').classList.add('hidden');el('bibleReady').classList.remove('hidden');
- el('bibleAvailable').textContent='66 livros e 1.189 capítulos disponíveis neste aparelho';
+ el('bibleAvailable').textContent='39 livros do Antigo + 27 do Novo Testamento · 1.189 capítulos';
 }
 async function loadZip(buffer,filename){
  if(importing)return;importing=true;
@@ -105,7 +110,9 @@ async function loadZip(buffer,filename){
   const count=[...parsed.values()].reduce((sum,ch)=>sum+ch.length,0);
   const records=[...parsed.values()].flat();
   const verseCount=records.reduce((n,c)=>n+c.verses.length,0);
-  if(parsed.size!==66||count!==1189||verseCount<28000)throw Error(`Arquivo não passou na conferência: ${parsed.size}/66 livros, ${count}/1189 capítulos, ${verseCount} versículos. Confira se é a ONBV USFM oficial.`);
+  const canonOk=BOOKS.every(([code,,expected])=>parsed.has(code)&&parsed.get(code).length===expected&&
+   parsed.get(code).every((entry,i)=>entry.chapter===i+1));
+  if(parsed.size!==66||count!==1189||verseCount<28000||!canonOk)throw Error(`Arquivo não passou na conferência canônica: ${parsed.size}/66 livros, ${count}/1189 capítulos, ${verseCount} versículos. Confira se é a ONBV USFM oficial.`);
   status('Salvando 1.189 capítulos no celular. Não feche esta tela...');
   await saveAll(records);updated();
   status(`Importação concluída: 66 livros, 1.189 capítulos e ${verseCount.toLocaleString('pt-BR')} versículos. Leitura offline pronta.`, 'ok');
@@ -230,7 +237,11 @@ function stepChapter(direction){
 }
 function openReader(){if(typeof showTab==='function')showTab('bible');renderChapter();}
 function initialize(){
- const select=el('bibleBook');BOOKS.forEach(([code,name])=>{select.add(new Option(name,code))});updateSelectors();
+ const select=el('bibleBook');
+ const antigo=document.createElement('optgroup');antigo.label='ANTIGO TESTAMENTO — 39 LIVROS';
+ const novo=document.createElement('optgroup');novo.label='NOVO TESTAMENTO — 27 LIVROS';
+ BOOKS.forEach(([code,name],i)=>{(i<OT_COUNT?antigo:novo).appendChild(new Option(name,code))});
+ select.append(antigo,novo);updateSelectors();
  select.addEventListener('change',e=>{readingBook=e.target.value;readingChapter=1;updateSelectors();renderChapter()});
  el('bibleChapterSelect').addEventListener('change',e=>{readingChapter=Number(e.target.value);renderChapter()});
  el('biblePrev').addEventListener('click',()=>stepChapter(-1));el('bibleNext').addEventListener('click',()=>stepChapter(1));
