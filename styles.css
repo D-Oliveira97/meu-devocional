@@ -109,3 +109,20 @@
 .charon-continuous-choice span{display:flex;flex-direction:column;gap:4px;flex:1}
 .charon-continuous-choice strong{font-size:13px;line-height:1.35}
 .charon-continuous-choice small{font-size:11px;line-height:1.5;color:#3f5e4f;font-weight:400}
+
+/* Meu Devocional 2.9 — destaque aproximado e continuidade entre dias */
+.charon-follow-details{margin:13px 0;border:1px solid #bdd7c4;border-radius:12px;background:#fffdfa;overflow:hidden}
+.charon-follow-details summary{cursor:pointer;padding:13px 15px;font-weight:800;color:#174a35;font-size:14px}
+.charon-follow-explain{padding:0 15px;margin:0 0 8px!important;font-size:11px!important;line-height:1.55;color:#58715f}
+.charon-follow-label{font-size:12px!important;font-weight:700;color:#275f43;margin:4px 15px 8px!important}
+.charon-transcript{height:min(320px,50vh);overflow-y:auto;overscroll-behavior:contain;background:#f9fcf6;border-top:1px solid #d8e7d9;padding:10px 12px;scroll-behavior:smooth}
+.charon-transcript-segment{font-size:13px!important;line-height:1.8!important;border-left:4px solid transparent;border-radius:8px;margin:4px 0!important;padding:9px 12px;color:#3f5848;white-space:pre-wrap;transition:background-color .2s ease,border-color .2s ease}
+.charon-transcript-segment strong{color:#1b5137}
+.charon-transcript-segment.charon-speaking{background:#fff1c9;color:#2d3d2e;border-left-color:#b67f19;box-shadow:0 1px 7px #5f471519}
+#studyContent [data-charon-anchor].charon-speaking{background:#fff2cc!important;box-shadow:inset 4px 0 0 #b98b39;border-radius:5px;padding-left:8px}
+.charon-next-wrap{margin:13px 0 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.charon-next-wrap button{min-height:44px}
+.charon-next-wrap button[hidden]{display:none!important}
+.charon-next-wrap .small-note{margin:0;font-size:11px;flex:1}
+@media(max-width:600px){.charon-transcript{height:min(270px,42vh)}.charon-next-wrap{display:block}.charon-next-wrap button{width:100%;margin-bottom:6px}}
+@media(prefers-reduced-motion:reduce){.charon-transcript{scroll-behavior:auto}}

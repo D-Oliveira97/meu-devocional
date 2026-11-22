@@ -8,7 +8,7 @@
   <meta name="color-scheme" content="light">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=12.0">
+  <link rel="stylesheet" href="styles.css?v=13.0">
   <title>Meu Devocional · 365 estudos · Charon contínua</title>
 </head>
 <body>
@@ -57,6 +57,13 @@
           <div class="charon-actions"><button type="button" id="charonStudy" class="primary">▶ Ouvir estudo com Charon</button><button type="button" class="outline" id="charonPrayer">🙏 Oração com Charon</button><button type="button" class="outline" id="charonStop">■ Parar Charon</button><button type="button" class="outline" id="charonLocal">🔊 Usar voz do Android</button></div>
           <label class="charon-continuous-choice" for="charonContinuous"><input type="checkbox" id="charonContinuous" checked><span><strong>🎧 Reprodução contínua (audiolivro)</strong><small>Prepara todos os trechos e reúne em uma única faixa antes de tocar. Na primeira vez pode levar alguns minutos; não faz solicitações extras além das já necessárias. Desmarque para começar mais rápido, parte por parte.</small></span></label>
           <audio id="charonAudio" controls preload="none" aria-label="Player da narração neural Charon"></audio>
+          <details class="charon-follow-details" id="charonFollowDetails" open>
+            <summary>📖 Acompanhar texto durante a narração</summary>
+            <p class="charon-follow-explain">O parágrafo destacado acompanha <strong>aproximadamente</strong> o áudio. A Charon não fornece timestamps exatos por palavra. Isso não altera a narração nem consome solicitações adicionais.</p>
+            <p id="charonFollowLabel" class="charon-follow-label" aria-live="off">Aguardando a narração.</p>
+            <div class="charon-transcript" id="charonTranscript" tabindex="0" aria-label="Roteiro narrado com destaque por trecho"></div>
+          </details>
+          <div class="charon-next-wrap"><button type="button" class="primary" id="charonNextDay" hidden>▶ Ouvir próximo dia com Charon</button><p class="small-note">Após terminar, você decide se quer ouvir o próximo estudo. Uma nova geração pode utilizar a cota gratuita.</p></div>
           <p class="charon-status" id="charonStatus" role="status" aria-live="polite">Configure a conexão gratuita uma única vez para começar.</p>
           <p class="charon-meta">Os trechos já gerados ficam salvos neste aparelho. No modo contínuo, a narração começa depois que todos estiverem prontos; não é necessário gerar o áudio novamente. O primeiro preparo exige internet e pode esgotar a cota gratuita; com a tela bloqueada, o funcionamento depende do navegador.</p>
           <details class="charon-config" id="charonConfigDetails"><summary>⚙ Configurar o Firebase gratuito (Spark) / Charon</summary>
@@ -241,9 +248,9 @@
     </section>
   </main>
   <footer><span>“Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.”</span><br><b>Salmos 119:105 · referência NVI</b><p>Meu Devocional · jornada anual</p></footer>
-  <script src="app.js?v=12.0" defer></script>
-  <script src="audio.js?v=12.0" defer></script>
-  <script type="module" src="charon-firebase.js?v=12.0"></script>
+  <script src="app.js?v=13.0" defer></script>
+  <script src="audio.js?v=13.0" defer></script>
+  <script type="module" src="charon-firebase.js?v=13.0"></script>
   <script src="jszip.min.js?v=8.0" defer></script>
   <script src="bible.js?v=8.0" defer></script>
 </body>

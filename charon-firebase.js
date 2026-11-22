@@ -1,4 +1,4 @@
-/* Meu Devocional 2.8 · Charon: narração contínua opcional reunindo WAV PCM dos trechos · Firebase AI Logic + App Check */
+/* Meu Devocional 2.9 · Charon contínua, realce aproximado por parágrafo e próxima narração */
 'use strict';
 const STORAGE_KEY = 'meuDevocional.charon.firebase.v1';
 const CONTINUOUS_PREF_KEY = 'meuDevocional.charon.continuous.v1';
@@ -9,6 +9,7 @@ const SDK_VERSION='13.4.0';
 const byId=id=>document.getElementById(id);
 let activeDay=1, runId=0, configured=null, model=null, player=null, audioURL=null;
 let parts=[], partIndex=0, preparing=false, paused=false, playingContinuous=false;
+let narration=null, partOffsets=[], partDurations=[], timeline=[], highlightedKey=null;
 let cacheDB=null;
 const clean=t=>String(t??'').replace(/\s+/g,' ').trim();
 const status=t=>{byId('charonStatus').textContent=t;};
@@ -42,17 +43,81 @@ async function getModel(){
 }
 function fieldsForDay(day){const s=window.DevocionalAudio?.study?.(day);if(!s)throw new Error('Os estudos não foram carregados ainda.');return s}
 function stripExtras(html){const d=document.createElement('div');d.innerHTML=html||'';d.querySelectorAll('script,style,button,a,nav').forEach(n=>n.remove());return [...d.querySelectorAll('h3,h4,p,li')].map(e=>clean(e.textContent)).filter(Boolean).join(' ')}
-function composeText(s,onlyPrayer){if(onlyPrayer)return `Meu Devocional. Dia ${s.day}. Oração do dia. ${clean(s.prayer)} Amém.`;
- const arr=[`Meu Devocional. Dia ${s.day} de 365. ${s.title}.`,
- `Leitura bíblica de referência: ${s.reference}. Nesta narração ouviremos os comentários e aplicações. A leitura integral da Bíblia ONBV fica no leitor bíblico separado.`,
- 'Preparando o coração: Separe um momento para receber a Palavra de Deus com atenção e humildade.',
- `Ideia central: ${s.insight}`,`Contexto histórico e literário: ${s.context}`,`Observando a passagem: ${s.interpretation}`,`Conexões bíblicas: ${s.theology}`,
- `Referências para aprofundar: ${s.crossReferences}`,`Um cuidado ao interpretar: ${s.care}`];
- if(s.extendedHtml)arr.push(`Aprofundamento: ${stripExtras(s.extendedHtml)}`);
- arr.push(`Aplicação para hoje: ${s.practice}`);
- (s.questions||[]).forEach((q,i)=>arr.push(`Pergunta para refletir ${i+1}: ${q}`));
- arr.push(`Oração do dia: ${s.prayer}`);
- return arr.map(clean).filter(Boolean).join('\n\n');
+// Os segmentos mantêm exatamente o roteiro da versão 2.8: os áudios já guardados
+// no IndexedDB continuam válidos. Os tempos do destaque são estimados pela duração
+// real de cada WAV e pelo tamanho de cada trecho de texto; NÃO há timestamps de palavras.
+function narrationFor(s,onlyPrayer){
+ const segments=[];
+ const add=(key,label,text)=>{const normalized=clean(text);if(normalized)segments.push({key,label,text:normalized});};
+ if(onlyPrayer){add('prayer','Oração do dia',`Meu Devocional. Dia ${s.day}. Oração do dia. ${clean(s.prayer)} Amém.`)}
+ else {
+   add('intro','Apresentação',`Meu Devocional. Dia ${s.day} de 365. ${s.title}.`);
+   add('reference','Passagem de referência',`Leitura bíblica de referência: ${s.reference}. Nesta narração ouviremos os comentários e aplicações. A leitura integral da Bíblia ONBV fica no leitor bíblico separado.`);
+   add('preparation','Preparando o coração','Preparando o coração: Separe um momento para receber a Palavra de Deus com atenção e humildade.');
+   add('insight','Ideia central',`Ideia central: ${s.insight}`);
+   add('context','Contexto histórico',`Contexto histórico e literário: ${s.context}`);
+   add('interpretation','Observando a passagem',`Observando a passagem: ${s.interpretation}`);
+   add('theology','Conexões bíblicas',`Conexões bíblicas: ${s.theology}`);
+   add('crossReferences','Referências para aprofundar',`Referências para aprofundar: ${s.crossReferences}`);
+   add('care','Cuidado ao interpretar',`Um cuidado ao interpretar: ${s.care}`);
+   if(s.extendedHtml)add('extended','Aprofundamento especial',`Aprofundamento: ${stripExtras(s.extendedHtml)}`);
+   add('practice','Aplicação para hoje',`Aplicação para hoje: ${s.practice}`);
+   (s.questions||[]).forEach((q,i)=>add(`question-${i}`,'Pergunta para refletir '+(i+1),`Pergunta para refletir ${i+1}: ${q}`));
+   add('prayer','Oração do dia',`Oração do dia: ${s.prayer}`);
+ }
+ let offset=0;
+ segments.forEach((seg,i)=>{seg.start=offset;offset+=seg.text.length;seg.end=offset;if(i<segments.length-1)offset+=1});
+ return {text:segments.map(seg=>seg.text).join('\n\n'),segments};
+}
+function composeText(s,onlyPrayer){return narrationFor(s,onlyPrayer).text;}
+function renderTranscript(){
+ const box=byId('charonTranscript');if(!box)return;
+ box.replaceChildren();highlightedKey=null;
+ if(!narration){box.textContent='Escolha um estudo e toque em ouvir com Charon.';return}
+ const frag=document.createDocumentFragment();
+ narration.segments.forEach(seg=>{
+  const para=document.createElement('p');para.className='charon-transcript-segment';para.dataset.charonKey=seg.key;
+  const strong=document.createElement('strong');strong.textContent=seg.label+' · ';
+  para.append(strong,document.createTextNode(seg.text));frag.append(para);
+ });
+ box.append(frag);
+}
+function showSegmentAt(pos){
+ if(!narration?.segments?.length)return;
+ const section=narration.segments.find(s=>pos<s.end)||narration.segments[narration.segments.length-1];
+ if(section.key===highlightedKey)return;
+ highlightedKey=section.key;
+ const view=byId('charonTranscript');
+ view?.querySelectorAll('[data-charon-key]').forEach(el=>{const on=el.dataset.charonKey===section.key;el.classList.toggle('charon-speaking',on);if(on)el.setAttribute('aria-current','true');else el.removeAttribute('aria-current')});
+ document.querySelectorAll('#studyContent [data-charon-anchor]').forEach(el=>el.classList.toggle('charon-speaking',el.dataset.charonAnchor===section.key));
+ byId('charonFollowLabel').textContent='Trecho estimado: '+section.label;
+ if(document.visibilityState==='visible'&&byId('charonFollowDetails')?.open){
+   const target=view?.querySelector('.charon-speaking');
+   if(target&&view){const pos=target.getBoundingClientRect().top-view.getBoundingClientRect().top+view.scrollTop;
+    if(pos<view.scrollTop+28||pos>view.scrollTop+view.clientHeight*.6){view.scrollTo({top:Math.max(0,pos-view.clientHeight*.3),behavior:'smooth'})}}
+ }
+}
+function clearHighlights(){highlightedKey=null;const view=byId('charonTranscript');view?.querySelectorAll('.charon-speaking').forEach(el=>{el.classList.remove('charon-speaking');el.removeAttribute('aria-current')});document.querySelectorAll('#studyContent .charon-speaking').forEach(el=>el.classList.remove('charon-speaking'));byId('charonFollowLabel').textContent='Aguardando a narração.'}
+function prepareOffsets(){
+ const all=clean(narration?.text||'');let cursor=0;partOffsets=parts.map(p=>{const found=all.indexOf(p,cursor);const start=found>=0?found:cursor;cursor=start+p.length;return start});
+}
+function positionAtAudioTime(t){
+ if(!parts.length)return null;
+ let i=partIndex, elapsed=t, duration=Number.isFinite(player?.duration)?player.duration:0;
+ if(playingContinuous&&timeline.length){i=timeline.findIndex(x=>t<x.end);if(i<0)i=timeline.length-1;elapsed=Math.max(0,t-timeline[i].start);duration=timeline[i].duration;}
+ if(!duration||duration<=0)return partOffsets[i]||0;
+ const fraction=Math.max(0,Math.min(1,elapsed/duration));
+ return (partOffsets[i]||0)+Math.floor((parts[i]?.length||0)*fraction);
+}
+function syncTranscript(){if(preparing||!player?.src||!narration)return;const pos=positionAtAudioTime(player.currentTime);if(pos!==null)showSegmentAt(pos);}
+function nextButtonVisible(on){const btn=byId('charonNextDay');if(!btn)return;btn.hidden=!on||activeDay>=365;btn.disabled=preparing;btn.textContent=`▶ Ouvir o Dia ${String(Math.min(activeDay+1,365)).padStart(3,'0')} com Charon`;}
+function finished(){preparing=false;showSegmentAt(narration?.segments?.at(-1)?.end||0);nextButtonVisible(true);
+ status(activeDay<365?'Narração concluída. Toque em “Ouvir próximo dia” quando quiser continuar; um novo estudo pode consumir cota gratuita.':'Narração do Dia 365 concluída. Parabéns por chegar ao final da jornada.');}
+async function listenNextDay(){
+ if(activeDay>=365||preparing)return;
+ const select=byId('daySelect');if(!select)return;
+ select.value=String(activeDay+1);select.dispatchEvent(new Event('change',{bubbles:true}));
+ await start('study');
 }
 // Divide por sentenças/palavras, sem cortar nenhum conteúdo para caber no limite de uma chamada.
 function chunk(text,max=MAX_CHUNK){const sentences=text.replace(/\r/g,'').split(/(?<=[.!?;:\n])\s+/u).filter(Boolean);const out=[];let buf='';
@@ -118,17 +183,19 @@ function setPlayerBlob(blob,noticeText,token) {
 async function playContinuous(token) {
  if(token!==runId)return;
  playingContinuous=true;preparing=true;
- const buffers=[];
+ const buffers=[];partDurations=[];timeline=[];
  try {
    for(let i=0;i<parts.length;i++){
      if(token!==runId)return;
      status(`Preparando narração contínua: trecho ${i+1} de ${parts.length}. A reprodução começa quando a faixa inteira estiver pronta. Trechos em cache não gastam cota.`);
      const result=await loadPart(parts[i],activeDay,currentMode,i);
      if(token!==runId)return;
-     buffers.push(await result.wav.arrayBuffer());
+     const ab=await result.wav.arrayBuffer();buffers.push(ab);
+     const info=wavChunk(ab);partDurations.push(info.data.byteLength/(info.rate*info.channels*info.bits/8));
    }
    if(token!==runId)return;
    status('Unindo os trechos em uma faixa contínua...');
+   let elapsed=0;timeline=partDurations.map(duration=>{const x={start:elapsed,end:elapsed+duration,duration};elapsed+=duration;return x});
    const joined=joinWavs(buffers);
    if(token!==runId)return;
    setPlayerBlob(joined,`✓ Narração contínua pronta (${parts.length} trechos reunidos). Pode apagar a tela durante a reprodução.`,token);
@@ -140,9 +207,9 @@ async function playContinuous(token) {
 }
 function release(){if(audioURL){URL.revokeObjectURL(audioURL);audioURL=null}}
 function pause(){if(player&&!player.paused)player.pause()}
-function stop(){runId++;preparing=false;paused=false;playingContinuous=false;parts=[];partIndex=0;if(player){player.pause();player.removeAttribute('src');player.load()}release();status('Narração Charon interrompida.');}
-function setDay(day){if(day!==activeDay){activeDay=day;stop()}}
-async function playNext(token){if(token!==runId)return;if(partIndex>=parts.length){status('Narração concluída. Você pode registrar sua reflexão.');preparing=false;return}
+function stop(){runId++;preparing=false;paused=false;playingContinuous=false;parts=[];partIndex=0;partOffsets=[];partDurations=[];timeline=[];narration=null;clearHighlights();nextButtonVisible(false);if(player){player.pause();player.removeAttribute('src');player.load()}release();status('Narração Charon interrompida.');}
+function setDay(day){if(day!==activeDay){activeDay=day;stop()}try{narration=narrationFor(fieldsForDay(day),false);renderTranscript()}catch(_){}}
+async function playNext(token){if(token!==runId)return;if(partIndex>=parts.length){finished();return}
  const current=partIndex;preparing=true;status(`Preparando trecho ${current+1} de ${parts.length} com Charon...`);
  try{const r=await loadPart(parts[current],activeDay,currentMode,current);if(token!==runId)return;
   release();audioURL=URL.createObjectURL(r.wav);player.src=audioURL;player.load();player.playbackRate=1;
@@ -152,9 +219,9 @@ async function playNext(token){if(token!==runId)return;if(partIndex>=parts.lengt
 }
 let currentMode='study';
 async function start(mode){if(!configured){byId('charonConfigDetails').open=true;byId('charonConfigDetails').scrollIntoView({behavior:'smooth',block:'nearest'});status('Primeiro configure o Firebase Spark sem faturamento.');return}
- const day=Number(byId('daySelect')?.value||1);try{const s=fieldsForDay(day);const txt=composeText(s,mode==='prayer');if(!txt.trim())throw new Error('Texto do estudo não encontrado.');
+ const day=Number(byId('daySelect')?.value||1);try{const s=fieldsForDay(day);const nextNarration=narrationFor(s,mode==='prayer');const txt=nextNarration.text;if(!txt.trim())throw new Error('Texto do estudo não encontrado.');
    window.DevocionalAudio?.stop?.('Reproduzindo Charon.');
-   stop();activeDay=day;currentMode=mode;parts=chunk(txt);partIndex=0;runId++;if(byId('charonContinuous')?.checked)await playContinuous(runId);else await playNext(runId);
+   stop();activeDay=day;currentMode=mode;narration=nextNarration;renderTranscript();parts=chunk(txt);prepareOffsets();partIndex=0;runId++;if(byId('charonContinuous')?.checked)await playContinuous(runId);else await playNext(runId);
  }catch(e){status('Não foi possível começar: '+(e.message||e));}}
 function playStudy(){return start('study')}
 function playPrayer(){return start('prayer')}
@@ -169,11 +236,15 @@ function init(){player=byId('charonAudio');activeDay=Number(byId('daySelect')?.v
  continuousBox.checked=localStorage.getItem(CONTINUOUS_PREF_KEY)!=='false';
  continuousBox.addEventListener('change',()=>{try{localStorage.setItem(CONTINUOUS_PREF_KEY,String(continuousBox.checked))}catch(_){}status(continuousBox.checked?'Reprodução contínua: prepare a faixa completa antes de tocar.':'Modo rápido: reproduz os trechos enquanto gera os próximos.')});
  byId('charonStudy').addEventListener('click',playStudy);byId('charonPrayer').addEventListener('click',playPrayer);byId('charonStop').addEventListener('click',stop);byId('charonLocal').addEventListener('click',()=>{stop();window.DevocionalAudio?.startLocal?.('study')});
- player.addEventListener('ended',()=>{if(playingContinuous){preparing=false;status('Narração contínua concluída. Você pode registrar sua reflexão.');return}partIndex++;playNext(runId)});
+ player.addEventListener('ended',()=>{if(playingContinuous){finished();return}partIndex++;playNext(runId)});
+ player.addEventListener('timeupdate',syncTranscript);
+ player.addEventListener('seeked',syncTranscript);
+ byId('charonNextDay').addEventListener('click',listenNextDay);
  player.addEventListener('error',()=>{if(player.src)status('Falha ao reproduzir este trecho. Tente novamente.')});
  player.addEventListener('play',()=>{window.DevocionalAudio?.stop?.('Charon em reprodução.');if('mediaSession' in navigator&&typeof MediaMetadata==='function'){try{navigator.mediaSession.metadata=new MediaMetadata({title:`Dia ${String(activeDay).padStart(3,'0')} · Voz Charon`,artist:'Meu Devocional · Narração IA',album:'365 estudos bíblicos'});}catch(_){}}});
  window.addEventListener('pagehide',pause);
  configureUI();
+ try{narration=narrationFor(fieldsForDay(activeDay),false);renderTranscript()}catch(_){}
 }
 window.DevocionalCharon={pause,stop,setDay,isConfigured,playStudy,playPrayer};
 document.addEventListener('DOMContentLoaded',init);

@@ -1,3 +1,27 @@
+MEU DEVOCIONAL 2.9 — CHARON COM LEITURA ACOMPANHADA E PRÓXIMO DIA
+
+NOVIDADES
+1. Durante a narração da Charon, uma área "Acompanhar texto" destaca o parágrafo estimado do roteiro. A região pode ser recolhida. O realce também marca as seções correspondentes no texto normal do estudo quando disponíveis.
+2. O tempo de cada trecho vem da duração real do WAV; a posição do texto é ESTIMADA pela proporção de caracteres em cada trecho, pois o Gemini não retorna timestamps por palavra. Não é uma transcrição sincronizada palavra por palavra.
+3. Ao final do estudo/oração, aparece o botão "Ouvir o Dia seguinte com Charon". O usuário decide se quer começar o próximo estudo; nenhuma geração adicional é disparada automaticamente.
+4. Modo de audiolivro contínuo e modo por partes continuam disponíveis. O destaque funciona nos dois.
+
+IMPORTANTE
+- O texto da ONBV permanece com seu leitor separado (sem narração neural).
+- Os 365 estudos, suas anotações, progresso, lembretes e configuração Firebase Spark mantêm as mesmas chaves de armazenamento.
+- Nenhuma solicitação extra à IA é feita apenas para destacar o texto. Tocar para ouvir o próximo dia pode consumir cota gratuita do Gemini.
+- O acompanhamento visual funciona quando a tela está acesa; a reprodução de áudio já validada com tela apagada não depende desse destaque.
+- Se o áudio de um trecho incluir pausas diferentes da média, o destaque pode adiantar ou atrasar um pouco. Não confundir com texto exato da Bíblia.
+- Não desinstale nem limpe os dados do aplicativo para atualizar.
+
+PUBLICAR NO GITHUB PAGES
+1. Exporte antes seu backup de anotações em Progresso.
+2. Envie os 13 arquivos extraídos à raiz do repositório Meu Devocional, substituindo os nomes existentes. Confirme Commit changes.
+3. Se os arquivos antigos benicio-player.js e dia-001-benicio.mp3 ainda estiverem no repositório, podem ser excluídos manualmente: não fazem parte da versão 2.9.
+4. Confirme que a execução GitHub Pages foi concluída. Abra o app com internet e atualize; se necessário feche/abra outra vez para o cache atualizar.
+5. No Dia 01, toque "Ouvir estudo com Charon"; acompanhe o destaque aproximado. Depois que terminar, toque "Ouvir o Dia 002 com Charon".
+6. Confirme no Android que a reprodução continua com tela bloqueada. NÃO apague a importação da Bíblia nem os dados locais.
+
 MEU DEVOCIONAL 2.8 — CHARON CONTÍNUA, SEM BENÍCIO
 
 Nova opção: REPRODUÇÃO CONTÍNUA (AUDIOBOOK), marcada por padrão no painel Charon. O aplicativo prepara todos os trechos existentes (usando o cache de voz do aparelho) e une a fala em um único WAV. Não abre nova API nem gera áudio extra para unir: as chamadas à IA continuam sendo feitas por trecho conforme a versão anterior.

@@ -79,7 +79,7 @@ function selectDay(n,{switchTab=true,scroll=false}={}){
  $('#daySelect').value=String(selectedDay);
  if(scroll)$('#study').scrollIntoView({behavior:'smooth',block:'start'});
 }
-function refsHtml(s){return '<p class="refs"><b>Referências para aprofundar:</b> '+h(s)+'</p>'}
+function refsHtml(s){return '<p class="refs" data-charon-anchor="crossReferences"><b>Referências para aprofundar:</b> '+h(s)+'</p>'}
 function checkItems(){return selectedDay===1?[['read','Reli Gênesis 1 com calma.'],['john','Li João 1:1–14.'],['thanks','Agradeci a Deus por três coisas.'],['care','Demonstrei respeito e amor a alguém.']]:[['read','Li a passagem principal (ONBV no aplicativo ou NVI na minha Bíblia).'],['cross','Consultei ao menos uma referência complementar.'],['reflect','Registrei uma descoberta ou aplicação pessoal.'],['pray','Reservei tempo para orar sobre o texto.']]}
 function renderStudy(){
  const s=study(selectedDay);if(!s)return;
@@ -90,40 +90,40 @@ function renderStudy(){
  const html=`
   <article class="card hero-card">
     <div class="pill">DIA ${d(s.day)} · ${h(s.theme.toUpperCase())}</div>
-    <h2>${h(s.title)}</h2>
+    <h2 data-charon-anchor="intro">${h(s.title)}</h2>
     <p class="lead">Um encontro com a Palavra para conhecer a Deus, refletir e praticar a fé no cotidiano.</p>
     <div class="meta"><span class="tag">📖 ${h(s.reference)}</span><span class="tag">🕯️ Bíblia NVI como referência</span><span class="tag">${completed?'✓ Concluído':'Estudo disponível'}</span></div>
     <div class="hero-footer"><button id="favoriteStudy" class="favorite-toggle ${fav?'is-saved':''}" type="button" aria-pressed="${fav}">${fav?'★ Remover dos favoritos':'☆ Adicionar aos favoritos'}</button></div>
   </article>
   <article class="card">
     <div class="section-kicker">01 · PREPARAÇÃO</div>
-    <h3>Preparando o coração</h3>
+    <h3 data-charon-anchor="preparation">Preparando o coração</h3>
     <p>Separe alguns minutos para o silêncio. Peça a Deus humildade, atenção e coragem para viver aquilo que a passagem ensina. Leia o texto inteiro antes de consultar o comentário.</p>
     <h3>Leitura principal</h3>
-    <p><strong>${h(s.reference)}</strong> — leia o texto completo da ONBV no quadro acima, depois de importar a tradução. Os comentários usam a NVI como referência; para comparar as redações, consulte sua Bíblia NVI.</p>
-    <p class="study-note"><b>Ideia central:</b> ${h(s.insight)}</p>
+    <p data-charon-anchor="reference"><strong>${h(s.reference)}</strong> — leia o texto completo da ONBV no quadro acima, depois de importar a tradução. Os comentários usam a NVI como referência; para comparar as redações, consulte sua Bíblia NVI.</p>
+    <p class="study-note" data-charon-anchor="insight"><b>Ideia central:</b> ${h(s.insight)}</p>
   </article>
   <article class="card">
     <div class="section-kicker">02 · CONTEXTO</div>
-    <h3>Contexto histórico e literário</h3><p>${h(s.context)}</p>
-    <h3>Como observar o texto</h3><p>${h(s.interpretation)}</p>
+    <h3>Contexto histórico e literário</h3><p data-charon-anchor="context">${h(s.context)}</p>
+    <h3>Como observar o texto</h3><p data-charon-anchor="interpretation">${h(s.interpretation)}</p>
   </article>
   <article class="card">
     <div class="section-kicker">03 · INTERPRETAÇÃO</div>
-    <h3>O que a passagem ensina?</h3><p>${h(s.insight)}</p>
-    <h3>Conexões com a mensagem bíblica</h3><p>${h(s.theology)}</p>
+    <h3>O que a passagem ensina?</h3><p data-charon-anchor="insight">${h(s.insight)}</p>
+    <h3>Conexões com a mensagem bíblica</h3><p data-charon-anchor="theology">${h(s.theology)}</p>
     ${refsHtml(s.crossReferences)}
-    <h3>Cuidado ao interpretar</h3><p>${h(s.care)}</p>
+    <h3>Cuidado ao interpretar</h3><p data-charon-anchor="care">${h(s.care)}</p>
   </article>
-  ${s.extendedHtml?`<article class="card more-study"><div class="section-kicker">APROFUNDAMENTO ESPECIAL</div><h3>Explorando a passagem com mais detalhes</h3>${s.extendedHtml}</article>`:''}
+  ${s.extendedHtml?`<article class="card more-study" data-charon-anchor="extended"><div class="section-kicker">APROFUNDAMENTO ESPECIAL</div><h3>Explorando a passagem com mais detalhes</h3>${s.extendedHtml}</article>`:''}
   <article class="card">
     <div class="section-kicker">04 · VIDA PRÁTICA</div>
-    <h3>Aplicação para hoje</h3><p>${h(s.practice)}</p>
-    <h3>Reflexão pessoal</h3><ol>${s.questions.map(q=>`<li>${h(q)}</li>`).join('')}</ol>
+    <h3>Aplicação para hoje</h3><p data-charon-anchor="practice">${h(s.practice)}</p>
+    <h3>Reflexão pessoal</h3><ol>${s.questions.map((q,i)=>`<li data-charon-anchor="question-${i}">${h(q)}</li>`).join('')}</ol>
     <p class="small-note">Você pode responder a essas perguntas na aba <b>Anotações</b>; cada dia tem seu próprio caderno.</p>
     <button class="outline" id="openJournal" type="button">✎ Escrever minhas reflexões</button>
   </article>
-  <article class="card prayer"><div class="section-kicker">05 · ORAÇÃO DO DIA</div><h3>Fala, Senhor: quero te ouvir</h3><p>${h(s.prayer)}</p></article>
+  <article class="card prayer"><div class="section-kicker">05 · ORAÇÃO DO DIA</div><h3>Fala, Senhor: quero te ouvir</h3><p data-charon-anchor="prayer">${h(s.prayer)}</p></article>
   <article class="card challenge"><div class="section-kicker">06 · COMPROMISSO</div><h3>Desafio espiritual</h3>${checkItems().map(([key,label])=>`<label class="check"><input type="checkbox" data-task="${key}" ${data.checklistByDay[selectedDay]?.[key]?'checked':''}> <span>${h(label)}</span></label>`).join('')}
    <button id="completeBtn" class="primary" type="button">${completed?'✓ Estudo concluído · Desmarcar':'✓ Marcar estudo como concluído'}</button>
    <p class="small-note" id="completeMsg" aria-live="polite"></p>
