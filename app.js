@@ -130,6 +130,11 @@ function renderStudy(){
   </article>
   ${next?`<article class="card next-card"><div class="section-kicker">PRÓXIMO ESTUDO</div><h3>Dia ${d(next.day)} — ${h(next.title)}</h3><p>Leitura: ${h(next.reference)}</p><button id="nextFromCard" class="outline" type="button">Ir para o próximo estudo →</button></article>`:`<article class="card next-card"><div class="section-kicker">JORNADA COMPLETA</div><h3>365 dias de aprendizado</h3><p>Você chegou à última etapa. Volte aos estudos, mantenha seu caderno e continue crescendo na Palavra.</p></article>`}`;
  $('#studyContent').innerHTML=html;
+ $('#studyContent').querySelectorAll('.refs, [data-charon-anchor="reference"], .next-card p').forEach(node=>{
+  const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+  const re=/\b(?:[1-3]\s*)?[A-Za-zÀ-ÿ]+(?:\s+(?:dos|das|de|[A-Za-zÀ-ÿ]+)){0,3}\s+\d{1,3}(?::\d{1,3}(?:[–-]\d{1,3})?)?/g;
+  nodes.forEach(text=>{if(text.parentElement?.closest('a,button'))return;const source=text.nodeValue;let match,last=0,frag=document.createDocumentFragment(),changed=false;while((match=re.exec(source))){const ref=match[0];if(!window.DevocionalBible?.parseReference?.(ref)?.length)continue;frag.append(document.createTextNode(source.slice(last,match.index)));const btn=document.createElement('button');btn.type='button';btn.className='scripture-link';btn.textContent=ref;btn.dataset.bibleRef=ref;frag.append(btn);last=re.lastIndex;changed=true}if(changed){frag.append(document.createTextNode(source.slice(last)));text.replaceWith(frag)}});
+ });
  window.DevocionalBible?.renderStudyPassage?.();
  $('#favoriteStudy').addEventListener('click',()=>{data.favorites=fav?data.favorites.filter(x=>x!==selectedDay):uniqueDays([...data.favorites,selectedDay]);persist();renderStudy()});
  $('#openJournal').addEventListener('click',()=>showTab('journal'));
@@ -338,3 +343,15 @@ async function init(){
  selectDay(first,{switchTab:false});showTab('study');
 }
 document.addEventListener('DOMContentLoaded',init);
+
+// Preferências locais da versão 3.0: sem envio a servidores.
+document.addEventListener('DOMContentLoaded',()=>{
+ const theme=document.getElementById('themeChoice'),font=document.getElementById('fontChoice'),value=document.getElementById('fontValue');
+ const applyTheme=()=>{const choice=theme.value;document.documentElement.dataset.theme=choice==='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):choice};
+ theme.value=localStorage.getItem('devocional.theme')||'auto';applyTheme();theme.addEventListener('change',()=>{localStorage.setItem('devocional.theme',theme.value);applyTheme()});
+ const media=matchMedia('(prefers-color-scheme: dark)');media.addEventListener?.('change',()=>{if(theme.value==='auto')applyTheme()});
+ const setFont=n=>{n=Math.max(14,Math.min(26,Number(n)||17));font.value=n;value.textContent=n+' px';document.documentElement.style.setProperty('--bible-font',n+'px')};
+ setFont(localStorage.getItem('devocional.bibleFont')||17);font.addEventListener('input',()=>{setFont(font.value);localStorage.setItem('devocional.bibleFont',font.value)});
+ document.getElementById('fontReset').addEventListener('click',()=>{setFont(17);localStorage.setItem('devocional.bibleFont','17')});
+ document.addEventListener('click',e=>{const btn=e.target.closest('[data-bible-ref]');if(btn)window.DevocionalBible?.openReference?.(btn.dataset.bibleRef)});
+});

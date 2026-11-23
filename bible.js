@@ -33,7 +33,7 @@ function norm(s){return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,''
 for(const b of BOOKS)aliases[norm(b[1])]=b[0];
 const el=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-let dbPromise=null,installed=false,readingBook='GEN',readingChapter=1,lastStudyRequest=0,importing=false;
+let dbPromise=null,installed=false,readingBook='GEN',readingChapter=1,readingVerse=1,lastStudyRequest=0,importing=false,pickerTestament='OT';
 function db(){
  if(dbPromise)return dbPromise;
  dbPromise=new Promise((resolve,reject)=>{
@@ -177,7 +177,7 @@ async function loadPassage(reference){
  return blocks;
 }
 function versesHtml(blocks){
- return blocks.map(b=>b.lines.map(ch=>`<section class="onbv-chapter"><h4>${esc(b.name)} ${ch.chapter}</h4>${ch.verses.map(v=>`<p class="onbv-verse"><sup>${v.n}</sup> ${esc(v.t)}</p>`).join('')}</section>`).join('')).join('');
+ return blocks.map(b=>b.lines.map(ch=>`<section class="onbv-chapter"><h4>${esc(b.name)} ${ch.chapter}</h4>${ch.verses.map(v=>`<p class="onbv-verse" id="verse-${ch.chapter}-${v.n}"><sup>${v.n}</sup> ${esc(v.t)}</p>`).join('')}</section>`).join('')).join('');
 }
 function speechParts(blocks){
  const out=[];
@@ -220,30 +220,38 @@ async function renderChapter(){
  el('biblePrev').disabled=readingBook===BOOKS[0][0]&&readingChapter===1;
  el('bibleNext').disabled=readingBook===BOOKS[65][0]&&readingChapter===22;
  if(!installed){area.innerHTML='<p>Importe a Bíblia ONBV para consultar qualquer livro e capítulo neste espaço, mesmo offline.</p>';return}
- try{const item=await get(readingBook+':'+readingChapter);if(item){area.innerHTML=versesHtml([{name:b[1],lines:[item]}]);}else area.textContent='Capítulo não encontrado na Bíblia importada.'}
+ try{const item=await get(readingBook+':'+readingChapter);if(item){area.innerHTML=versesHtml([{name:b[1],lines:[item]}]);renderVerseGrid(item.verses);if(readingVerse>1){const target=area.querySelector('[id="verse-'+readingChapter+'-'+readingVerse+'"]');target?.scrollIntoView({block:'nearest'});target?.classList.add('selected-verse')}}else area.textContent='Capítulo não encontrado na Bíblia importada.'}
  catch(e){area.textContent='Erro ao carregar capítulo: '+e.message}
 }
 function updateSelectors(){
  const b=byCode.get(readingBook);el('bibleBook').value=readingBook;
  const chapter=el('bibleChapterSelect');chapter.replaceChildren();
  for(let i=1;i<=b[2];i++){const opt=new Option('Capítulo '+i,String(i));chapter.add(opt)}
- readingChapter=Math.min(b[2],Math.max(1,readingChapter));chapter.value=readingChapter;
+ readingChapter=Math.min(b[2],Math.max(1,readingChapter));chapter.value=readingChapter;renderPicker();
 }
 function stepChapter(direction){
  const b=byCode.get(readingBook),idx=BOOKS.findIndex(x=>x[0]===readingBook);
  if(direction===1){if(readingChapter<b[2])readingChapter++;else if(idx<BOOKS.length-1){readingBook=BOOKS[idx+1][0];readingChapter=1}}
  else{if(readingChapter>1)readingChapter--;else if(idx>0){readingBook=BOOKS[idx-1][0];readingChapter=BOOKS[idx-1][2]}}
- updateSelectors();renderChapter();el('bible').scrollIntoView({behavior:'smooth',block:'start'});
+ readingVerse=1;updateSelectors();renderChapter();el('bible').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function openReader(){if(typeof showTab==='function')showTab('bible');renderChapter();}
+function renderVerseGrid(verses){const grid=el('verseGrid');if(!grid)return;grid.replaceChildren();for(const v of verses){const button=document.createElement('button');button.type='button';button.className='picker-tile'+(Number(v.n)===readingVerse?' selected':'');button.textContent=v.n;button.setAttribute('aria-label','Versículo '+v.n);button.addEventListener('click',()=>{readingVerse=Number(v.n);renderChapter()});grid.append(button)}}
+function renderPicker(){const books=el('bookGrid'),chapters=el('chapterGrid');if(!books||!chapters)return;books.replaceChildren();chapters.replaceChildren();el('pickerOT').classList.toggle('picker-active',pickerTestament==='OT');el('pickerNT').classList.toggle('picker-active',pickerTestament==='NT');
+ const abbr=['Gn','Êx','Lv','Nm','Dt','Js','Jz','Rt','1Sm','2Sm','1Rs','2Rs','1Cr','2Cr','Ed','Ne','Et','Jó','Sl','Pv','Ec','Ct','Is','Jr','Lm','Ez','Dn','Os','Jl','Am','Ob','Jn','Mq','Na','Hc','Sf','Ag','Zc','Ml','Mt','Mc','Lc','Jo','At','Rm','1Co','2Co','Gl','Ef','Fp','Cl','1Ts','2Ts','1Tm','2Tm','Tt','Fm','Hb','Tg','1Pe','2Pe','1Jo','2Jo','3Jo','Jd','Ap'];
+ BOOKS.forEach(([code,name],i)=>{if((i<39)!==(pickerTestament==='OT'))return;const button=document.createElement('button');button.type='button';button.className='picker-tile'+(readingBook===code?' selected':'');button.textContent=abbr[i];button.title=name;button.setAttribute('aria-label',name);button.addEventListener('click',()=>{readingBook=code;readingChapter=1;readingVerse=1;updateSelectors();renderChapter()});books.append(button)});
+ for(let i=1;i<=byCode.get(readingBook)[2];i++){const button=document.createElement('button');button.type='button';button.className='picker-tile'+(readingChapter===i?' selected':'');button.textContent=i;button.addEventListener('click',()=>{readingChapter=i;readingVerse=1;updateSelectors();renderChapter()});chapters.append(button)}
+}
+function openReference(reference){const parts=parseReference(reference);if(!parts.length)return false;readingBook=parts[0].book;readingChapter=parts[0].startChapter;readingVerse=parts[0].startVerse||1;pickerTestament=BOOKS.findIndex(b=>b[0]===readingBook)<39?'OT':'NT';updateSelectors();openReader();return true}
 function initialize(){
+ el('pickerOT').addEventListener('click',()=>{pickerTestament='OT';renderPicker()});el('pickerNT').addEventListener('click',()=>{pickerTestament='NT';renderPicker()});
  const select=el('bibleBook');
  const antigo=document.createElement('optgroup');antigo.label='ANTIGO TESTAMENTO — 39 LIVROS';
  const novo=document.createElement('optgroup');novo.label='NOVO TESTAMENTO — 27 LIVROS';
  BOOKS.forEach(([code,name],i)=>{(i<OT_COUNT?antigo:novo).appendChild(new Option(name,code))});
  select.append(antigo,novo);updateSelectors();
- select.addEventListener('change',e=>{readingBook=e.target.value;readingChapter=1;updateSelectors();renderChapter()});
- el('bibleChapterSelect').addEventListener('change',e=>{readingChapter=Number(e.target.value);renderChapter()});
+ select.addEventListener('change',e=>{readingBook=e.target.value;readingChapter=1;readingVerse=1;pickerTestament=BOOKS.findIndex(b=>b[0]===readingBook)<39?'OT':'NT';updateSelectors();renderChapter()});
+ el('bibleChapterSelect').addEventListener('change',e=>{readingChapter=Number(e.target.value);readingVerse=1;renderPicker();renderChapter()});
  el('biblePrev').addEventListener('click',()=>stepChapter(-1));el('bibleNext').addEventListener('click',()=>stepChapter(1));
  el('bibleListenChapter').addEventListener('click',playChapter);
  el('bibleToggleAudio').addEventListener('click',()=>window.DevocionalAudio?.togglePause?.());
@@ -256,6 +264,6 @@ function initialize(){
  get('ready','meta').then(meta=>{if(meta?.chapters===1189){updated();status('Bíblia ONBV já importada. Disponível offline neste aparelho.','ok')}else status('Baixe o ZIP oficial uma única vez e importe-o aqui.');renderChapter();renderStudyPassage()})
  .catch(e=>status('Armazenamento local indisponível: '+e.message,'error'));
 }
-window.DevocionalBible={renderStudyPassage,renderChapter,playPassage,parseReference,parseUsfm,speechParts,loadPassage,source:BIBLE_SOURCE};
+window.DevocionalBible={renderStudyPassage,renderChapter,openReference,playPassage,parseReference,parseUsfm,speechParts,loadPassage,source:BIBLE_SOURCE};
 document.addEventListener('DOMContentLoaded',initialize);
 })();

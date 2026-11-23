@@ -126,3 +126,23 @@
 .charon-next-wrap .small-note{margin:0;font-size:11px;flex:1}
 @media(max-width:600px){.charon-transcript{height:min(270px,42vh)}.charon-next-wrap{display:block}.charon-next-wrap button{width:100%;margin-bottom:6px}}
 @media(prefers-reduced-motion:reduce){.charon-transcript{scroll-behavior:auto}}
+
+/* v3.0 · compactação, leitura acessível e temas */
+:root{--bible-font:17px;color-scheme:light}
+.book-grid,.number-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(37px,1fr));gap:4px;margin:8px 0 16px}
+.picker-tile{min-width:0;min-height:34px;padding:4px 1px;background:var(--white);border:1px solid var(--line);border-radius:6px;color:var(--ink);font-size:11px;font-weight:700;line-height:1.1}
+.picker-tile.selected,.picker-active{background:var(--green)!important;color:white!important;border-color:var(--green)!important}
+.picker-heading{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--ink);margin-top:12px}.picker-heading span{font-size:11px;color:var(--muted)}
+.testament-switch{display:flex;gap:6px;margin-top:8px}.testament-switch button{flex:1;padding:8px 4px}
+.legacy-picker{margin:8px 0 14px;font-size:12px;color:var(--muted)}
+.onbv-verse{font-size:var(--bible-font)!important;line-height:1.85}.onbv-verse.selected-verse{background:rgba(188,150,81,.23);border-radius:5px}
+.scripture-link{display:inline;background:none;border:0;padding:0;color:var(--green2);text-decoration:underline;text-underline-offset:3px;font:inherit;font-weight:700}
+#fontChoice{width:100%;accent-color:var(--green)}#fontValue{display:block;margin:5px 0 12px}
+[data-theme=dark]{color-scheme:dark;--green:#a5d4b4;--green2:#a5d4b4;--gold:#dfbd80;--ink:#e6eee7;--muted:#bac9bd;--paper:#111a17;--line:#415349;--white:#202c26;--warn:#e5a58c}
+[data-theme=dark] .top{background:#17291f}[data-theme=dark] .card,[data-theme=dark] .audio-card,[data-theme=dark] .bible-hero,[data-theme=dark] .bible-install,[data-theme=dark] .info-card,[data-theme=dark] .prayer,[data-theme=dark] .study-row,[data-theme=dark] .day-navigation,[data-theme=dark] .refs,[data-theme=dark] .study-note,[data-theme=dark] .onbv-verses,[data-theme=dark] .bible-status,[data-theme=dark] .audio-progress,[data-theme=dark] .reminder-preview,[data-theme=dark] .canon-summary,[data-theme=dark] .bible-ready{background:#202c26!important;color:var(--ink)!important;border-color:var(--line)!important}
+[data-theme=dark] .tab,[data-theme=dark] .outline,[data-theme=dark] input,[data-theme=dark] select,[data-theme=dark] textarea,[data-theme=dark] .month-stat,[data-theme=dark] .picker-tile{background:#27382f;color:var(--ink);border-color:var(--line)}
+[data-theme=dark] .tab.active,[data-theme=dark] .primary{background:#426f52;color:white}
+[data-theme=dark] .hero-card{background:linear-gradient(125deg,#214330,#31533e)!important}[data-theme=dark] .hero-card h2{color:#fff}
+[data-theme=dark] .tabs{background:var(--paper)}[data-theme=dark] .stat-chip,[data-theme=dark] .reminder-shortcut{background:#27382f;color:var(--ink)}
+[data-theme=dark] .card h2,[data-theme=dark] .card h3,[data-theme=dark] .card h4,[data-theme=dark] h1,[data-theme=dark] .study-row .data>strong{color:#b6dfbd}
+@media(max-width:480px){.book-grid,.number-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}.picker-tile{min-height:31px;font-size:10px}.compact-picker{margin:0 -4px}}

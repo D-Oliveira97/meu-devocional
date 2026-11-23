@@ -218,7 +218,7 @@ async function playNext(token){if(token!==runId)return;if(partIndex>=parts.lengt
  }catch(e){if(token!==runId)return;preparing=false;status('Atenção: '+(e.message||e));}
 }
 let currentMode='study';
-async function start(mode){if(!configured){byId('charonConfigDetails').open=true;byId('charonConfigDetails').scrollIntoView({behavior:'smooth',block:'nearest'});status('Primeiro configure o Firebase Spark sem faturamento.');return}
+async function start(mode){if(!configured){if(typeof showTab==='function')showTab('settings');byId('charonConfigDetails').open=true;byId('charonConfigDetails').scrollIntoView({behavior:'smooth',block:'nearest'});status('Primeiro configure o Firebase Spark sem faturamento.');return}
  const day=Number(byId('daySelect')?.value||1);try{const s=fieldsForDay(day);const nextNarration=narrationFor(s,mode==='prayer');const txt=nextNarration.text;if(!txt.trim())throw new Error('Texto do estudo não encontrado.');
    window.DevocionalAudio?.stop?.('Reproduzindo Charon.');
    stop();activeDay=day;currentMode=mode;narration=nextNarration;renderTranscript();parts=chunk(txt);prepareOffsets();partIndex=0;runId++;if(byId('charonContinuous')?.checked)await playContinuous(runId);else await playNext(runId);

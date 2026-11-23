@@ -8,7 +8,7 @@
   <meta name="color-scheme" content="light">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=13.0">
+  <link rel="stylesheet" href="styles.css?v=14.0">
   <title>Meu Devocional · 365 estudos · Charon contínua</title>
 </head>
 <body>
@@ -33,6 +33,7 @@
       <button class="tab" data-tab="saved" aria-controls="saved" aria-selected="false">☆ Favoritos</button>
       <button class="tab" data-tab="progress" aria-controls="progress" aria-selected="false">◷ Progresso</button>
       <button class="tab" data-tab="reminders" aria-controls="reminders" aria-selected="false">🔔 Lembretes</button>
+      <button class="tab tab-settings" data-tab="settings" aria-controls="settings" aria-selected="false" title="Configurações">⚙</button>
     </nav>
     <div id="alert" class="alert hidden" role="status" aria-live="polite"></div>
 
@@ -51,11 +52,10 @@
         <p>Ouça a passagem bíblica ONBV, os comentários e a oração em português. A Bíblia deve ser importada uma única vez do distribuidor oficial.</p>
 
         <section class="charon-panel" id="charonPanel" aria-labelledby="charonHeading">
-          <div class="charon-heading"><span class="charon-icon" aria-hidden="true">🎙️</span><div><p class="section-kicker">VOZ NEURAL SOB DEMANDA · GEMINI</p><h3 id="charonHeading">Ouvir com Charon</h3></div></div>
-          <p>A voz Charon narra os <strong>comentários e orações dos 365 estudos</strong>, sem narrar a Bíblia ONBV. Usa a modalidade gratuita do Gemini, quando disponível. A primeira execução precisa de configuração do Firebase.</p>
+          <div class="charon-heading"><span class="charon-icon" aria-hidden="true">🎙️</span><div><h3 id="charonHeading">Estudo em áudio</h3></div></div>
+          <p>Ouça seu devocional diário.</p>
           <div id="charonSetupNotice" class="charon-notice" role="status">Ainda não configurado. A voz do Android continua disponível para leitura.</div>
-          <div class="charon-actions"><button type="button" id="charonStudy" class="primary">▶ Ouvir estudo com Charon</button><button type="button" class="outline" id="charonPrayer">🙏 Oração com Charon</button><button type="button" class="outline" id="charonStop">■ Parar Charon</button><button type="button" class="outline" id="charonLocal">🔊 Usar voz do Android</button></div>
-          <label class="charon-continuous-choice" for="charonContinuous"><input type="checkbox" id="charonContinuous" checked><span><strong>🎧 Reprodução contínua (audiolivro)</strong><small>Prepara todos os trechos e reúne em uma única faixa antes de tocar. Na primeira vez pode levar alguns minutos; não faz solicitações extras além das já necessárias. Desmarque para começar mais rápido, parte por parte.</small></span></label>
+          <div class="charon-actions"><button type="button" id="charonStudy" class="primary">▶ Ouvir estudo</button><button type="button" class="outline" id="charonPrayer">🙏 Ouvir oração</button><button type="button" class="outline" id="charonStop">■ Parar</button><button type="button" class="outline" id="charonLocal">🔊 Voz do Android</button></div>
           <audio id="charonAudio" controls preload="none" aria-label="Player da narração neural Charon"></audio>
           <details class="charon-follow-details" id="charonFollowDetails" open>
             <summary>📖 Acompanhar texto durante a narração</summary>
@@ -64,20 +64,7 @@
             <div class="charon-transcript" id="charonTranscript" tabindex="0" aria-label="Roteiro narrado com destaque por trecho"></div>
           </details>
           <div class="charon-next-wrap"><button type="button" class="primary" id="charonNextDay" hidden>▶ Ouvir próximo dia com Charon</button><p class="small-note">Após terminar, você decide se quer ouvir o próximo estudo. Uma nova geração pode utilizar a cota gratuita.</p></div>
-          <p class="charon-status" id="charonStatus" role="status" aria-live="polite">Configure a conexão gratuita uma única vez para começar.</p>
-          <p class="charon-meta">Os trechos já gerados ficam salvos neste aparelho. No modo contínuo, a narração começa depois que todos estiverem prontos; não é necessário gerar o áudio novamente. O primeiro preparo exige internet e pode esgotar a cota gratuita; com a tela bloqueada, o funcionamento depende do navegador.</p>
-          <details class="charon-config" id="charonConfigDetails"><summary>⚙ Configurar o Firebase gratuito (Spark) / Charon</summary>
-            <p>Configure um projeto <strong>Firebase Spark sem faturamento</strong> e ative <strong>AI Logic — Gemini Developer API</strong> com <strong>App Check / reCAPTCHA Enterprise</strong> para o domínio do seu site. Use somente as configurações <strong>públicas do aplicativo Web Firebase</strong>. Não use uma chave privada da API do Gemini aqui.</p>
-            <form id="charonConfigForm" autocomplete="off">
-              <label for="charonProjectId">Project ID (ID do projeto Firebase)</label><input required id="charonProjectId" name="projectId" placeholder="meu-devocional-12345" inputmode="text" spellcheck="false">
-              <label for="charonAppId">App ID (identificador do aplicativo Web Firebase)</label><input required id="charonAppId" name="appId" placeholder="1:123456789:web:abc..." spellcheck="false">
-              <label for="charonApiKey">Firebase Web API key (chave de configuração Web, não chave secreta Gemini)</label><input required id="charonApiKey" name="apiKey" placeholder="AIza..." spellcheck="false">
-              <label for="charonSiteKey">Site key do reCAPTCHA Enterprise (pública)</label><input required id="charonSiteKey" name="siteKey" placeholder="6L..." spellcheck="false">
-              <label class="charon-confirm"><input id="charonSparkConfirm" type="checkbox" required> Confirmo que o projeto está no <strong>plano Spark, sem conta de faturamento vinculada</strong>, e que o App Check está configurado para este domínio.</label>
-              <div class="charon-config-actions"><button type="submit" class="primary">Salvar configuração neste aparelho</button><button type="button" class="outline" id="charonClear">Desvincular configuração Charon</button></div>
-            </form>
-            <p class="charon-tip">As configurações ficam neste navegador, não são enviadas ao GitHub. A chave Web Firebase é identificadora pública; sua proteção depende do App Check e das restrições de API do projeto. O limite gratuito pode se esgotar e o áudio não será gerado até a cota voltar. Nunca ative o plano Blaze ou uma cobrança para este teste.</p>
-          </details>
+          <p class="charon-status" id="charonStatus" role="status" aria-live="polite">Pronto para ouvir.</p>
         </section>
         <div class="audio-actions">
           <button id="audioPlay" type="button" class="primary">▶ Ouvir estudo completo</button>
@@ -131,11 +118,11 @@
       </article>
       <article class="card bible-reader-card">
         <h2>Ler ou ouvir um capítulo</h2>
-        <div class="bible-controls">
+        <div class="compact-picker" id="bibleCompactPicker"><div class="picker-heading"><strong>Livros</strong><span>Escolha um livro, capítulo e versículo</span></div><div class="testament-switch"><button type="button" class="outline" id="pickerOT">Antigo Testamento</button><button type="button" class="outline" id="pickerNT">Novo Testamento</button></div><div class="book-grid" id="bookGrid"></div><div class="picker-heading"><strong>Capítulos</strong></div><div class="number-grid" id="chapterGrid"></div><div class="picker-heading"><strong>Versículos</strong></div><div class="number-grid" id="verseGrid"></div></div><details class="legacy-picker"><summary>Seleção por lista</summary><div class="bible-controls">
           <div><label for="bibleBook">Livro bíblico (somente cânon protestante)</label><select id="bibleBook"></select></div>
           <div><label for="bibleChapterSelect">Capítulo</label><select id="bibleChapterSelect"></select></div>
         </div>
-        <div class="bible-buttons bible-navigation">
+        </details><div class="bible-buttons bible-navigation">
           <button type="button" class="outline" id="biblePrev">← Anterior</button>
           <button type="button" class="outline" id="bibleListenChapter">🔊 Ouvir capítulo</button>
           <button type="button" class="outline" id="bibleToggleAudio">⏯ Pausar / retomar áudio</button>
@@ -246,12 +233,27 @@
         <p>Não é necessário compartilhar suas anotações ou conceder acesso ao aplicativo à sua conta Google. O botão apenas abre a tela de criação de evento da sua agenda.</p>
       </article>
     </section>
+    <section id="settings" class="panel hidden" aria-label="Configurações"><article class="card"><h2>⚙ Configurações</h2><p>Personalize sua leitura e o áudio do aplicativo.</p><label for="themeChoice">Aparência</label><select id="themeChoice"><option value="auto">Automático (Android)</option><option value="light">Claro</option><option value="dark">Escuro</option></select><label for="fontChoice">Tamanho do texto bíblico</label><input type="range" id="fontChoice" min="14" max="26" step="1" value="17"><output id="fontValue" for="fontChoice">17 px</output><button type="button" class="outline" id="fontReset">Restaurar tamanho</button></article><article class="card"><h2>🎧 Áudio e voz Charon</h2>          <label class="charon-continuous-choice" for="charonContinuous"><input type="checkbox" id="charonContinuous" checked><span><strong>🎧 Reprodução contínua (audiolivro)</strong><small>Prepara todos os trechos e reúne em uma única faixa antes de tocar. Na primeira vez pode levar alguns minutos; não faz solicitações extras além das já necessárias. Desmarque para começar mais rápido, parte por parte.</small></span></label>
+          <p class="charon-meta">Os trechos já gerados ficam salvos neste aparelho. No modo contínuo, a narração começa depois que todos estiverem prontos; não é necessário gerar o áudio novamente. O primeiro preparo exige internet e pode esgotar a cota gratuita; com a tela bloqueada, o funcionamento depende do navegador.</p>
+          <details class="charon-config" id="charonConfigDetails"><summary>⚙ Configurar o Firebase gratuito (Spark) / Charon</summary>
+            <p>Configure um projeto <strong>Firebase Spark sem faturamento</strong> e ative <strong>AI Logic — Gemini Developer API</strong> com <strong>App Check / reCAPTCHA Enterprise</strong> para o domínio do seu site. Use somente as configurações <strong>públicas do aplicativo Web Firebase</strong>. Não use uma chave privada da API do Gemini aqui.</p>
+            <form id="charonConfigForm" autocomplete="off">
+              <label for="charonProjectId">Project ID (ID do projeto Firebase)</label><input required id="charonProjectId" name="projectId" placeholder="meu-devocional-12345" inputmode="text" spellcheck="false">
+              <label for="charonAppId">App ID (identificador do aplicativo Web Firebase)</label><input required id="charonAppId" name="appId" placeholder="1:123456789:web:abc..." spellcheck="false">
+              <label for="charonApiKey">Firebase Web API key (chave de configuração Web, não chave secreta Gemini)</label><input required id="charonApiKey" name="apiKey" placeholder="AIza..." spellcheck="false">
+              <label for="charonSiteKey">Site key do reCAPTCHA Enterprise (pública)</label><input required id="charonSiteKey" name="siteKey" placeholder="6L..." spellcheck="false">
+              <label class="charon-confirm"><input id="charonSparkConfirm" type="checkbox" required> Confirmo que o projeto está no <strong>plano Spark, sem conta de faturamento vinculada</strong>, e que o App Check está configurado para este domínio.</label>
+              <div class="charon-config-actions"><button type="submit" class="primary">Salvar configuração neste aparelho</button><button type="button" class="outline" id="charonClear">Desvincular configuração Charon</button></div>
+            </form>
+            <p class="charon-tip">As configurações ficam neste navegador, não são enviadas ao GitHub. A chave Web Firebase é identificadora pública; sua proteção depende do App Check e das restrições de API do projeto. O limite gratuito pode se esgotar e o áudio não será gerado até a cota voltar. Nunca ative o plano Blaze ou uma cobrança para este teste.</p>
+          </details>
+</article></section>
   </main>
   <footer><span>“Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.”</span><br><b>Salmos 119:105 · referência NVI</b><p>Meu Devocional · jornada anual</p></footer>
-  <script src="app.js?v=13.0" defer></script>
-  <script src="audio.js?v=13.0" defer></script>
-  <script type="module" src="charon-firebase.js?v=13.0"></script>
+  <script src="app.js?v=14.0" defer></script>
+  <script src="audio.js?v=14.0" defer></script>
+  <script type="module" src="charon-firebase.js?v=14.0"></script>
   <script src="jszip.min.js?v=8.0" defer></script>
-  <script src="bible.js?v=8.0" defer></script>
+  <script src="bible.js?v=14.0" defer></script>
 </body>
 </html>
