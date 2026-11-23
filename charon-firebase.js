@@ -73,7 +73,7 @@ function composeText(s,onlyPrayer){return narrationFor(s,onlyPrayer).text;}
 function renderTranscript(){
  const box=byId('charonTranscript');if(!box)return;
  box.replaceChildren();highlightedKey=null;
- if(!narration){box.textContent='Escolha um estudo e toque em ouvir com Charon.';return}
+ if(!narration){box.textContent='Escolha um estudo e toque em ouvir.';return}
  const frag=document.createDocumentFragment();
  narration.segments.forEach(seg=>{
   const para=document.createElement('p');para.className='charon-transcript-segment';para.dataset.charonKey=seg.key;
@@ -81,6 +81,16 @@ function renderTranscript(){
   para.append(strong,document.createTextNode(seg.text));frag.append(para);
  });
  box.append(frag);
+ // Tornar referências bíblicas dentro do roteiro narrado interativas.
+ const refPattern=/\b(?:[1-3]\s*)?[A-Za-zÀ-ÿ]+(?:\s+(?:dos|das|de|[A-Za-zÀ-ÿ]+)){0,3}\s+\d{1,3}(?::\d{1,3}(?:[–-]\d{1,3})?)?/g;
+ box.querySelectorAll('.charon-transcript-segment').forEach(node=>{
+  const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT),items=[];
+  while(walker.nextNode())items.push(walker.currentNode);
+  items.forEach(item=>{if(item.parentElement?.closest('button'))return;const value=item.nodeValue;let m,last=0,changed=false;const frag=document.createDocumentFragment();refPattern.lastIndex=0;
+   while((m=refPattern.exec(value))){if(!window.DevocionalBible?.parseReference?.(m[0])?.length)continue;frag.append(document.createTextNode(value.slice(last,m.index)));const btn=document.createElement('button');btn.type='button';btn.className='scripture-link';btn.dataset.bibleRef=m[0];btn.textContent=m[0];frag.append(btn);last=refPattern.lastIndex;changed=true;}
+   if(changed){frag.append(document.createTextNode(value.slice(last)));item.replaceWith(frag);}
+  });
+ });
  const links=byId('charonReadingLinks');if(links){links.replaceChildren();const day=fieldsForDay(activeDay);const refs=[day.reference,...(Array.isArray(day.crossReferences)?day.crossReferences:[]),...(Array.isArray(day.cross_references)?day.cross_references:[])].filter(x=>typeof x==='string');const unique=[...new Set(refs)];if(unique.length){const heading=document.createElement('strong');heading.textContent='📖 Leituras relacionadas';links.append(heading)}unique.slice(0,12).forEach(ref=>{if(!window.DevocionalBible?.parseReference?.(ref)?.length)return;const btn=document.createElement('button');btn.type='button';btn.className='scripture-link reading-chip';btn.dataset.bibleRef=ref;btn.textContent=ref;links.append(btn)})}
 }
 function showSegmentAt(pos){
@@ -208,7 +218,7 @@ async function playContinuous(token) {
 }
 function release(){if(audioURL){URL.revokeObjectURL(audioURL);audioURL=null}}
 function pause(){if(player&&!player.paused)player.pause()}
-function stop(){runId++;preparing=false;paused=false;playingContinuous=false;parts=[];partIndex=0;partOffsets=[];partDurations=[];timeline=[];narration=null;clearHighlights();nextButtonVisible(false);if(player){player.pause();player.removeAttribute('src');player.load()}release();status('Narração Charon interrompida.');}
+function stop(){runId++;preparing=false;paused=false;playingContinuous=false;parts=[];partIndex=0;partOffsets=[];partDurations=[];timeline=[];narration=null;clearHighlights();nextButtonVisible(false);if(player){player.pause();player.removeAttribute('src');player.load()}release();status('Narração interrompida.');}
 function setDay(day){if(day!==activeDay){activeDay=day;stop()}try{narration=narrationFor(fieldsForDay(day),false);renderTranscript()}catch(_){}}
 async function playNext(token){if(token!==runId)return;if(partIndex>=parts.length){finished();return}
  const current=partIndex;preparing=true;status(`Preparando trecho ${current+1} de ${parts.length} com Charon...`);

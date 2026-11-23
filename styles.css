@@ -167,3 +167,19 @@
 [data-theme=dark] .scripture-link{color:#bce9c9!important}
 [data-theme=dark] .audio-disclaimer,[data-theme=dark] .small-note,[data-theme=dark] .section-kicker,[data-theme=dark] .bible-attribution{color:#c9d8cd!important}
 @media(max-width:480px){.book-grid,.number-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.picker-tile{min-height:38px;font-size:13px}}
+
+
+/* Versão 3.2 — tema OLED e diário integrado */
+[data-theme="dark"]{--paper:#000000;--white:#101010;--ink:#f3f3f3;--muted:#c9c9c9;--line:#383838;--green:#c6e8d0}
+[data-theme="dark"] body,[data-theme="dark"] main,[data-theme="dark"] .tabs{background:#000!important;color:#f3f3f3}
+[data-theme="dark"] .top{background:#080e0b!important}
+[data-theme="dark"] .card,[data-theme="dark"] .audio-card,[data-theme="dark"] .bible-hero,[data-theme="dark"] .bible-install,[data-theme="dark"] .info-card,[data-theme="dark"] .prayer,[data-theme="dark"] .study-row,[data-theme="dark"] .day-navigation,[data-theme="dark"] .refs,[data-theme="dark"] .study-note,[data-theme="dark"] .onbv-verses,[data-theme="dark"] .bible-status,[data-theme="dark"] .audio-progress,[data-theme="dark"] .reminder-preview,[data-theme="dark"] .canon-summary,[data-theme="dark"] .bible-ready,[data-theme="dark"] .charon-panel,[data-theme="dark"] .charon-follow-details,[data-theme="dark"] .charon-transcript,[data-theme="dark"] .charon-transcript-segment,[data-theme="dark"] .charon-reading-links,[data-theme="dark"] .charon-config,[data-theme="dark"] .audio-settings,[data-theme="dark"] .compact-picker,[data-theme="dark"] .bible-reader-card{background:#101010!important;color:#f3f3f3!important;border-color:#383838!important}
+[data-theme="dark"] .tab,[data-theme="dark"] .outline,[data-theme="dark"] input,[data-theme="dark"] select,[data-theme="dark"] textarea,[data-theme="dark"] .picker-tile{background:#191919!important;color:#f3f3f3!important;border-color:#555!important}
+[data-theme="dark"] .hero-card{background:#101b14!important}
+[data-theme="dark"] .small-note,[data-theme="dark"] .section-kicker,[data-theme="dark"] .charon-status,[data-theme="dark"] .charon-follow-label,[data-theme="dark"] .audio-progress-bottom{color:#d0d0d0!important}
+[data-theme="dark"] .scripture-link{color:#bdebc9!important;text-decoration:underline;text-underline-offset:3px}
+[data-theme="dark"] .charon-speaking{background:#3a3016!important;color:#fff0bd!important}
+.answer-field{display:flex;flex-direction:column;gap:8px;margin:14px 0;font-weight:600}
+.answer-field textarea{width:100%;min-height:88px;font:inherit;font-weight:400;line-height:1.5;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--white);color:var(--ink)}
+.study-answers,.journal-answers{margin:14px 0}
+#charonSetupNotice.hidden{display:none!important}

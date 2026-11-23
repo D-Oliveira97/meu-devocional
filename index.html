@@ -8,7 +8,7 @@
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=15.0">
+  <link rel="stylesheet" href="styles.css?v=16.0">
   <title>Meu Devocional · 365 estudos · Charon contínua</title>
 </head>
 <body>
@@ -53,18 +53,18 @@
         
 
         <section class="charon-panel" id="charonPanel" aria-labelledby="charonHeading">
-          <div class="charon-heading"><span class="charon-icon" aria-hidden="true">🎙️</span><div><h3 id="charonHeading">Estudo em áudio</h3></div></div>
           
-          <div id="charonSetupNotice" class="charon-notice" role="status">Áudio pronto para configurar.</div>
+          
+          <div id="charonSetupNotice" class="charon-notice hidden" role="status" aria-hidden="true">Áudio pronto para configurar.</div>
           <div class="charon-actions"><button type="button" id="charonStudy" class="primary">▶ Ouvir estudo</button><button type="button" class="outline" id="charonPrayer">🙏 Ouvir oração</button><button type="button" class="outline" id="charonStop">■ Parar</button><button type="button" class="outline" id="charonLocal">🔊 Voz do Android</button></div>
           <audio id="charonAudio" controls preload="none" aria-label="Player da narração neural Charon"></audio>
           <details class="charon-follow-details" id="charonFollowDetails" open>
             <summary>📖 Acompanhar texto durante a narração</summary>
-            <p class="charon-follow-explain">O parágrafo destacado acompanha <strong>aproximadamente</strong> o áudio. A Charon não fornece timestamps exatos por palavra. Isso não altera a narração nem consome solicitações adicionais.</p>
+
             <p id="charonFollowLabel" class="charon-follow-label" aria-live="off">Aguardando a narração.</p>
             <div class="charon-transcript" id="charonTranscript" tabindex="0" aria-label="Roteiro narrado com destaque por trecho"></div><div id="charonReadingLinks" class="charon-reading-links" aria-label="Leituras bíblicas relacionadas"></div>
           </details>
-          <div class="charon-next-wrap"><button type="button" class="primary" id="charonNextDay" hidden>▶ Ouvir próximo dia com Charon</button><p class="small-note">Após terminar, você decide se quer ouvir o próximo estudo. Uma nova geração pode utilizar a cota gratuita.</p></div>
+          <div class="charon-next-wrap"><button type="button" class="primary" id="charonNextDay" hidden>▶ Ouvir próximo dia </button><p class="small-note">Após terminar, você decide se quer ouvir o próximo estudo. Uma nova geração pode utilizar a cota gratuita.</p></div>
           <p class="charon-status" id="charonStatus" role="status" aria-live="polite">Pronto para ouvir.</p>
         </section>
         <details class="android-audio-compact"><summary>🔊 Áudio do Android <span aria-hidden="true">⚙</span></summary><div class="audio-actions">
@@ -85,14 +85,7 @@
           <div class="audio-track" aria-hidden="true"><div id="audioTrackBar"></div></div>
           <div class="audio-progress-bottom"><span id="audioProgressLabel">Pronto para ouvir · Dia 001</span><div class="audio-skip"><button id="audioPrev" type="button" class="audio-skip-btn" disabled>← Parte anterior</button><button id="audioNext" type="button" class="audio-skip-btn" disabled>Próxima parte →</button></div></div>
         </div>
-        <p class="audio-disclaimer">A narração bíblica usa o texto <b>ONBV importado</b>, não o texto integral da NVI. A voz local do Android continua disponível. A voz neural Charon só narra estudos e orações, nunca o texto integral da ONBV, e depende de uma configuração Firebase Spark protegida por App Check. <b>Se bloquear a tela ou colocar o app em segundo plano, a narração pode parar</b>, dependendo do Android e do navegador.</p>
-      </article>
-      <article class="card onbv-study-card">
-        <p class="section-kicker">LEITURA NA MESMA TELA · EDIÇÃO ONBV</p>
-        <h2>Leia a passagem bíblica aqui</h2>
-        <p class="small-note">A leitura abaixo é da <b>Open Nova Bíblia Viva (ONBV)</b>. Os comentários do estudo continuam usando a NVI como referência. As traduções podem diferir em sua redação.</p>
-        <div id="bibleStudyContent" aria-live="polite">Carregando leitor bíblico...</div>
-        <p class="bible-attribution">Biblica® Open Nova Bíblia Viva™ © 2007, 2010 Biblica, Inc. · <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt_BR" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></p>
+
       </article>
       <div id="studyContent" aria-live="polite"></div>
     </section>
@@ -161,6 +154,7 @@
         <h2>Meu caderno espiritual</h2>
         <p id="journalContext"></p>
         <label for="notes">O que aprendi? Que dúvidas ficaram? O que vou praticar?</label>
+        <div id="journalAnswers" class="journal-answers"></div>
         <textarea id="notes" rows="13" spellcheck="true" placeholder="Escreva sua reflexão com liberdade..."></textarea>
         <p class="small-note">Salvamento automático neste aparelho. Para maior segurança, exporte um backup no painel Progresso.</p>
         <button id="saveNotes" class="primary" type="button">Salvar anotações</button>
@@ -252,10 +246,10 @@
 </article></section>
   </main>
   <footer><span>“Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.”</span><br><b>Salmos 119:105 · referência NVI</b><p>Meu Devocional · jornada anual</p></footer>
-  <script src="app.js?v=15.0" defer></script>
-  <script src="audio.js?v=15.0" defer></script>
-  <script type="module" src="charon-firebase.js?v=15.0"></script>
+  <script src="app.js?v=16.0" defer></script>
+  <script src="audio.js?v=16.0" defer></script>
+  <script type="module" src="charon-firebase.js?v=16.0"></script>
   <script src="jszip.min.js?v=8.0" defer></script>
-  <script src="bible.js?v=15.0" defer></script>
+  <script src="bible.js?v=16.0" defer></script>
 </body>
 </html>

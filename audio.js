@@ -214,6 +214,6 @@
   updateUI();
   window.addEventListener('pagehide',()=>{if(playing)cancelAudio()});
  }
- window.DevocionalAudio={setDay,stop,togglePause,playBibleParts,selectedDay:()=>typeof selectedDay!=='undefined'?selectedDay:currentDay,study:day=>typeof study==='function'?study(day):null};
+ window.DevocionalAudio={setDay,stop,pause,togglePause,playBibleParts,selectedDay:()=>typeof selectedDay!=='undefined'?selectedDay:currentDay,study:day=>typeof study==='function'?study(day):null};
  document.addEventListener('DOMContentLoaded',initialize);
 })();

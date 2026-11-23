@@ -21,6 +21,12 @@ function normalizeData(source){
  if(s.notesByDay&&typeof s.notesByDay==='object'&&!Array.isArray(s.notesByDay)){
    Object.entries(s.notesByDay).forEach(([k,v])=>{const n=Number(k);if(Number.isInteger(n)&&n>=1&&n<=365&&typeof v==='string')notes[n]=v.slice(0,200000)});
  }
+ const answers={};
+ if(s.answersByDay&&typeof s.answersByDay==='object'){
+  Object.entries(s.answersByDay).forEach(([k,v])=>{
+   const n=Number(k);if(Number.isInteger(n)&&n>=1&&n<=365&&Array.isArray(v))answers[n]=v.slice(0,15).map(x=>typeof x==='string'?x.slice(0,10000):'');
+  });
+ }
  const checklist={};
  if(s.checklistByDay&&typeof s.checklistByDay==='object'&&!Array.isArray(s.checklistByDay)){
    Object.entries(s.checklistByDay).forEach(([k,v])=>{
@@ -29,7 +35,7 @@ function normalizeData(source){
      }
    });
  }
- return {schema:2,completed:uniqueDays(s.completed),favorites:uniqueDays(s.favorites),notesByDay:notes,
+ return {schema:2,completed:uniqueDays(s.completed),favorites:uniqueDays(s.favorites),notesByDay:notes,answersByDay:answers,
    checklistByDay:checklist,verses:(Array.isArray(s.verses)?s.verses:[]).filter(v=>typeof v==='string').slice(0,500).map(s=>s.slice(0,200)),
    lastDay:Math.max(1,Math.min(365,Number(s.lastDay)||1))};
 }
@@ -100,7 +106,7 @@ function renderStudy(){
     <h3 data-charon-anchor="preparation">Preparando o coração</h3>
     <p>Separe alguns minutos para o silêncio. Peça a Deus humildade, atenção e coragem para viver aquilo que a passagem ensina. Leia o texto inteiro antes de consultar o comentário.</p>
     <h3>Leitura principal</h3>
-    <p data-charon-anchor="reference"><strong>${h(s.reference)}</strong> — leia o texto completo da ONBV no quadro acima, depois de importar a tradução. Os comentários usam a NVI como referência; para comparar as redações, consulte sua Bíblia NVI.</p>
+    <p data-charon-anchor="reference"><strong>${h(s.reference)}</strong> — abra a passagem na aba Bíblia ONBV. Os comentários usam a NVI como referência; para comparar as redações, consulte sua Bíblia NVI.</p>
     <p class="study-note" data-charon-anchor="insight"><b>Ideia central:</b> ${h(s.insight)}</p>
   </article>
   <article class="card">
@@ -119,9 +125,11 @@ function renderStudy(){
   <article class="card">
     <div class="section-kicker">04 · VIDA PRÁTICA</div>
     <h3>Aplicação para hoje</h3><p data-charon-anchor="practice">${h(s.practice)}</p>
-    <h3>Reflexão pessoal</h3><ol>${s.questions.map((q,i)=>`<li data-charon-anchor="question-${i}">${h(q)}</li>`).join('')}</ol>
-    <p class="small-note">Você pode responder a essas perguntas na aba <b>Anotações</b>; cada dia tem seu próprio caderno.</p>
-    <button class="outline" id="openJournal" type="button">✎ Escrever minhas reflexões</button>
+    <h3>Reflexão pessoal</h3>
+    <div class="study-answers">${s.questions.map((q,i)=>`<label class="answer-field"><span data-charon-anchor="question-${i}">${i+1}. ${h(q)}</span><textarea data-answer-index="${i}" rows="3" placeholder="Minha resposta...">${h(data.answersByDay[selectedDay]?.[i]||'')}</textarea></label>`).join('')}</div>
+    <label class="answer-field"><span>Minhas anotações deste estudo</span><textarea id="studyNotes" rows="5" placeholder="Escreva suas reflexões...">${h(data.notesByDay[selectedDay]||'')}</textarea></label>
+    <p class="small-note" id="studySaveStatus" role="status">As respostas e anotações são salvas neste aparelho e podem ser consultadas na aba Anotações.</p>
+    <button class="outline" id="openJournal" type="button">✎ Ver todas as anotações</button>
   </article>
   <article class="card prayer"><div class="section-kicker">05 · ORAÇÃO DO DIA</div><h3>Fala, Senhor: quero te ouvir</h3><p data-charon-anchor="prayer">${h(s.prayer)}</p></article>
   <article class="card challenge"><div class="section-kicker">06 · COMPROMISSO</div><h3>Desafio espiritual</h3>${checkItems().map(([key,label])=>`<label class="check"><input type="checkbox" data-task="${key}" ${data.checklistByDay[selectedDay]?.[key]?'checked':''}> <span>${h(label)}</span></label>`).join('')}
@@ -130,14 +138,19 @@ function renderStudy(){
   </article>
   ${next?`<article class="card next-card"><div class="section-kicker">PRÓXIMO ESTUDO</div><h3>Dia ${d(next.day)} — ${h(next.title)}</h3><p>Leitura: ${h(next.reference)}</p><button id="nextFromCard" class="outline" type="button">Ir para o próximo estudo →</button></article>`:`<article class="card next-card"><div class="section-kicker">JORNADA COMPLETA</div><h3>365 dias de aprendizado</h3><p>Você chegou à última etapa. Volte aos estudos, mantenha seu caderno e continue crescendo na Palavra.</p></article>`}`;
  $('#studyContent').innerHTML=html;
- $('#studyContent').querySelectorAll('.refs, [data-charon-anchor="reference"], .next-card p').forEach(node=>{
+ $('#studyContent').querySelectorAll('.refs, [data-charon-anchor="reference"], .next-card p, .more-study, [data-charon-anchor="context"], [data-charon-anchor="interpretation"], [data-charon-anchor="theology"], [data-charon-anchor="care"], [data-charon-anchor="practice"]').forEach(node=>{
   const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
   const re=/\b(?:[1-3]\s*)?[A-Za-zÀ-ÿ]+(?:\s+(?:dos|das|de|[A-Za-zÀ-ÿ]+)){0,3}\s+\d{1,3}(?::\d{1,3}(?:[–-]\d{1,3})?)?/g;
   nodes.forEach(text=>{if(text.parentElement?.closest('a,button'))return;const source=text.nodeValue;let match,last=0,frag=document.createDocumentFragment(),changed=false;while((match=re.exec(source))){const ref=match[0];if(!window.DevocionalBible?.parseReference?.(ref)?.length)continue;frag.append(document.createTextNode(source.slice(last,match.index)));const btn=document.createElement('button');btn.type='button';btn.className='scripture-link';btn.textContent=ref;btn.dataset.bibleRef=ref;frag.append(btn);last=re.lastIndex;changed=true}if(changed){frag.append(document.createTextNode(source.slice(last)));text.replaceWith(frag)}});
  });
- window.DevocionalBible?.renderStudyPassage?.();
+
  $('#favoriteStudy').addEventListener('click',()=>{data.favorites=fav?data.favorites.filter(x=>x!==selectedDay):uniqueDays([...data.favorites,selectedDay]);persist();renderStudy()});
  $('#openJournal').addEventListener('click',()=>showTab('journal'));
+ $('#studyNotes')?.addEventListener('input',e=>{data.notesByDay[selectedDay]=e.target.value;const ok=persist();$('#studySaveStatus').textContent=ok?'✓ Anotações salvas':'Não foi possível salvar. Exporte uma cópia de segurança.';});
+ $('#studyContent').querySelectorAll('[data-answer-index]').forEach(el=>el.addEventListener('input',()=>{
+  const arr=data.answersByDay[selectedDay]||[];arr[Number(el.dataset.answerIndex)]=el.value;data.answersByDay[selectedDay]=arr;
+  const ok=persist();$('#studySaveStatus').textContent=ok?'✓ Respostas salvas':'Não foi possível salvar. Exporte uma cópia de segurança.';
+ }));
  $$('[data-task]').forEach(el=>el.addEventListener('change',()=>{data.checklistByDay[selectedDay]={...(data.checklistByDay[selectedDay]||{}),[el.dataset.task]:el.checked};persist()}));
  $('#completeBtn').addEventListener('click',()=>{
    data.completed=completed?data.completed.filter(x=>x!==selectedDay):uniqueDays([...data.completed,selectedDay]);
@@ -151,6 +164,9 @@ function renderJournal(){
  const s=study(selectedDay);$('#journalContext').textContent=`Dia ${d(selectedDay)} — ${s.title} · ${s.reference}`;
  $('#notes').value=data.notesByDay[selectedDay]||'';
  $('#savedMsg').textContent='';
+ const answerArea=$('#journalAnswers');
+ if(answerArea){const questions=s.questions||[];answerArea.innerHTML=questions.map((q,i)=>`<label class="answer-field"><span>${i+1}. ${h(q)}</span><textarea rows="3" data-journal-answer="${i}">${h(data.answersByDay[selectedDay]?.[i]||'')}</textarea></label>`).join('');
+ answerArea.querySelectorAll('textarea').forEach(el=>el.addEventListener('input',()=>{const arr=data.answersByDay[selectedDay]||[];arr[Number(el.dataset.journalAnswer)]=el.value;data.answersByDay[selectedDay]=arr;persist();}));}
 }
 function storeNotes(){data.notesByDay[selectedDay]=$('#notes').value;const okay=persist();$('#savedMsg').textContent=okay?'Anotações deste dia salvas neste aparelho.':'Não foi possível salvar. Exporte uma cópia de segurança.';return okay}
 function renderVerses(){
@@ -353,5 +369,5 @@ document.addEventListener('DOMContentLoaded',()=>{
  const setFont=n=>{n=Math.max(14,Math.min(26,Number(n)||17));font.value=n;value.textContent=n+' px';document.documentElement.style.setProperty('--bible-font',n+'px')};
  setFont(localStorage.getItem('devocional.bibleFont')||17);font.addEventListener('input',()=>{setFont(font.value);localStorage.setItem('devocional.bibleFont',font.value)});
  document.getElementById('fontReset').addEventListener('click',()=>{setFont(17);localStorage.setItem('devocional.bibleFont','17')});
- document.addEventListener('click',e=>{const btn=e.target.closest('[data-bible-ref]');if(btn)window.DevocionalBible?.openReference?.(btn.dataset.bibleRef)});
+ document.addEventListener('click',e=>{const btn=e.target.closest('[data-bible-ref]');if(btn){window.DevocionalCharon?.pause?.();window.DevocionalAudio?.pause?.();window.DevocionalBible?.openReference?.(btn.dataset.bibleRef)}});
 });
