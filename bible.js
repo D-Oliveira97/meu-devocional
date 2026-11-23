@@ -33,7 +33,7 @@ function norm(s){return String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,''
 for(const b of BOOKS)aliases[norm(b[1])]=b[0];
 const el=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-let dbPromise=null,installed=false,readingBook='GEN',readingChapter=1,readingVerse=1,lastStudyRequest=0,importing=false,pickerTestament='OT';
+let dbPromise=null,installed=false,readingBook='GEN',readingChapter=1,readingVerse=1,lastStudyRequest=0,importing=false,pickerTestament='OT',pickerStage='book';
 function db(){
  if(dbPromise)return dbPromise;
  dbPromise=new Promise((resolve,reject)=>{
@@ -236,14 +236,16 @@ function stepChapter(direction){
  readingVerse=1;updateSelectors();renderChapter();el('bible').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function openReader(){if(typeof showTab==='function')showTab('bible');renderChapter();}
+function setPickerStage(stage){pickerStage=stage;document.querySelectorAll('[data-picker-stage]').forEach(b=>{b.classList.toggle('active',b.dataset.pickerStage===stage);b.setAttribute('aria-selected',String(b.dataset.pickerStage===stage))});for(const [name,cl] of [['book','.picker-books'],['chapter','.picker-chapters'],['verse','.picker-verses']])document.querySelector(cl)?.classList.toggle('hidden',stage!==name)}
 function renderVerseGrid(verses){const grid=el('verseGrid');if(!grid)return;grid.replaceChildren();for(const v of verses){const button=document.createElement('button');button.type='button';button.className='picker-tile'+(Number(v.n)===readingVerse?' selected':'');button.textContent=v.n;button.setAttribute('aria-label','Versículo '+v.n);button.addEventListener('click',()=>{readingVerse=Number(v.n);renderChapter()});grid.append(button)}}
 function renderPicker(){const books=el('bookGrid'),chapters=el('chapterGrid');if(!books||!chapters)return;books.replaceChildren();chapters.replaceChildren();el('pickerOT').classList.toggle('picker-active',pickerTestament==='OT');el('pickerNT').classList.toggle('picker-active',pickerTestament==='NT');
  const abbr=['Gn','Êx','Lv','Nm','Dt','Js','Jz','Rt','1Sm','2Sm','1Rs','2Rs','1Cr','2Cr','Ed','Ne','Et','Jó','Sl','Pv','Ec','Ct','Is','Jr','Lm','Ez','Dn','Os','Jl','Am','Ob','Jn','Mq','Na','Hc','Sf','Ag','Zc','Ml','Mt','Mc','Lc','Jo','At','Rm','1Co','2Co','Gl','Ef','Fp','Cl','1Ts','2Ts','1Tm','2Tm','Tt','Fm','Hb','Tg','1Pe','2Pe','1Jo','2Jo','3Jo','Jd','Ap'];
- BOOKS.forEach(([code,name],i)=>{if((i<39)!==(pickerTestament==='OT'))return;const button=document.createElement('button');button.type='button';button.className='picker-tile'+(readingBook===code?' selected':'');button.textContent=abbr[i];button.title=name;button.setAttribute('aria-label',name);button.addEventListener('click',()=>{readingBook=code;readingChapter=1;readingVerse=1;updateSelectors();renderChapter()});books.append(button)});
- for(let i=1;i<=byCode.get(readingBook)[2];i++){const button=document.createElement('button');button.type='button';button.className='picker-tile'+(readingChapter===i?' selected':'');button.textContent=i;button.addEventListener('click',()=>{readingChapter=i;readingVerse=1;updateSelectors();renderChapter()});chapters.append(button)}
+ BOOKS.forEach(([code,name],i)=>{if((i<39)!==(pickerTestament==='OT'))return;const button=document.createElement('button');button.type='button';button.className='picker-tile'+(readingBook===code?' selected':'');button.textContent=abbr[i];button.title=name;button.setAttribute('aria-label',name);button.addEventListener('click',()=>{readingBook=code;readingChapter=1;readingVerse=1;updateSelectors();renderChapter();setPickerStage('chapter')});books.append(button)});
+ for(let i=1;i<=byCode.get(readingBook)[2];i++){const button=document.createElement('button');button.type='button';button.className='picker-tile'+(readingChapter===i?' selected':'');button.textContent=i;button.addEventListener('click',()=>{readingChapter=i;readingVerse=1;updateSelectors();renderChapter();setPickerStage('verse')});chapters.append(button)}
 }
-function openReference(reference){const parts=parseReference(reference);if(!parts.length)return false;readingBook=parts[0].book;readingChapter=parts[0].startChapter;readingVerse=parts[0].startVerse||1;pickerTestament=BOOKS.findIndex(b=>b[0]===readingBook)<39?'OT':'NT';updateSelectors();openReader();return true}
+function openReference(reference){const parts=parseReference(reference);if(!parts.length)return false;readingBook=parts[0].book;readingChapter=parts[0].startChapter;readingVerse=parts[0].startVerse||1;pickerTestament=BOOKS.findIndex(b=>b[0]===readingBook)<39?'OT':'NT';updateSelectors();setPickerStage('verse');openReader();return true}
 function initialize(){
+ document.querySelectorAll('[data-picker-stage]').forEach(button=>button.addEventListener('click',()=>setPickerStage(button.dataset.pickerStage)));setPickerStage('book');
  el('pickerOT').addEventListener('click',()=>{pickerTestament='OT';renderPicker()});el('pickerNT').addEventListener('click',()=>{pickerTestament='NT';renderPicker()});
  const select=el('bibleBook');
  const antigo=document.createElement('optgroup');antigo.label='ANTIGO TESTAMENTO — 39 LIVROS';

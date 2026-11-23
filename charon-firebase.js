@@ -81,6 +81,7 @@ function renderTranscript(){
   para.append(strong,document.createTextNode(seg.text));frag.append(para);
  });
  box.append(frag);
+ const links=byId('charonReadingLinks');if(links){links.replaceChildren();const day=fieldsForDay(activeDay);const refs=[day.reference,...(Array.isArray(day.crossReferences)?day.crossReferences:[]),...(Array.isArray(day.cross_references)?day.cross_references:[])].filter(x=>typeof x==='string');const unique=[...new Set(refs)];if(unique.length){const heading=document.createElement('strong');heading.textContent='📖 Leituras relacionadas';links.append(heading)}unique.slice(0,12).forEach(ref=>{if(!window.DevocionalBible?.parseReference?.(ref)?.length)return;const btn=document.createElement('button');btn.type='button';btn.className='scripture-link reading-chip';btn.dataset.bibleRef=ref;btn.textContent=ref;links.append(btn)})}
 }
 function showSegmentAt(pos){
  if(!narration?.segments?.length)return;

@@ -146,3 +146,24 @@
 [data-theme=dark] .tabs{background:var(--paper)}[data-theme=dark] .stat-chip,[data-theme=dark] .reminder-shortcut{background:#27382f;color:var(--ink)}
 [data-theme=dark] .card h2,[data-theme=dark] .card h3,[data-theme=dark] .card h4,[data-theme=dark] h1,[data-theme=dark] .study-row .data>strong{color:#b6dfbd}
 @media(max-width:480px){.book-grid,.number-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:3px}.picker-tile{min-height:31px;font-size:10px}.compact-picker{margin:0 -4px}}
+
+/* v3.1: índice em etapas, leitura e acessibilidade */
+.picker-stages{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin:8px 0 12px}
+.picker-stage{background:transparent!important;border:0!important;border-bottom:3px solid transparent!important;border-radius:0!important;padding:10px 2px!important;font-size:11px!important;color:var(--ink)!important;font-weight:800}
+.picker-stage.active{border-bottom-color:#d9a12a!important}
+.book-grid,.number-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin:9px 0}
+.picker-tile{min-height:38px;border-radius:3px;font-size:13px}
+.charon-reading-links{display:flex;align-items:center;flex-wrap:wrap;gap:7px;padding:10px 12px;border-top:1px solid var(--line)}
+.charon-reading-links strong{width:100%;font-size:12px;color:var(--ink)}
+.reading-chip{padding:5px 9px;border:1px solid currentColor;border-radius:7px;font-size:12px!important}
+.android-audio-compact{margin:9px 0;border:1px solid var(--line);border-radius:10px;padding:7px 10px}
+.android-audio-compact>summary{cursor:pointer;font-size:13px;font-weight:750;color:var(--ink);display:flex;justify-content:space-between}
+.android-audio-compact .audio-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:9px}
+.android-audio-compact .audio-actions button{font-size:11px;padding:8px 3px;min-width:0}
+[data-theme=dark] .welcome,[data-theme=dark] .audio-heading,[data-theme=dark] .charon-panel,[data-theme=dark] .charon-follow-details,[data-theme=dark] .charon-transcript,[data-theme=dark] .charon-transcript-segment,[data-theme=dark] .charon-reading-links,[data-theme=dark] .charon-notice,[data-theme=dark] .charon-config,[data-theme=dark] .audio-settings,[data-theme=dark] .compact-picker,[data-theme=dark] .bible-reader-card{background:#202c26!important;color:#eaf3eb!important;border-color:#526858!important}
+[data-theme=dark] .charon-transcript-segment strong,[data-theme=dark] .charon-follow-details summary,[data-theme=dark] .charon-follow-label,[data-theme=dark] .charon-follow-explain,[data-theme=dark] .audio-heading h2,[data-theme=dark] .charon-heading h3,[data-theme=dark] .picker-heading,[data-theme=dark] .charon-panel p,[data-theme=dark] .audio-card p,[data-theme=dark] .welcome p{color:#eaf3eb!important}
+[data-theme=dark] .charon-transcript-segment.charon-speaking,[data-theme=dark] #studyContent [data-charon-anchor].charon-speaking{background:#4c4225!important;color:#fff2cc!important;border-left-color:#e5b64b!important}
+[data-theme=dark] .picker-tile.selected{background:#425e48!important;color:#fff!important;border-color:#d5ae56!important}
+[data-theme=dark] .scripture-link{color:#bce9c9!important}
+[data-theme=dark] .audio-disclaimer,[data-theme=dark] .small-note,[data-theme=dark] .section-kicker,[data-theme=dark] .bible-attribution{color:#c9d8cd!important}
+@media(max-width:480px){.book-grid,.number-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}.picker-tile{min-height:38px;font-size:13px}}
