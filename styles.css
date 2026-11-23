@@ -183,3 +183,6 @@
 .answer-field textarea{width:100%;min-height:88px;font:inherit;font-weight:400;line-height:1.5;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--white);color:var(--ink)}
 .study-answers,.journal-answers{margin:14px 0}
 #charonSetupNotice.hidden{display:none!important}
+
+.current-version{display:inline-block;background:#21583b;color:#fff!important;font-weight:800;padding:9px 14px;border-radius:10px;letter-spacing:.04em}
+#news h3{margin-top:24px}#news li{margin:7px 0;line-height:1.5}#startDateChoice{display:block;max-width:280px;margin:10px 0 12px}#startToday{margin-bottom:8px}

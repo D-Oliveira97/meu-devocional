@@ -5,7 +5,12 @@ const STORAGE_V2='meuDevocional.v2';
 const STORAGE_V1='meuDevocional.v1';
 const REMINDER_PREFS_KEY='meuDevocional.reminders.v1';
 const DEVOTIONAL_URL='https://d-oliveira97.github.io/meu-devocional/';
-const INITIAL_DATE={year:2026,month:10,day:22};
+const DEFAULT_START_DATE='2026-11-23';
+const START_DATE_KEY='devocional.startDate.v1';
+function planStartDate(){
+ let value=null;try{value=localStorage.getItem(START_DATE_KEY)}catch(_){}
+ return /^\d{4}-\d{2}-\d{2}$/.test(value||'')&&!Number.isNaN(Date.parse(value+'T12:00:00'))?value:DEFAULT_START_DATE;
+}
 const MAX_DAYS=365;
 let studies=[];
 let selectedDay=1;
@@ -58,7 +63,7 @@ function persist(){try{localStorage.setItem(STORAGE_V2,JSON.stringify(data));ret
 function h(s){return String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
 function htext(s){return h(s).replace(/\n/g,'<br>')}
 function d(n){return String(n).padStart(3,'0')}
-function todaysPlanDay(){const now=new Date();const t=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());const s=Date.UTC(INITIAL_DATE.year,INITIAL_DATE.month,INITIAL_DATE.day);return Math.max(1,Math.min(MAX_DAYS,Math.floor((t-s)/86400000)+1))}
+function todaysPlanDay(){const now=new Date();const t=Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());const [year,month,day]=planStartDate().split('-').map(Number);const s=Date.UTC(year,month-1,day);return Math.max(1,Math.min(MAX_DAYS,Math.floor((t-s)/86400000)+1))}
 function study(n){return studies[n-1]}
 function alertUser(message,type='success'){
  const el=$('#alert');el.textContent=message;el.classList.toggle('error',type==='error');el.classList.remove('hidden');
@@ -355,7 +360,7 @@ async function init(){
  }
  const daySelector=$('#daySelect');const options=document.createDocumentFragment();studies.forEach(s=>{const o=document.createElement('option');o.value=s.day;o.textContent=`${d(s.day)} · ${s.title}`;options.append(o)});daySelector.append(options);
  const filter=$('#weekFilter');const weeks=new Map(studies.map(s=>[s.week,s.theme]));weeks.forEach((title,week)=>{const opt=document.createElement('option');opt.value=week;opt.textContent=week===53?'Encerramento · Dia 365':`Semana ${String(week).padStart(2,'0')} · ${title}`;filter.append(opt)});
- const first=Object.keys(data.notesByDay).length||data.completed.length||data.favorites.length?data.lastDay:todaysPlanDay();
+ const first=todaysPlanDay();
  selectDay(first,{switchTab:false});showTab('study');
 }
 document.addEventListener('DOMContentLoaded',init);
@@ -363,6 +368,12 @@ document.addEventListener('DOMContentLoaded',init);
 // Preferências locais da versão 3.0: sem envio a servidores.
 document.addEventListener('DOMContentLoaded',()=>{
  const theme=document.getElementById('themeChoice'),font=document.getElementById('fontChoice'),value=document.getElementById('fontValue');
+ const startInput=document.getElementById('startDateChoice'),startStatus=document.getElementById('startDateStatus');
+ if(startInput){
+  const showStart=()=>{startInput.value=planStartDate();startStatus.textContent=`Início: ${startInput.value.split('-').reverse().join('/')} · Hoje corresponde ao Dia ${String(todaysPlanDay()).padStart(3,'0')}.`};
+  showStart();startInput.addEventListener('change',()=>{if(!startInput.value)return;try{localStorage.setItem(START_DATE_KEY,startInput.value)}catch(_){alertUser('Não foi possível salvar a data.','error');return}showStart();selectDay(todaysPlanDay(),{scroll:true});alertUser('Data de início atualizada. Seus registros anteriores foram preservados.')});
+  document.getElementById('startToday')?.addEventListener('click',()=>{const now=new Date();startInput.value=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');startInput.dispatchEvent(new Event('change'))});
+ }
  const applyTheme=()=>{const choice=theme.value;document.documentElement.dataset.theme=choice==='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):choice};
  theme.value=localStorage.getItem('devocional.theme')||'auto';applyTheme();theme.addEventListener('change',()=>{localStorage.setItem('devocional.theme',theme.value);applyTheme()});
  const media=matchMedia('(prefers-color-scheme: dark)');media.addEventListener?.('change',()=>{if(theme.value==='auto')applyTheme()});

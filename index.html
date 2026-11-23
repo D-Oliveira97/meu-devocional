@@ -8,7 +8,7 @@
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=16.0">
+  <link rel="stylesheet" href="styles.css?v=17.0">
   <title>Meu Devocional · 365 estudos · Charon contínua</title>
 </head>
 <body>
@@ -228,8 +228,13 @@
         <p>Não é necessário compartilhar suas anotações ou conceder acesso ao aplicativo à sua conta Google. O botão apenas abre a tela de criação de evento da sua agenda.</p>
       </article>
     </section>
-    <section id="news" class="panel hidden" aria-label="Novidades"><article class="card"><h2>✦ Novidades</h2><p>Novidades do Meu Devocional 3.1</p><p>Índice bíblico por livro, capítulo e versículo; referências clicáveis durante a narração; tema noturno aprimorado; controles de áudio compactos e ajustes de leitura.</p><p>Os estudos e a narração Charon continuam disponíveis.</p></article></section>
-    <section id="settings" class="panel hidden" aria-label="Configurações"><article class="card"><h2>⚙ Configurações</h2><p>Personalize sua leitura e o áudio do aplicativo.</p><label for="themeChoice">Aparência</label><select id="themeChoice"><option value="auto">Automático (Android)</option><option value="light">Claro</option><option value="dark">Escuro</option></select><label for="fontChoice">Tamanho do texto bíblico</label><input type="range" id="fontChoice" min="14" max="26" step="1" value="17"><output id="fontValue" for="fontChoice">17 px</output><button type="button" class="outline" id="fontReset">Restaurar tamanho</button></article><article class="card"><h2>🎧 Áudio e voz Charon</h2>          <label class="charon-continuous-choice" for="charonContinuous"><input type="checkbox" id="charonContinuous" checked><span><strong>🎧 Reprodução contínua (audiolivro)</strong><small>Prepara todos os trechos e reúne em uma única faixa antes de tocar. Na primeira vez pode levar alguns minutos; não faz solicitações extras além das já necessárias. Desmarque para começar mais rápido, parte por parte.</small></span></label>
+    <section id="news" class="panel hidden" aria-label="Novidades"><article class="card"><h2>✦ Novidades</h2><p class="current-version">VERSÃO ATUAL · 3.3</p>
+<h3>Versão 3.3 — 23/11/2026</h3><ul><li>Dia 001 começa em 23/11/2026 por padrão.</li><li>Data inicial personalizável em Configurações, com botão para iniciar hoje.</li><li>Histórico de atualizações reunido nesta aba.</li></ul>
+<h3>Versão 3.2</h3><ul><li>Modo noturno com preto OLED e ajustes de contraste.</li><li>Tela inicial simplificada, sem explicações técnicas da voz ou passagem bíblica duplicada.</li><li>Referências bíblicas interativas ampliadas e tentativa de pausa automática do áudio ao abrir referências.</li><li>Respostas e anotações diretamente no estudo, integradas à aba Anotações e ao backup.</li></ul>
+<h3>Versão 3.1</h3><ul><li>Índice por livro, capítulo e versículo, dividido entre Antigo e Novo Testamento.</li><li>Referências clicáveis na área de acompanhamento da narração.</li><li>Aba Novidades e controles de áudio Android compactos.</li><li>Melhorias de contraste no modo noturno.</li></ul>
+<h3>Versão 3.0</h3><ul><li>Seção Estudo em áudio simplificada e ajustes da voz em Configurações.</li><li>Navegação bíblica compacta e referências clicáveis.</li><li>Modo claro, escuro e automático e ajuste do tamanho do texto bíblico.</li></ul>
+<h3>Versão 2.9</h3><ul><li>Narração contínua, acompanhamento sincronizado aproximado do texto e opção de avançar para o próximo estudo.</li></ul></article></section>
+    <section id="settings" class="panel hidden" aria-label="Configurações"><article class="card"><h2>⚙ Configurações</h2><p>Personalize sua leitura e o áudio do aplicativo.</p><label for="startDateChoice">Data de início da jornada</label><input type="date" id="startDateChoice" value="2026-11-23"><button type="button" class="outline" id="startToday">Começar hoje</button><p class="small-note" id="startDateStatus" role="status"></p><p class="small-note">A mudança reorganiza o calendário do plano, mas não apaga anotações nem estudos concluídos. Os registros permanecem associados ao número de cada estudo.</p><label for="themeChoice">Aparência</label><select id="themeChoice"><option value="auto">Automático (Android)</option><option value="light">Claro</option><option value="dark">Escuro</option></select><label for="fontChoice">Tamanho do texto bíblico</label><input type="range" id="fontChoice" min="14" max="26" step="1" value="17"><output id="fontValue" for="fontChoice">17 px</output><button type="button" class="outline" id="fontReset">Restaurar tamanho</button></article><article class="card"><h2>🎧 Áudio e voz Charon</h2>          <label class="charon-continuous-choice" for="charonContinuous"><input type="checkbox" id="charonContinuous" checked><span><strong>🎧 Reprodução contínua (audiolivro)</strong><small>Prepara todos os trechos e reúne em uma única faixa antes de tocar. Na primeira vez pode levar alguns minutos; não faz solicitações extras além das já necessárias. Desmarque para começar mais rápido, parte por parte.</small></span></label>
           <p class="charon-meta">Os trechos já gerados ficam salvos neste aparelho. No modo contínuo, a narração começa depois que todos estiverem prontos; não é necessário gerar o áudio novamente. O primeiro preparo exige internet e pode esgotar a cota gratuita; com a tela bloqueada, o funcionamento depende do navegador.</p>
           <details class="charon-config" id="charonConfigDetails"><summary>⚙ Configurar o Firebase gratuito (Spark) / Charon</summary>
             <p>Configure um projeto <strong>Firebase Spark sem faturamento</strong> e ative <strong>AI Logic — Gemini Developer API</strong> com <strong>App Check / reCAPTCHA Enterprise</strong> para o domínio do seu site. Use somente as configurações <strong>públicas do aplicativo Web Firebase</strong>. Não use uma chave privada da API do Gemini aqui.</p>
@@ -246,10 +251,10 @@
 </article></section>
   </main>
   <footer><span>“Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.”</span><br><b>Salmos 119:105 · referência NVI</b><p>Meu Devocional · jornada anual</p></footer>
-  <script src="app.js?v=16.0" defer></script>
-  <script src="audio.js?v=16.0" defer></script>
-  <script type="module" src="charon-firebase.js?v=16.0"></script>
+  <script src="app.js?v=17.0" defer></script>
+  <script src="audio.js?v=17.0" defer></script>
+  <script type="module" src="charon-firebase.js?v=17.0"></script>
   <script src="jszip.min.js?v=8.0" defer></script>
-  <script src="bible.js?v=16.0" defer></script>
+  <script src="bible.js?v=17.0" defer></script>
 </body>
 </html>
