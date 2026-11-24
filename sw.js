@@ -1,6 +1,6 @@
-/* Meu Devocional 2.9 · cache offline sem MP3 externo */
-const CACHE_NAME='meu-devocional-365-v17';
-const ASSETS=['./','./index.html','./styles.css?v=17.0','./app.js?v=17.0','./audio.js?v=17.0','./charon-firebase.js?v=17.0','./jszip.min.js?v=17.0','./bible.js?v=17.0','./studies.json','./manifest.webmanifest','./icon.svg'];
+/* Meu Devocional 3.3.1 · cache offline sem MP3 externo */
+const CACHE_NAME='meu-devocional-365-v18';
+const ASSETS=['./','./index.html','./styles.css?v=17.0','./app.js?v=17.0','./audio.js?v=17.0','./charon-firebase.js?v=17.0','./jszip.min.js?v=17.0','./bible.js?v=17.0','./studies.json','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png','./icon-maskable-512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(names=>Promise.all(names.filter(name=>name.startsWith('meu-devocional-')&&name!==CACHE_NAME).map(name=>caches.delete(name)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{
