@@ -1,4 +1,4 @@
-MEU DEVOCIONAL 3.5.1 — 26/11/2026
+MEU DEVOCIONAL 3.5.2 — 26/11/2026
 - Controle flutuante circular: toque para pausar ou retomar; arraste para mover. A posição é salva neste navegador.
 - Para parar, utilize os comandos de áudio originais; para retornar, toque na aba Estudo.
 - Nenhuma alteração nos estudos, dados locais ou motores de áudio.
@@ -132,3 +132,6 @@ Para retirar a amostra também do repositório público, abra cada arquivo antig
   dia-001-benicio.mp3
 Só faça isso APÓS publicar esta versão, que já não depende deles.
 O novo Service Worker troca para cache v12 e apaga os caches antigos da aplicação, sem limpar as anotações, favoritos, importação da Bíblia ou áudios Charon salvos em IndexedDB.
+
+
+3.5.2: roteiro completo da preparação e primeiro parágrafo da interpretação. Os estudos narrados usam novas chaves de cache e são gerados novamente sob demanda, dentro da cota gratuita. As orações e demais dados permanecem intactos.

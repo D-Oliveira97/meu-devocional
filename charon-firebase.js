@@ -1,4 +1,4 @@
-/* Meu Devocional 2.9 · Charon contínua, realce aproximado por parágrafo e próxima narração */
+/* Meu Devocional 3.5.2 · roteiro integral dos comentários e realce aproximado */
 'use strict';
 const STORAGE_KEY = 'meuDevocional.charon.firebase.v1';
 const CONTINUOUS_PREF_KEY = 'meuDevocional.charon.continuous.v1';
@@ -44,9 +44,8 @@ async function getModel(){
 }
 function fieldsForDay(day){const s=window.DevocionalAudio?.study?.(day);if(!s)throw new Error('Os estudos não foram carregados ainda.');return s}
 function stripExtras(html){const d=document.createElement('div');d.innerHTML=html||'';d.querySelectorAll('script,style,button,a,nav').forEach(n=>n.remove());return [...d.querySelectorAll('h3,h4,p,li')].map(e=>clean(e.textContent)).filter(Boolean).join(' ')}
-// Os segmentos mantêm exatamente o roteiro da versão 2.8: os áudios já guardados
-// no IndexedDB continuam válidos. Os tempos do destaque são estimados pela duração
-// real de cada WAV e pelo tamanho de cada trecho de texto; NÃO há timestamps de palavras.
+// Roteiro revisado para acompanhar as seções do estudo na ordem da tela.
+// Os tempos continuam estimados pela duração real de cada WAV; não há timestamps de palavras.
 function narrationFor(s,onlyPrayer){
  const segments=[];
  const add=(key,label,text)=>{const normalized=clean(text);if(normalized)segments.push({key,label,text:normalized});};
@@ -54,10 +53,11 @@ function narrationFor(s,onlyPrayer){
  else {
    add('intro','Apresentação',`Meu Devocional. Dia ${s.day} de 365. ${s.title}.`);
    add('reference','Passagem de referência',`Leitura bíblica de referência: ${s.reference}. Nesta narração ouviremos os comentários e aplicações. A leitura integral da Bíblia ONBV fica no leitor bíblico separado.`);
-   add('preparation','Preparando o coração','Preparando o coração: Separe um momento para receber a Palavra de Deus com atenção e humildade.');
+   add('preparation','Preparando o coração','Preparando o coração: Separe alguns minutos para o silêncio. Peça a Deus humildade, atenção e coragem para viver aquilo que a passagem ensina. Leia o texto inteiro antes de consultar o comentário.');
    add('insight','Ideia central',`Ideia central: ${s.insight}`);
    add('context','Contexto histórico',`Contexto histórico e literário: ${s.context}`);
-   add('interpretation','Observando a passagem',`Observando a passagem: ${s.interpretation}`);
+   add('interpretation','Como observar o texto',`Como observar o texto: ${s.interpretation}`);
+   add('insight-repeat','O que a passagem ensina?',`O que a passagem ensina? ${s.insight}`);
    add('theology','Conexões bíblicas',`Conexões bíblicas: ${s.theology}`);
    add('crossReferences','Referências para aprofundar',`Referências para aprofundar: ${s.crossReferences}`);
    add('care','Cuidado ao interpretar',`Um cuidado ao interpretar: ${s.care}`);
@@ -71,7 +71,7 @@ function narrationFor(s,onlyPrayer){
  return {text:segments.map(seg=>seg.text).join('\n\n'),segments};
 }
 function composeText(s,onlyPrayer){return narrationFor(s,onlyPrayer).text;}
-// O roteiro e a chave de cache permanecem idênticos; somente a apresentação muda.
+// A apresentação acompanha o roteiro revisado.
 function renderTranscript(){highlightedKey=null;window.DevocionalFollow?.clear('charon');}
 function showSegmentAt(pos){
  if(!narration?.segments?.length)return;
@@ -109,7 +109,7 @@ async function listenNextDay(){
  await start('study');
 }
 // Divide por sentenças/palavras, sem cortar nenhum conteúdo para caber no limite de uma chamada.
-function chunk(text,max=MAX_CHUNK){const sentences=text.replace(/\r/g,'').split(/(?<=[.!?;:\n])\s+/u).filter(Boolean);const out=[];let buf='';
+function chunk(text,max=MAX_CHUNK){const sentences=clean(text).split(/(?<=[.!?;:])\s+/u).filter(Boolean);const out=[];let buf='';
  const flush=()=>{if(buf){out.push(buf.trim());buf=''}};
  for(const sentence of sentences){if((buf+' '+sentence).trim().length<=max){buf=(buf+' '+sentence).trim();continue}flush();if(sentence.length<=max){buf=sentence;continue}
   for(const word of sentence.split(/\s+/)){if((buf+' '+word).trim().length>max)flush();if(word.length>max){for(let i=0;i<word.length;i+=max)out.push(word.slice(i,i+max))}else{buf=(buf+' '+word).trim()}}}
@@ -121,7 +121,8 @@ async function cacheGet(key){const db=await openDB();if(!db)return null;return n
 async function cachePut(key,blob){const db=await openDB();if(!db)return;return new Promise(resolve=>{try{const tx=db.transaction('audio','readwrite');tx.objectStore('audio').put(blob,key);tx.oncomplete=()=>resolve();tx.onerror=()=>resolve()}catch(_){resolve()}})}
 function quota(){const day=new Date().toLocaleDateString('en-CA',{timeZone:'America/Sao_Paulo'});const key='meuDevocional.charon.localQuota.v1';let s;try{s=JSON.parse(localStorage.getItem(key)||'null')}catch(_){}if(!s||s.date!==day)s={date:day,count:0};return {count:s.count,inc(){s.count++;try{localStorage.setItem(key,JSON.stringify(s))}catch(_){}}}}
 function decode(b64){const parts=[];for(let i=0;i<b64.length;i+=32768){const bin=atob(b64.slice(i,i+32768));const bytes=new Uint8Array(bin.length);for(let k=0;k<bin.length;k++)bytes[k]=bin.charCodeAt(k);parts.push(bytes)}return new Blob(parts,{type:'audio/wav'});}
-async function loadPart(text,day,mode,i){const key=`${MODEL}:Charon:${day}:${mode}:${i}:${hash(text)}`;let wav=await cacheGet(key);if(wav)return {wav,cached:true};
+async function loadPart(text,day,mode,i){// Apenas estudos usam o novo namespace: gravações antigas incompletas não serão reutilizadas.
+ const key=`${MODEL}:Charon:${day}:${mode==='study'?'study-full-v2':mode}:${i}:${hash(text)}`;let wav=await cacheGet(key);if(wav)return {wav,cached:true};
  if(!navigator.onLine)throw new Error('Sem internet. Este trecho ainda não foi baixado.');
  const q=quota();if(q.count>=DAILY_LIMIT)throw new Error('Limite local de 12 gerações por dia atingido. Os trechos já baixados continuam disponíveis.');
  const m=await getModel();q.inc(); // Limite conservador, mesmo se a chamada falhar
