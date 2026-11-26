@@ -12,7 +12,8 @@ let parts=[], partIndex=0, preparing=false, paused=false, playingContinuous=fals
 let narration=null, partOffsets=[], partDurations=[], timeline=[], highlightedKey=null;
 let cacheDB=null;
 const clean=t=>String(t??'').replace(/\s+/g,' ').trim();
-const status=t=>{byId('charonStatus').textContent=t;};
+const notify=()=>window.DevocionalMiniPlayer?.refresh();
+const status=t=>{byId('charonStatus').textContent=t;notify();};
 const notice=(t,type='ok')=>{const el=byId('charonSetupNotice');el.textContent=t;el.dataset.type=type;};
 function readCfg(){try{const c=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');return validate(c)?c:null}catch(_){return null}}
 function validate(c){return !!(c&&typeof c==='object'&&/^[-\w]{4,80}$/.test(c.projectId||'')&&/^1:[\w:.-]{12,200}$/.test(c.appId||'')&&/^AIza[\w-]{20,100}$/.test(c.apiKey||'')&&/^[\w-]{12,150}$/.test(c.siteKey||''))}
@@ -195,9 +196,20 @@ async function playContinuous(token) {
  }
 }
 function release(){if(audioURL){URL.revokeObjectURL(audioURL);audioURL=null}}
-function pause(){paused=true;if(player&&!player.paused)player.pause()}
+function playbackState(){
+ const hasTrack=!!(parts.length&&player?.getAttribute('src')&&!player.ended);
+ return {day:activeDay,mode:currentMode,state:preparing?(paused?'waiting-paused':'preparing'):hasTrack?(player.paused?'paused':'playing'):'idle'};
+}
+function pause(){if(!preparing&&playbackState().state==='idle')return;paused=true;if(player&&!player.paused)player.pause();notify()}
+async function resume(){
+ const state=playbackState().state;
+ if(state==='waiting-paused'){paused=false;notify();return}
+ if(state!=='paused')return;
+ paused=false;
+ try{await player.play()}catch(_){paused=true;status('Toque em retomar para tentar novamente.')}finally{notify()}
+}
 function stop(){runId++;preparing=false;paused=false;playingContinuous=false;parts=[];partIndex=0;partOffsets=[];partDurations=[];timeline=[];narration=null;clearHighlights();nextButtonVisible(false);if(player){player.pause();player.removeAttribute('src');player.load()}release();status('Narração interrompida.');}
-function setDay(day){if(day!==activeDay){activeDay=day;stop()}try{narration=narrationFor(fieldsForDay(day),false);renderTranscript()}catch(_){}}
+function setDay(day){if(day!==activeDay){activeDay=day;stop()}else if(playbackState().state!=='idle')return;try{narration=narrationFor(fieldsForDay(day),false);renderTranscript()}catch(_){}}
 async function playNext(token){if(token!==runId)return;if(partIndex>=parts.length){finished();return}
  const current=partIndex;preparing=true;status(`Preparando trecho ${current+1} de ${parts.length} com Charon...`);
  try{const r=await loadPart(parts[current],activeDay,currentMode,current);if(token!==runId)return;
@@ -209,7 +221,7 @@ async function playNext(token){if(token!==runId)return;if(partIndex>=parts.lengt
 }
 let currentMode='study';
 async function start(mode){if(!configured){if(typeof showTab==='function')showTab('settings');byId('charonConfigDetails').open=true;byId('charonConfigDetails').scrollIntoView({behavior:'smooth',block:'nearest'});status('Primeiro configure o Firebase Spark sem faturamento.');return}
- const day=Number(byId('daySelect')?.value||1);try{const s=fieldsForDay(day);const nextNarration=narrationFor(s,mode==='prayer');const txt=nextNarration.text;if(!txt.trim())throw new Error('Texto do estudo não encontrado.');
+ const day=Number(byId('daySelect')?.value||1);if(day===activeDay&&mode===currentMode&&['paused','waiting-paused'].includes(playbackState().state))return resume();try{const s=fieldsForDay(day);const nextNarration=narrationFor(s,mode==='prayer');const txt=nextNarration.text;if(!txt.trim())throw new Error('Texto do estudo não encontrado.');
    window.DevocionalAudio?.stop?.('Narração em reprodução.');
    stop();activeDay=day;currentMode=mode;narration=nextNarration;renderTranscript();parts=chunk(txt);prepareOffsets();partIndex=0;runId++;if(byId('charonContinuous')?.checked)await playContinuous(runId);else await playNext(runId);
  }catch(e){status('Não foi possível começar: '+(e.message||e));}}
@@ -228,6 +240,7 @@ function init(){player=byId('charonAudio');activeDay=Number(byId('daySelect')?.v
  byId('charonStudy').addEventListener('click',playStudy);byId('charonPrayer').addEventListener('click',playPrayer);byId('charonStop').addEventListener('click',stop);
  player.addEventListener('ended',()=>{if(playingContinuous){finished();return}partIndex++;playNext(runId)});
  player.addEventListener('timeupdate',syncTranscript);
+ for(const event of ['play','pause','ended','loadedmetadata','emptied'])player.addEventListener(event,notify);
  player.addEventListener('seeked',syncTranscript);
  byId('charonNextDay').addEventListener('click',listenNextDay);
  player.addEventListener('error',()=>{if(player.src)status('Falha ao reproduzir este trecho. Tente novamente.')});
@@ -236,5 +249,5 @@ function init(){player=byId('charonAudio');activeDay=Number(byId('daySelect')?.v
  configureUI();
  try{narration=narrationFor(fieldsForDay(activeDay),false);renderTranscript()}catch(_){}
 }
-window.DevocionalCharon={pause,stop,setDay,isConfigured,playStudy,playPrayer};
+window.DevocionalCharon={pause,resume,stop,setDay,isConfigured,playStudy,playPrayer,playbackState};
 document.addEventListener('DOMContentLoaded',init);

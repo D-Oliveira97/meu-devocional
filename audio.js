@@ -90,6 +90,7 @@
   const part=queue[index]?.partIndex??-1;
   byId('audioPrev').disabled=!playing&&!paused||part<=0;
   byId('audioNext').disabled=!playing&&!paused||part<0||part>=parts.length-1||mode==='prayer';
+  window.DevocionalMiniPlayer?.refresh();
  }
  function cancelAudio(){
   runToken++;
@@ -176,6 +177,8 @@
   // Cancelar e retomar desde o início do trecho é mais previsível que pause/resume no Android.
   cancelAudio();playing=false;paused=true;updateUI();status('Pausado. Ao retomar, o trecho atual será repetido.');
  }
+ function playbackState(){return {day:currentDay,mode,state:playing?'playing':paused&&queue.length?'paused':'idle'};}
+ function resume(){if(paused&&queue.length&&!playing){window.DevocionalCharon?.pause?.();togglePause()}}
  function togglePause(){
   if(playing){pause();return}
   if(paused&&queue.length){cancelAudio();playing=true;paused=false;updateUI();speakNext(runToken)}
@@ -216,6 +219,6 @@
   updateUI();
   window.addEventListener('pagehide',()=>{if(playing)cancelAudio()});
  }
- window.DevocionalAudio={setDay,stop,pause,togglePause,playBibleParts,selectedDay:()=>typeof selectedDay!=='undefined'?selectedDay:currentDay,study:day=>typeof study==='function'?study(day):null};
+ window.DevocionalAudio={setDay,stop,pause,resume,playbackState,togglePause,playBibleParts,selectedDay:()=>typeof selectedDay!=='undefined'?selectedDay:currentDay,study:day=>typeof study==='function'?study(day):null};
  document.addEventListener('DOMContentLoaded',initialize);
 })();

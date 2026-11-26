@@ -203,3 +203,30 @@
 .compact-progress{padding:8px 10px;margin:6px 0 0}.compact-progress p{font-size:12px;margin:0 0 5px}
 .android-audio-compact summary{cursor:pointer}.bible-credits summary{cursor:pointer;font-weight:700;color:var(--green)}
 [data-theme="dark"] .picker-active,[data-theme="dark"] .tab.active{background:#314b39!important;color:#fff!important;border-color:#a6c4ad!important}
+
+/* 3.5 — mini player sem modal, modo OLED sem grandes preenchimentos */
+.mini-player{position:fixed;z-index:30;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(620px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--white);border:1px solid var(--line);border-radius:12px;color:var(--ink);box-shadow:0 4px 20px #0003}
+.mini-player[hidden],.mini-player [hidden]{display:none!important}
+.mini-copy{display:flex;flex-direction:column;min-width:0;line-height:1.35}.mini-copy strong{font-size:13px}.mini-copy small{font-size:11px;color:var(--muted)}
+.mini-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.mini-actions button{min-height:44px;margin:0;padding:7px 10px;font-size:12px}.mini-actions #miniStop{min-width:44px}
+.has-mini-player main{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))}.has-mini-player textarea{scroll-margin-bottom:120px}
+@media(max-width:440px){.mini-player{flex-wrap:wrap;gap:5px}.mini-actions{flex:1;justify-content:flex-end}.mini-copy{flex:1 0 100%}.mini-actions #miniToggle{flex:1}.has-mini-player main{padding-bottom:150px}}
+/* Preserve line wrapping while highlight advances; no paragraph reflow. */
+#studyContent [data-charon-anchor].charon-speaking{padding:0;box-shadow:-4px 0 #b98b39;outline:1px solid #bc9651;outline-offset:3px}
+#studyContent .study-note.charon-speaking,#studyContent .refs.charon-speaking{padding:8px 12px}
+[data-theme=dark]{--paper:#000;--white:#000;--ink:#f3f3f3;--muted:#c1c1c1;--line:#484848;--green:#b8e3c7;--green2:#b8e3c7;color-scheme:dark;background:#000}
+[data-theme=dark] :is(body,main,.top,.tabs,.welcome,.card,.audio-card,.hero-card,.bible-hero,.bible-install,.info-card,.prayer,.study-row,.day-navigation,.refs,.study-note,.onbv-verses,.bible-status,.audio-progress,.reminder-preview,.canon-summary,.bible-ready,.charon-panel,.charon-follow-details,.charon-transcript,.charon-transcript-segment,.charon-reading-links,.charon-notice,.charon-config,.audio-settings,.compact-picker,.bible-reader-card,.audio-heading,.audio-icon,.charon-icon,.charon-continuous-choice,.mini-player,.month-stat,.stat-chip,.reminder-shortcut,.favorite-toggle,.current-version,.alert,.empty-state,.reminder-link,.reminder-icon){background:#000!important;color:var(--ink)!important;border-color:var(--line)!important;box-shadow:none}
+[data-theme=dark] :is(.tab,.outline,.primary,.picker-tile,input:not([type=checkbox]),select,textarea,.install){background:#000!important;color:var(--ink)!important;border:1px solid var(--line)!important}
+[data-theme=dark] :is(.tab.active,.picker-active,.picker-tile.selected,.favorite-toggle.is-saved,.primary,.current-version,#miniToggle){background:#000!important;color:#b8e3c7!important;border:1px solid #a5d4b4!important}
+[data-theme=dark] :is(.tab.active,.picker-active,.picker-tile.selected){border-color:#dfbd80!important;color:#ffdc95!important}
+[data-theme=dark] :is(.text-btn,.day-middle label,.bible-ready strong,.onbv-verse sup,.onbv-verse .verse-number,.canon-summary strong,.reminder-link,.audio-skip-btn,.welcome-foot){color:#b8e3c7!important}
+[data-theme=dark] :is(.progress-track,.audio-track){background:#000!important;border:1px solid #555}
+[data-theme=dark] :is(#audioTrackBar,.progress-track div){background:#b8e3c7}
+[data-theme=dark] .hero-card .tag{background:#000;color:#f3f3f3;border-color:var(--line)}
+[data-theme=dark] .onbv-verse.selected-verse{background:#000!important;outline:1px solid #dfbd80;color:#fff0bd!important}
+[data-theme=dark] #studyContent [data-charon-anchor].charon-speaking{background:#000!important;color:#ffdf97!important;box-shadow:-4px 0 #dfbd80!important;outline:1px solid #dfbd80}
+[data-theme=dark] :is(input,textarea)::placeholder{color:#aaa}
+[data-theme=dark] .alert.error,[data-theme=dark] .bible-status[data-type=error]{color:#ffc1af!important;border-color:#b67864!important}
+[data-theme=dark] .picker-stage{background:#000!important;border:0!important;border-bottom:3px solid transparent!important}
+[data-theme=dark] .picker-stage.active{border-bottom-color:#dfbd80!important}
+#studyContent .study-note.charon-speaking{padding:10px 14px}

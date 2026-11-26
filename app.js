@@ -70,6 +70,7 @@ function alertUser(message,type='success'){
  clearTimeout(alertUser.timeout);alertUser.timeout=setTimeout(()=>el.classList.add('hidden'),6500);
 }
 function showTab(name){
+ window.DevocionalMiniPlayer?.beforeTab(page,name);
  page=name;
  $('.welcome')?.classList.toggle('hidden',name==='bible');
  $$('.tab').forEach(btn=>{const active=btn.dataset.tab===name;btn.classList.toggle('active',active);btn.setAttribute('aria-selected',String(active))});
@@ -81,6 +82,7 @@ function showTab(name){
  if(name==='reminders')updateReminderPreview();
  if(name==='bible')window.DevocionalBible?.renderChapter?.();
  if(name==='study')window.DevocionalFollow?.refresh();
+ window.DevocionalMiniPlayer?.afterTab(name);
 }
 function selectDay(n,{switchTab=true,scroll=false}={}){
  selectedDay=Math.max(1,Math.min(MAX_DAYS,Math.floor(Number(n)||1)));
@@ -380,7 +382,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   showStart();startInput.addEventListener('change',()=>{if(!startInput.value)return;try{localStorage.setItem(START_DATE_KEY,startInput.value)}catch(_){alertUser('Não foi possível salvar a data.','error');return}showStart();selectDay(todaysPlanDay(),{scroll:true});alertUser('Data de início atualizada. Seus registros anteriores foram preservados.')});
   document.getElementById('startToday')?.addEventListener('click',()=>{const now=new Date();startInput.value=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');startInput.dispatchEvent(new Event('change'))});
  }
- const applyTheme=()=>{const choice=theme.value;document.documentElement.dataset.theme=choice==='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):choice};
+ const applyTheme=()=>{const choice=theme.value;const resolved=choice==='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):choice;document.documentElement.dataset.theme=resolved;document.querySelector('meta[name=theme-color]')?.setAttribute('content',resolved==='dark'?'#000000':'#173d32')};
  theme.value=localStorage.getItem('devocional.theme')||'auto';applyTheme();theme.addEventListener('change',()=>{localStorage.setItem('devocional.theme',theme.value);applyTheme()});
  const media=matchMedia('(prefers-color-scheme: dark)');media.addEventListener?.('change',()=>{if(theme.value==='auto')applyTheme()});
  const setFont=n=>{n=Math.max(14,Math.min(26,Number(n)||17));font.value=n;value.textContent=n+' px';document.documentElement.style.setProperty('--bible-font',n+'px')};
@@ -396,4 +398,38 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(scroll&&target&&page==='study'&&document.visibilityState==='visible'&&!document.activeElement?.matches('textarea,input,select,[contenteditable=true]')){const r=target.getBoundingClientRect();const nav=document.querySelector('.tabs')?.getBoundingClientRect();const top=Math.max(155,nav?.bottom||0)+12;if(r.top<top||r.top>innerHeight*.65)window.scrollTo({top:Math.max(0,scrollY+r.top-top),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}}
  window.DevocionalFollow={show(source,next){if(owner===source&&key===next)return;owner=source;key=next;paint(true)},clear,refresh(){paint(false)}};
  document.addEventListener('DOMContentLoaded',()=>{const box=document.getElementById('followStudy');try{box.checked=localStorage.getItem(pref)!=='false'}catch(_){}box.addEventListener('change',()=>{try{localStorage.setItem(pref,String(box.checked))}catch(_){}paint(box.checked)})});
+})();
+
+
+/* 3.5 — controle flutuante e pausa ao consultar ou escrever. */
+(()=>{
+ let savedScroll=null;
+ const engines=()=>[window.DevocionalCharon,window.DevocionalAudio].filter(Boolean);
+ const entries=()=>engines().map(engine=>({engine,...engine.playbackState?.()})).filter(x=>x.state&&x.state!=='idle');
+ const isStudy=x=>x.mode==='study'||x.mode==='prayer'||x.mode==='bible-study';
+ function current(){const list=entries();return list.find(x=>['playing','preparing'].includes(x.state))||list.find(x=>isStudy(x)&&x.day===selectedDay)||list[0]}
+ function pauseAll(){engines().forEach(engine=>engine.pause?.());refresh()}
+ function refresh(){
+  const panel=document.getElementById('miniPlayer');if(!panel)return;
+  const item=current();panel.hidden=!item;document.body.classList.toggle('has-mini-player',!!item);if(!item)return;
+  const active=item.state==='playing',preparing=item.state==='preparing',waiting=item.state==='waiting-paused';
+  const action=document.getElementById('miniToggle');
+  const label=active?'Pausar':preparing?'Pausar preparo':waiting?'Retomar quando pronto':'Retomar áudio';
+  action.textContent=(active||preparing?'⏸ ':'▶ ')+label;action.setAttribute('aria-label',label);
+  const title=item.mode==='prayer'?'Oração':isStudy(item)?'Estudo':'Bíblia';
+  document.getElementById('miniTitle').textContent=title+(isStudy(item)?' · Dia '+String(item.day).padStart(3,'0'):'');
+  document.getElementById('miniStatus').textContent=active?'Em reprodução':preparing?'Preparando áudio':waiting?'Pausado durante o preparo':'Áudio pausado';
+  document.getElementById('miniReturn').hidden=page==='study'||!entries().some(x=>isStudy(x)&&x.day===selectedDay);
+ }
+ function beforeTab(from,to){if(from==='study'&&(to==='bible'||to==='journal')){savedScroll={day:selectedDay,y:scrollY};pauseAll()}}
+ function afterTab(name){refresh();if(name==='study'&&savedScroll?.day===selectedDay){const y=savedScroll.y;savedScroll=null;requestAnimationFrame(()=>{if(page==='study')window.scrollTo({top:y,behavior:'instant'})})}}
+ window.DevocionalMiniPlayer={refresh,beforeTab,afterTab};
+ document.addEventListener('DOMContentLoaded',()=>{
+  const isNote=el=>el?.matches?.('#studyNotes,#notes,textarea[data-answer-index],textarea[data-journal-answer]');
+  for(const type of ['focusin','click'])document.addEventListener(type,event=>{if(isNote(event.target))pauseAll()});
+  document.getElementById('miniToggle').addEventListener('click',()=>{const item=current();if(!item)return;if(['playing','preparing'].includes(item.state)){item.engine.pause();return}if(isNote(document.activeElement))document.activeElement.blur();item.engine.resume?.();refresh()});
+  document.getElementById('miniStop').addEventListener('click',()=>{current()?.engine.stop?.();refresh()});
+  document.getElementById('miniReturn').addEventListener('click',()=>{showTab('study')});
+  refresh();
+ });
 })();

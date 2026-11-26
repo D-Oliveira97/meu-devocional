@@ -1,3 +1,9 @@
+MEU DEVOCIONAL 3.5 — 26/11/2026
+- Mini player: pause, retome e pare o áudio; volte ao estudo sem reiniciar a faixa Charon.
+- Pausa ao editar respostas/anotações e ao consultar a Bíblia.
+- Tema OLED com superfícies pretas e contornos discretos. O controle nativo de áudio pode manter as cores do navegador.
+- A sincronia permanece aproximada; retomada Android desde o início do trecho.
+
 MEU DEVOCIONAL 3.4 — 26/11/2026
 Atualização: acompanhamento no estudo, Bíblia simplificada, data dinâmica e comandos de áudio compactos. Preserve os dados locais e publique os arquivos no mesmo endereço.
 
