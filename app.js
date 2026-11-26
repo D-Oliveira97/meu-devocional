@@ -71,6 +71,7 @@ function alertUser(message,type='success'){
 }
 function showTab(name){
  page=name;
+ $('.welcome')?.classList.toggle('hidden',name==='bible');
  $$('.tab').forEach(btn=>{const active=btn.dataset.tab===name;btn.classList.toggle('active',active);btn.setAttribute('aria-selected',String(active))});
  $$('.panel').forEach(el=>el.classList.toggle('hidden',el.id!==name));
  if(name==='library')renderLibrary();
@@ -79,6 +80,7 @@ function showTab(name){
  if(name==='progress')renderProgress();
  if(name==='reminders')updateReminderPreview();
  if(name==='bible')window.DevocionalBible?.renderChapter?.();
+ if(name==='study')window.DevocionalFollow?.refresh();
 }
 function selectDay(n,{switchTab=true,scroll=false}={}){
  selectedDay=Math.max(1,Math.min(MAX_DAYS,Math.floor(Number(n)||1)));
@@ -108,10 +110,10 @@ function renderStudy(){
   </article>
   <article class="card">
     <div class="section-kicker">01 · PREPARAÇÃO</div>
-    <h3 data-charon-anchor="preparation">Preparando o coração</h3>
-    <p>Separe alguns minutos para o silêncio. Peça a Deus humildade, atenção e coragem para viver aquilo que a passagem ensina. Leia o texto inteiro antes de consultar o comentário.</p>
     <h3>Leitura principal</h3>
     <p data-charon-anchor="reference"><strong>${h(s.reference)}</strong> — abra a passagem na aba Bíblia ONBV. Os comentários usam a NVI como referência; para comparar as redações, consulte sua Bíblia NVI.</p>
+    <h3>Preparando o coração</h3>
+    <p data-charon-anchor="preparation">Separe alguns minutos para o silêncio. Peça a Deus humildade, atenção e coragem para viver aquilo que a passagem ensina. Leia o texto inteiro antes de consultar o comentário.</p>
     <p class="study-note" data-charon-anchor="insight"><b>Ideia central:</b> ${h(s.insight)}</p>
   </article>
   <article class="card">
@@ -121,12 +123,12 @@ function renderStudy(){
   </article>
   <article class="card">
     <div class="section-kicker">03 · INTERPRETAÇÃO</div>
-    <h3>O que a passagem ensina?</h3><p data-charon-anchor="insight">${h(s.insight)}</p>
+    <h3>O que a passagem ensina?</h3><p data-charon-anchor="insight-repeat">${h(s.insight)}</p>
     <h3>Conexões com a mensagem bíblica</h3><p data-charon-anchor="theology">${h(s.theology)}</p>
     ${refsHtml(s.crossReferences)}
     <h3>Cuidado ao interpretar</h3><p data-charon-anchor="care">${h(s.care)}</p>
   </article>
-  ${s.extendedHtml?`<article class="card more-study" data-charon-anchor="extended"><div class="section-kicker">APROFUNDAMENTO ESPECIAL</div><h3>Explorando a passagem com mais detalhes</h3>${s.extendedHtml}</article>`:''}
+  ${s.extendedHtml?`<article class="card more-study"><div class="section-kicker">APROFUNDAMENTO ESPECIAL</div><h3>Explorando a passagem com mais detalhes</h3>${s.extendedHtml}</article>`:''}
   <article class="card">
     <div class="section-kicker">04 · VIDA PRÁTICA</div>
     <h3>Aplicação para hoje</h3><p data-charon-anchor="practice">${h(s.practice)}</p>
@@ -143,6 +145,7 @@ function renderStudy(){
   </article>
   ${next?`<article class="card next-card"><div class="section-kicker">PRÓXIMO ESTUDO</div><h3>Dia ${d(next.day)} — ${h(next.title)}</h3><p>Leitura: ${h(next.reference)}</p><button id="nextFromCard" class="outline" type="button">Ir para o próximo estudo →</button></article>`:`<article class="card next-card"><div class="section-kicker">JORNADA COMPLETA</div><h3>365 dias de aprendizado</h3><p>Você chegou à última etapa. Volte aos estudos, mantenha seu caderno e continue crescendo na Palavra.</p></article>`}`;
  $('#studyContent').innerHTML=html;
+ const extra=$('#studyContent .more-study');if(extra){let i=0;extra.querySelectorAll('h3,h4,p,li').forEach(el=>{if(el.closest('.section-kicker')||el.textContent==='Explorando a passagem com mais detalhes'||!el.textContent.trim())return;el.dataset.charonAnchor='extended-'+i++})}
  $('#studyContent').querySelectorAll('.refs, [data-charon-anchor="reference"], .next-card p, .more-study, [data-charon-anchor="context"], [data-charon-anchor="interpretation"], [data-charon-anchor="theology"], [data-charon-anchor="care"], [data-charon-anchor="practice"]').forEach(node=>{
   const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
   const re=/\b(?:[1-3]\s*)?[A-Za-zÀ-ÿ]+(?:\s+(?:dos|das|de|[A-Za-zÀ-ÿ]+)){0,3}\s+\d{1,3}(?::\d{1,3}(?:[–-]\d{1,3})?)?/g;
@@ -162,6 +165,7 @@ function renderStudy(){
    persist();renderStudy();renderProgress();
    $('#completeMsg').textContent=completed?'Você pode retomar o estudo quando quiser.':'Estudo marcado como concluído. Continue sua caminhada!';
  });
+ window.DevocionalFollow?.refresh();
  if(next)$('#nextFromCard').addEventListener('click',()=>selectDay(selectedDay+1,{scroll:true}));
 }
 function renderJournal(){
@@ -194,7 +198,9 @@ function makeStudyRow(s){
  const state=document.createElement('span');state.className='state';state.textContent=data.completed.includes(s.day)?'✓ Lido':data.favorites.includes(s.day)?'★':'›';root.append(state);
  return root;
 }
+function updateLibraryDate(){const el=$('#libraryStartDate');if(el){const date=planStartDate();el.dateTime=date;el.textContent=date.split('-').reverse().join('/')}}
 function renderLibrary(){
+ updateLibraryDate();
  if(!studies.length)return;
  const query=$('#searchStudies').value.trim().toLocaleLowerCase('pt-BR');
  const wk=$('#weekFilter').value;
@@ -370,7 +376,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  const theme=document.getElementById('themeChoice'),font=document.getElementById('fontChoice'),value=document.getElementById('fontValue');
  const startInput=document.getElementById('startDateChoice'),startStatus=document.getElementById('startDateStatus');
  if(startInput){
-  const showStart=()=>{startInput.value=planStartDate();startStatus.textContent=`Início: ${startInput.value.split('-').reverse().join('/')} · Hoje corresponde ao Dia ${String(todaysPlanDay()).padStart(3,'0')}.`};
+  const showStart=()=>{updateLibraryDate();startInput.value=planStartDate();startStatus.textContent=`Início: ${startInput.value.split('-').reverse().join('/')} · Hoje corresponde ao Dia ${String(todaysPlanDay()).padStart(3,'0')}.`};
   showStart();startInput.addEventListener('change',()=>{if(!startInput.value)return;try{localStorage.setItem(START_DATE_KEY,startInput.value)}catch(_){alertUser('Não foi possível salvar a data.','error');return}showStart();selectDay(todaysPlanDay(),{scroll:true});alertUser('Data de início atualizada. Seus registros anteriores foram preservados.')});
   document.getElementById('startToday')?.addEventListener('click',()=>{const now=new Date();startInput.value=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-');startInput.dispatchEvent(new Event('change'))});
  }
@@ -382,3 +388,12 @@ document.addEventListener('DOMContentLoaded',()=>{
  document.getElementById('fontReset').addEventListener('click',()=>{setFont(17);localStorage.setItem('devocional.bibleFont','17')});
  document.addEventListener('click',e=>{const btn=e.target.closest('[data-bible-ref]');if(btn){window.DevocionalCharon?.pause?.();window.DevocionalAudio?.pause?.();window.DevocionalBible?.openReference?.(btn.dataset.bibleRef)}});
 });
+
+// Um único destaque no estudo, compartilhado pelas duas vozes.
+(()=>{let key=null,owner=null;const pref='devocional.followStudy.v1';
+ function clear(source){if(source&&owner!==source)return;key=null;owner=null;document.querySelectorAll('#studyContent .charon-speaking').forEach(el=>{el.classList.remove('charon-speaking');el.removeAttribute('aria-current')})}
+ function paint(scroll){const enabled=document.getElementById('followStudy')?.checked;let target=null;document.querySelectorAll('#studyContent [data-charon-anchor]').forEach(el=>{const on=!!enabled&&el.dataset.charonAnchor===key&&!target;el.classList.toggle('charon-speaking',on);if(on){target=el;el.setAttribute('aria-current','true')}else el.removeAttribute('aria-current')});
+ if(scroll&&target&&page==='study'&&document.visibilityState==='visible'&&!document.activeElement?.matches('textarea,input,select,[contenteditable=true]')){const r=target.getBoundingClientRect();const nav=document.querySelector('.tabs')?.getBoundingClientRect();const top=Math.max(155,nav?.bottom||0)+12;if(r.top<top||r.top>innerHeight*.65)window.scrollTo({top:Math.max(0,scrollY+r.top-top),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}}
+ window.DevocionalFollow={show(source,next){if(owner===source&&key===next)return;owner=source;key=next;paint(true)},clear,refresh(){paint(false)}};
+ document.addEventListener('DOMContentLoaded',()=>{const box=document.getElementById('followStudy');try{box.checked=localStorage.getItem(pref)!=='false'}catch(_){}box.addEventListener('change',()=>{try{localStorage.setItem(pref,String(box.checked))}catch(_){}paint(box.checked)})});
+})();

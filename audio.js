@@ -33,23 +33,23 @@
  }
  function buildParts(s){
   const items=[];
-  function add(label,text){const clean=String(text||'').replace(/\s+/g,' ').trim();if(clean)items.push({label,text:clean})}
-  add('Abertura',`Dia ${s.day} de 365. ${s.title}. Leitura bíblica: ${s.reference}. Esta narração acompanha o comentário e as reflexões da jornada. A passagem bíblica completa da ONBV pode ser narrada na opção específica.`);
-  add('Preparando o coração','Separe alguns minutos para o silêncio. Peça a Deus humildade, atenção e coragem para viver aquilo que a passagem ensina. Leia o texto inteiro antes de consultar o comentário.');
-  add('Ideia central',s.insight);
-  add('Contexto histórico e literário',s.context);
-  add('Como observar o texto',s.interpretation);
-  add('O que a passagem ensina?',s.insight);
-  add('Conexões com a mensagem bíblica',s.theology);
-  add('Referências para aprofundar',s.crossReferences);
-  add('Cuidado ao interpretar',s.care);
+  function add(label,text,key){const clean=String(text||'').replace(/\s+/g,' ').trim();if(clean)items.push({label,text:clean,key})}
+  add('Abertura',`Dia ${s.day} de 365. ${s.title}. Leitura bíblica: ${s.reference}. Esta narração acompanha o comentário e as reflexões da jornada. A passagem bíblica completa da ONBV pode ser narrada na opção específica.`, 'intro');
+  add('Preparando o coração','Separe alguns minutos para o silêncio. Peça a Deus humildade, atenção e coragem para viver aquilo que a passagem ensina. Leia o texto inteiro antes de consultar o comentário.', 'preparation');
+  add('Ideia central',s.insight,'insight');
+  add('Contexto histórico e literário',s.context,'context');
+  add('Como observar o texto',s.interpretation,'interpretation');
+  add('O que a passagem ensina?',s.insight,'insight-repeat');
+  add('Conexões com a mensagem bíblica',s.theology,'theology');
+  add('Referências para aprofundar',s.crossReferences,'crossReferences');
+  add('Cuidado ao interpretar',s.care,'care');
   if(s.extendedHtml){
    const extras=textOnly(s.extendedHtml);
-   extras.forEach((t,i)=>add(`Aprofundamento especial ${i+1}`,t));
+   extras.forEach((t,i)=>add(`Aprofundamento especial ${i+1}`,t,`extended-${i}`));
   }
-  add('Aplicação para hoje',s.practice);
-  (s.questions||[]).forEach((q,i)=>add(`Reflexão ${i+1}`,q));
-  add('Oração do dia',s.prayer);
+  add('Aplicação para hoje',s.practice,'practice');
+  (s.questions||[]).forEach((q,i)=>add(`Reflexão ${i+1}`,q,`question-${i}`));
+  add('Oração do dia',s.prayer,'prayer');
   return items;
  }
  // Partes curtas evitam travamentos comuns de locuções muito longas no Android.
@@ -71,21 +71,22 @@
   }
   flush();return result;
  }
- function makeQueue(items){return items.flatMap((part,partIndex)=>chunk(part.text).map(text=>({partIndex,label:part.label,text})));}
- function status(message){byId('audioStatus').textContent=message;}
+ function makeQueue(items){return items.flatMap((part,partIndex)=>chunk(part.text).map(text=>({partIndex,label:part.label,key:part.key,text})));}
+ function status(message){byId('audioStatus').textContent=message;const bible=byId('bibleAudioStatus');if(bible)bible.textContent=mode==='bible'||mode==='bible-study'?message:'';}
  function updateUI(){
   const progress=queue.length?Math.round(100*Math.min(index,queue.length)/queue.length):0;
   byId('audioTrackBar').style.width=progress+'%';
   byId('audioProgressLabel').textContent=queue.length
    ?`${progress}% · ${Math.min(index+1,queue.length)} de ${queue.length} trechos · Dia ${String(currentDay).padStart(3,'0')}`
    :`Pronto para ouvir · Dia ${String(currentDay||1).padStart(3,'0')}`;
-  byId('audioPlay').textContent=paused&&mode==='study'?'▶ Retomar estudo':'▶ Ouvir estudo completo';
-  byId('audioPrayer').textContent=paused&&mode==='prayer'?'▶ Retomar oração':'🙏 Ouvir só a oração';
-  byId('audioBible').textContent=paused&&mode==='bible'?'▶ Retomar passagem':'📖 Ouvir passagem ONBV';
-  byId('audioFull').textContent=paused&&mode==='bible-study'?'▶ Retomar leitura completa':'🎧 Passagem + estudo';
-  byId('audioPause').disabled=!playing;
+  function buttonLabel(id,label,glyph){const btn=byId(id);btn.title=label;btn.setAttribute('aria-label',label);btn.firstElementChild.textContent=glyph;}
+  buttonLabel('audioPlay',paused&&mode==='study'?'Retomar estudo':'Ouvir estudo','▶');
+  buttonLabel('audioPrayer',paused&&mode==='prayer'?'Retomar oração':'Ouvir oração','🙏');
+  buttonLabel('audioPause',paused?'Retomar':'Pausar',paused?'▶':'⏸');
+  byId('audioPause').disabled=!playing&&!paused;
   byId('audioStop').disabled=!playing&&!paused;
-  byId('audioPause').textContent='⏸ Pausar';
+  byId('bibleToggleAudio').disabled=!(mode==='bible'||mode==='bible-study')||(!playing&&!paused);
+  byId('bibleStopAudio').disabled=byId('bibleToggleAudio').disabled;
   const part=queue[index]?.partIndex??-1;
   byId('audioPrev').disabled=!playing&&!paused||part<=0;
   byId('audioNext').disabled=!playing&&!paused||part<0||part>=parts.length-1||mode==='prayer';
@@ -95,7 +96,7 @@
   if(synth){try{synth.cancel()}catch(_){}}
  }
  function stop(message='Narração interrompida.'){
-  cancelAudio();playing=false;paused=false;queue=[];index=0;updateUI();status(message);
+  window.DevocionalFollow?.clear('android');cancelAudio();playing=false;paused=false;queue=[];index=0;updateUI();status(message);
  }
  function setDay(day){
   if(day===currentDay)return;
@@ -134,6 +135,7 @@
    // Caso uma voz falhe, permita retomar este trecho sem perder o dia.
    cancelAudio();playing=false;paused=true;updateUI();status('A leitura foi interrompida pelo dispositivo. Toque em Retomar para tentar novamente.');
   };
+  if(item.key)window.DevocionalFollow?.show('android',item.key);else window.DevocionalFollow?.clear('android');
   status('Lendo: '+item.label+'…');
   updateUI();
   try{synth.speak(utterance)}catch(_){playing=false;paused=true;status('Não foi possível iniciar a voz. Verifique a síntese de voz do Android e tente novamente.');updateUI();}
@@ -147,7 +149,7 @@
   const resume=paused&&queue.length&&modeArg===mode&&day===currentDay;
   cancelAudio();
   if(!resume){
-   currentDay=day;mode=modeArg;parts=mode==='prayer'?[{label:'Oração do dia',text:s.prayer}]:buildParts(s);
+   currentDay=day;mode=modeArg;parts=mode==='prayer'?[{label:'Oração do dia',text:s.prayer,key:'prayer'}]:buildParts(s);
    queue=makeQueue(parts);index=0;
   }
   playing=true;paused=false;
@@ -159,7 +161,7 @@
   if(!Array.isArray(bibleParts)||!bibleParts.length){status('Importe a Bíblia ONBV antes de iniciar a narração.');return}
   const nextMode=withStudy?'bible-study':'bible';
   const day=window.DevocionalAudio?.selectedDay?.()||currentDay;
-  const resume=paused&&queue.length&&nextMode===mode&&day===currentDay;
+  const resume=paused&&queue.length&&nextMode===mode&&day===currentDay&&JSON.stringify(parts.slice(0,bibleParts.length))===JSON.stringify(bibleParts);
   cancelAudio();
   if(!resume){
     currentDay=day;mode=nextMode;
@@ -203,9 +205,9 @@
    voiceURI=e.target.value;saveSettings();
    if(playing){cancelAudio();speakNext(runToken);}
   });
-  byId('audioPlay').addEventListener('click',()=>{if(window.DevocionalCharon?.isConfigured?.())window.DevocionalCharon.playStudy();else start('study')});
-  byId('audioPrayer').addEventListener('click',()=>{if(window.DevocionalCharon?.isConfigured?.())window.DevocionalCharon.playPrayer();else start('prayer')});
-  byId('audioPause').addEventListener('click',pause);
+  byId('audioPlay').addEventListener('click',()=>start('study'));
+  byId('audioPrayer').addEventListener('click',()=>start('prayer'));
+  byId('audioPause').addEventListener('click',togglePause);
   byId('audioStop').addEventListener('click',()=>stop());
   byId('audioPrev').addEventListener('click',()=>jump(-1));
   byId('audioNext').addEventListener('click',()=>jump(1));

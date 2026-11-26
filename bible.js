@@ -84,7 +84,7 @@ function parseUsfm(source){
  commit();return {code,chapters};
 }
 function status(text,type='info'){
- const field=el('bibleImportStatus');if(field){field.textContent=text;field.dataset.type=type}
+ const field=el('bibleImportStatus');if(field){field.textContent=text;field.dataset.type=type}const card=field?.closest('.bible-hero');if(card)card.classList.toggle('hidden',installed&&type!=='error');
 }
 function updated(){
  installed=true;
