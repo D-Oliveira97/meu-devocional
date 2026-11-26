@@ -1,3 +1,8 @@
+MEU DEVOCIONAL 3.5.1 — 26/11/2026
+- Controle flutuante circular: toque para pausar ou retomar; arraste para mover. A posição é salva neste navegador.
+- Para parar, utilize os comandos de áudio originais; para retornar, toque na aba Estudo.
+- Nenhuma alteração nos estudos, dados locais ou motores de áudio.
+
 MEU DEVOCIONAL 3.5 — 26/11/2026
 - Mini player: pause, retome e pare o áudio; volte ao estudo sem reiniciar a faixa Charon.
 - Pausa ao editar respostas/anotações e ao consultar a Bíblia.

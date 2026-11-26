@@ -401,25 +401,33 @@ document.addEventListener('DOMContentLoaded',()=>{
 })();
 
 
-/* 3.5 — controle flutuante e pausa ao consultar ou escrever. */
+/* 3.5.1 — controle circular arrastável; pausa e retomada preservadas. */
 (()=>{
- let savedScroll=null;
+ let savedScroll=null,drag=null,suppressClick=false;
+ const positionKey='devocional.miniPosition.v1';
+ let position={x:1,y:1};
+ try{const stored=JSON.parse(localStorage.getItem(positionKey)||'null');if(stored&&Number.isFinite(stored.x)&&Number.isFinite(stored.y))position={x:Math.max(0,Math.min(1,stored.x)),y:Math.max(0,Math.min(1,stored.y))}}catch(_){}
+ const panel=()=>document.getElementById('miniPlayer');
+ const clamp=(n,lo,hi)=>Math.min(hi,Math.max(lo,n));
+ function bounds(){const vv=window.visualViewport;const x=vv?.offsetLeft||0,y=vv?.offsetTop||0,w=vv?.width||document.documentElement.clientWidth,h=vv?.height||innerHeight;const el=panel(),size=el?.offsetWidth||46,height=el?.offsetHeight||46;return {left:x+12,top:y+12,right:Math.max(x+12,x+w-size-12),bottom:Math.max(y+12,y+h-height-18)}}
+ function place(){const el=panel();if(!el||el.hidden)return;const b=bounds();el.style.left=(b.left+position.x*(b.right-b.left))+'px';el.style.top=(b.top+position.y*(b.bottom-b.top))+'px'}
+ function move(x,y){const b=bounds();position={x:b.right>b.left?(clamp(x,b.left,b.right)-b.left)/(b.right-b.left):0,y:b.bottom>b.top?(clamp(y,b.top,b.bottom)-b.top)/(b.bottom-b.top):0};place()}
+ function savePosition(){try{localStorage.setItem(positionKey,JSON.stringify(position))}catch(_){}}
  const engines=()=>[window.DevocionalCharon,window.DevocionalAudio].filter(Boolean);
  const entries=()=>engines().map(engine=>({engine,...engine.playbackState?.()})).filter(x=>x.state&&x.state!=='idle');
  const isStudy=x=>x.mode==='study'||x.mode==='prayer'||x.mode==='bible-study';
  function current(){const list=entries();return list.find(x=>['playing','preparing'].includes(x.state))||list.find(x=>isStudy(x)&&x.day===selectedDay)||list[0]}
  function pauseAll(){engines().forEach(engine=>engine.pause?.());refresh()}
  function refresh(){
-  const panel=document.getElementById('miniPlayer');if(!panel)return;
-  const item=current();panel.hidden=!item;document.body.classList.toggle('has-mini-player',!!item);if(!item)return;
+  const el=panel();if(!el)return;
+  const item=current();el.hidden=!item;if(!item)return;
   const active=item.state==='playing',preparing=item.state==='preparing',waiting=item.state==='waiting-paused';
   const action=document.getElementById('miniToggle');
-  const label=active?'Pausar':preparing?'Pausar preparo':waiting?'Retomar quando pronto':'Retomar áudio';
-  action.textContent=(active||preparing?'⏸ ':'▶ ')+label;action.setAttribute('aria-label',label);
-  const title=item.mode==='prayer'?'Oração':isStudy(item)?'Estudo':'Bíblia';
-  document.getElementById('miniTitle').textContent=title+(isStudy(item)?' · Dia '+String(item.day).padStart(3,'0'):'');
-  document.getElementById('miniStatus').textContent=active?'Em reprodução':preparing?'Preparando áudio':waiting?'Pausado durante o preparo':'Áudio pausado';
-  document.getElementById('miniReturn').hidden=page==='study'||!entries().some(x=>isStudy(x)&&x.day===selectedDay);
+  const label=active?'Pausar áudio':preparing?'Pausar preparo':waiting?'Retomar quando pronto':'Retomar áudio';
+  action.setAttribute('aria-label',label);action.title=label+' · arraste para mover';
+  document.getElementById('miniPlayIcon').toggleAttribute('hidden',active||preparing);
+  document.getElementById('miniPauseIcon').toggleAttribute('hidden',!(active||preparing));
+  el.classList.toggle('is-playing',active||preparing);place();
  }
  function beforeTab(from,to){if(from==='study'&&(to==='bible'||to==='journal')){savedScroll={day:selectedDay,y:scrollY};pauseAll()}}
  function afterTab(name){refresh();if(name==='study'&&savedScroll?.day===selectedDay){const y=savedScroll.y;savedScroll=null;requestAnimationFrame(()=>{if(page==='study')window.scrollTo({top:y,behavior:'instant'})})}}
@@ -427,9 +435,14 @@ document.addEventListener('DOMContentLoaded',()=>{
  document.addEventListener('DOMContentLoaded',()=>{
   const isNote=el=>el?.matches?.('#studyNotes,#notes,textarea[data-answer-index],textarea[data-journal-answer]');
   for(const type of ['focusin','click'])document.addEventListener(type,event=>{if(isNote(event.target))pauseAll()});
-  document.getElementById('miniToggle').addEventListener('click',()=>{const item=current();if(!item)return;if(['playing','preparing'].includes(item.state)){item.engine.pause();return}if(isNote(document.activeElement))document.activeElement.blur();item.engine.resume?.();refresh()});
-  document.getElementById('miniStop').addEventListener('click',()=>{current()?.engine.stop?.();refresh()});
-  document.getElementById('miniReturn').addEventListener('click',()=>{showTab('study')});
+  const button=document.getElementById('miniToggle');
+  button.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0)return;suppressClick=false;const el=panel();drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:parseFloat(el.style.left)||el.offsetLeft,top:parseFloat(el.style.top)||el.offsetTop,moved:false};button.setPointerCapture(e.pointerId)});
+  button.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.moved&&Math.hypot(dx,dy)<7)return;drag.moved=true;suppressClick=true;panel().classList.add('is-dragging');move(drag.left+dx,drag.top+dy)});
+  function finish(e){if(!drag||drag.id!==e.pointerId)return;if(drag.moved){suppressClick=true;savePosition()}drag=null;panel().classList.remove('is-dragging');if(button.hasPointerCapture(e.pointerId))button.releasePointerCapture(e.pointerId)}
+  for(const type of ['pointerup','pointercancel','lostpointercapture'])button.addEventListener(type,finish);
+  button.addEventListener('keydown',e=>{const steps={ArrowLeft:[-16,0],ArrowRight:[16,0],ArrowUp:[0,-16],ArrowDown:[0,16]};if(!steps[e.key])return;e.preventDefault();const [dx,dy]=steps[e.key];const el=panel();move(parseFloat(el.style.left)+dx,parseFloat(el.style.top)+dy);savePosition()});
+  button.addEventListener('click',e=>{if(suppressClick&&e.detail!==0){suppressClick=false;e.preventDefault();return}suppressClick=false;const item=current();if(!item)return;if(['playing','preparing'].includes(item.state)){item.engine.pause();refresh();return}if(isNote(document.activeElement))document.activeElement.blur();item.engine.resume?.();refresh()});
+  window.addEventListener('resize',place);window.visualViewport?.addEventListener('resize',place);window.visualViewport?.addEventListener('scroll',place);
   refresh();
  });
 })();

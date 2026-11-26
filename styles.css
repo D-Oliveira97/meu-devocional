@@ -204,20 +204,20 @@
 .android-audio-compact summary{cursor:pointer}.bible-credits summary{cursor:pointer;font-weight:700;color:var(--green)}
 [data-theme="dark"] .picker-active,[data-theme="dark"] .tab.active{background:#314b39!important;color:#fff!important;border-color:#a6c4ad!important}
 
-/* 3.5 — mini player sem modal, modo OLED sem grandes preenchimentos */
-.mini-player{position:fixed;z-index:30;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(620px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--white);border:1px solid var(--line);border-radius:12px;color:var(--ink);box-shadow:0 4px 20px #0003}
+/* 3.5.1 — um único botão circular, translúcido e arrastável. */
+.mini-player{position:fixed;z-index:30;right:auto;bottom:auto;left:calc(100% - 58px);top:calc(100% - 64px);width:46px;height:46px;margin:0;padding:0;border:0;background:transparent;box-shadow:none}
 .mini-player[hidden],.mini-player [hidden]{display:none!important}
-.mini-copy{display:flex;flex-direction:column;min-width:0;line-height:1.35}.mini-copy strong{font-size:13px}.mini-copy small{font-size:11px;color:var(--muted)}
-.mini-actions{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.mini-actions button{min-height:44px;margin:0;padding:7px 10px;font-size:12px}.mini-actions #miniStop{min-width:44px}
-.has-mini-player main{padding-bottom:calc(125px + env(safe-area-inset-bottom,0px))}.has-mini-player textarea{scroll-margin-bottom:120px}
-@media(max-width:440px){.mini-player{flex-wrap:wrap;gap:5px}.mini-actions{flex:1;justify-content:flex-end}.mini-copy{flex:1 0 100%}.mini-actions #miniToggle{flex:1}.has-mini-player main{padding-bottom:150px}}
+#miniToggle{display:grid;place-items:center;width:100%;height:100%;margin:0;padding:0;border:1px solid #487360;border-radius:50%;background:rgba(255,255,255,.82);color:#173d32;box-shadow:0 2px 9px #0002;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;cursor:grab;backdrop-filter:blur(4px)}
+#miniToggle svg{pointer-events:none}
+#miniToggle:focus-visible{outline:2px solid #bc9651;outline-offset:3px}
+.mini-player.is-dragging #miniToggle{cursor:grabbing}
 /* Preserve line wrapping while highlight advances; no paragraph reflow. */
 #studyContent [data-charon-anchor].charon-speaking{padding:0;box-shadow:-4px 0 #b98b39;outline:1px solid #bc9651;outline-offset:3px}
 #studyContent .study-note.charon-speaking,#studyContent .refs.charon-speaking{padding:8px 12px}
 [data-theme=dark]{--paper:#000;--white:#000;--ink:#f3f3f3;--muted:#c1c1c1;--line:#484848;--green:#b8e3c7;--green2:#b8e3c7;color-scheme:dark;background:#000}
-[data-theme=dark] :is(body,main,.top,.tabs,.welcome,.card,.audio-card,.hero-card,.bible-hero,.bible-install,.info-card,.prayer,.study-row,.day-navigation,.refs,.study-note,.onbv-verses,.bible-status,.audio-progress,.reminder-preview,.canon-summary,.bible-ready,.charon-panel,.charon-follow-details,.charon-transcript,.charon-transcript-segment,.charon-reading-links,.charon-notice,.charon-config,.audio-settings,.compact-picker,.bible-reader-card,.audio-heading,.audio-icon,.charon-icon,.charon-continuous-choice,.mini-player,.month-stat,.stat-chip,.reminder-shortcut,.favorite-toggle,.current-version,.alert,.empty-state,.reminder-link,.reminder-icon){background:#000!important;color:var(--ink)!important;border-color:var(--line)!important;box-shadow:none}
+[data-theme=dark] :is(body,main,.top,.tabs,.welcome,.card,.audio-card,.hero-card,.bible-hero,.bible-install,.info-card,.prayer,.study-row,.day-navigation,.refs,.study-note,.onbv-verses,.bible-status,.audio-progress,.reminder-preview,.canon-summary,.bible-ready,.charon-panel,.charon-follow-details,.charon-transcript,.charon-transcript-segment,.charon-reading-links,.charon-notice,.charon-config,.audio-settings,.compact-picker,.bible-reader-card,.audio-heading,.audio-icon,.charon-icon,.charon-continuous-choice,.month-stat,.stat-chip,.reminder-shortcut,.favorite-toggle,.current-version,.alert,.empty-state,.reminder-link,.reminder-icon){background:#000!important;color:var(--ink)!important;border-color:var(--line)!important;box-shadow:none}
 [data-theme=dark] :is(.tab,.outline,.primary,.picker-tile,input:not([type=checkbox]),select,textarea,.install){background:#000!important;color:var(--ink)!important;border:1px solid var(--line)!important}
-[data-theme=dark] :is(.tab.active,.picker-active,.picker-tile.selected,.favorite-toggle.is-saved,.primary,.current-version,#miniToggle){background:#000!important;color:#b8e3c7!important;border:1px solid #a5d4b4!important}
+[data-theme=dark] :is(.tab.active,.picker-active,.picker-tile.selected,.favorite-toggle.is-saved,.primary,.current-version){background:#000!important;color:#b8e3c7!important;border:1px solid #a5d4b4!important}
 [data-theme=dark] :is(.tab.active,.picker-active,.picker-tile.selected){border-color:#dfbd80!important;color:#ffdc95!important}
 [data-theme=dark] :is(.text-btn,.day-middle label,.bible-ready strong,.onbv-verse sup,.onbv-verse .verse-number,.canon-summary strong,.reminder-link,.audio-skip-btn,.welcome-foot){color:#b8e3c7!important}
 [data-theme=dark] :is(.progress-track,.audio-track){background:#000!important;border:1px solid #555}
@@ -230,3 +230,6 @@
 [data-theme=dark] .picker-stage{background:#000!important;border:0!important;border-bottom:3px solid transparent!important}
 [data-theme=dark] .picker-stage.active{border-bottom-color:#dfbd80!important}
 #studyContent .study-note.charon-speaking{padding:10px 14px}
+
+[data-theme=dark] #miniToggle{background:rgba(0,0,0,.76);color:#b8e3c7;border-color:#777;box-shadow:none}
+[data-theme=dark] .mini-player.is-playing #miniToggle{border-color:#a5d4b4}

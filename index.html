@@ -8,7 +8,7 @@
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="icon-192.png" type="image/png">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=20.0">
+  <link rel="stylesheet" href="styles.css?v=21.0">
   <title>Meu Devocional · 365 estudos</title>
 </head>
 <body>
@@ -197,7 +197,8 @@
         <p>Não é necessário compartilhar suas anotações ou conceder acesso ao aplicativo à sua conta Google. O botão apenas abre a tela de criação de evento da sua agenda.</p>
       </article>
     </section>
-    <section id="news" class="panel hidden" aria-label="Novidades"><article class="card"><h2>✦ Novidades</h2><p class="current-version">VERSÃO ATUAL · 3.5</p>
+    <section id="news" class="panel hidden" aria-label="Novidades"><article class="card"><h2>✦ Novidades</h2><p class="current-version">VERSÃO ATUAL · 3.5.1</p>
+<h3>Versão 3.5.1 — 26/11/2026</h3><ul><li>Controle flutuante circular, compacto e levemente translúcido: toque para pausar ou retomar e arraste para reposicionar.</li><li>A posição é lembrada neste aparelho. Os controles completos continuam disponíveis nas áreas de áudio.</li></ul>
 <h3>Versão 3.5 — 26/11/2026</h3><ul><li>Pausa automática ao escrever anotações ou respostas e ao consultar a Bíblia.</li><li>Controle flutuante para pausar, retomar e parar a narração, com retorno ao estudo.</li><li>Tema OLED com preto puro e contornos discretos; realce sem preenchimento no modo escuro.</li><li>Preservação da faixa gerada e do cache; sem alteração no roteiro da voz.</li></ul>
 <h3>Versão 3.4 — 26/11/2026</h3><ul><li>Realce e acompanhamento diretamente no texto do estudo, sem roteiro duplicado.</li><li>Bíblia ONBV simplificada, com créditos preservados.</li><li>Biblioteca com data de início atualizada conforme as configurações.</li><li>Lembretes sem rótulos de versão.</li><li>Controles de áudio compactos; preferências da voz Android em Configurações.</li></ul>
 <h3>Versão 3.3.1 — 24/11/2026</h3><ul><li>Ícone corrigido para recortes do Android, com fundo verde uniforme e versão adaptável.</li></ul>
@@ -228,13 +229,14 @@
   </main>
   <footer><span>“Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.”</span><br><b>Salmos 119:105 · referência NVI</b><p>Meu Devocional · jornada anual</p></footer>
   <aside id="miniPlayer" class="mini-player" hidden aria-label="Controle de narração">
-    <div class="mini-copy"><strong id="miniTitle">Estudo</strong><small id="miniStatus">Áudio pausado</small></div>
-    <div class="mini-actions"><button id="miniReturn" class="outline" type="button" hidden>↩ Estudo</button><button id="miniToggle" class="primary" type="button">▶ Retomar áudio</button><button id="miniStop" class="outline" type="button" title="Parar áudio" aria-label="Parar áudio">■</button></div>
+    <button id="miniToggle" type="button" aria-label="Retomar áudio" title="Retomar áudio · arraste para mover">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path id="miniPlayIcon" d="M8 5l12 7-12 7z" fill="currentColor"/><path id="miniPauseIcon" d="M7 5h4v14H7zM14 5h4v14h-4z" fill="currentColor" hidden/></svg>
+    </button>
   </aside>
-  <script src="app.js?v=20.0" defer></script>
-  <script src="audio.js?v=20.0" defer></script>
-  <script type="module" src="charon-firebase.js?v=20.0"></script>
-  <script src="jszip.min.js?v=20.0" defer></script>
-  <script src="bible.js?v=20.0" defer></script>
+  <script src="app.js?v=21.0" defer></script>
+  <script src="audio.js?v=21.0" defer></script>
+  <script type="module" src="charon-firebase.js?v=21.0"></script>
+  <script src="jszip.min.js?v=21.0" defer></script>
+  <script src="bible.js?v=21.0" defer></script>
 </body>
 </html>
