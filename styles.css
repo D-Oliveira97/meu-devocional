@@ -233,3 +233,15 @@
 
 [data-theme=dark] #miniToggle{background:rgba(0,0,0,.76);color:#b8e3c7;border-color:#777;box-shadow:none}
 [data-theme=dark] .mini-player.is-playing #miniToggle{border-color:#a5d4b4}
+
+/* 3.5.3 — leitura em tamanho comum e respostas do aprofundamento */
+:root{--study-font:17px}
+#studyContent .card :is(p,li,.answer-field,.answer-field span,.check){font-size:var(--study-font);line-height:1.7;overflow-wrap:anywhere}
+#studyContent .card :is(.refs,.small-note){font-size:calc(var(--study-font) - 2px)!important}
+#studyContent .hero-card .lead{font-size:var(--study-font)}
+#studyContent .card h3{font-size:calc(var(--study-font) + 3px)}
+#studyContent .card h4{font-size:calc(var(--study-font) + 1px)}
+#studyContent .hero-card h2{font-size:calc(var(--study-font) + 11px)}
+#studyContent textarea,#journal .answer-field textarea{font-size:var(--study-font);line-height:1.55}
+#studyContent .extended-answer{display:block;width:100%;min-height:88px;margin:9px 0 16px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--white);color:var(--ink);font-weight:400;resize:vertical}
+#studyContent .extended-answer:focus{outline:2px solid var(--gold);outline-offset:2px}

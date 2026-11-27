@@ -32,6 +32,10 @@ function normalizeData(source){
    const n=Number(k);if(Number.isInteger(n)&&n>=1&&n<=365&&Array.isArray(v))answers[n]=v.slice(0,15).map(x=>typeof x==='string'?x.slice(0,10000):'');
   });
  }
+ const extendedAnswers={};
+ if(s.extendedAnswersByDay&&typeof s.extendedAnswersByDay==='object'){
+  Object.entries(s.extendedAnswersByDay).forEach(([k,v])=>{const n=Number(k);if(Number.isInteger(n)&&n>=1&&n<=365&&Array.isArray(v))extendedAnswers[n]=v.slice(0,30).map(x=>typeof x==='string'?x.slice(0,10000):'');});
+ }
  const checklist={};
  if(s.checklistByDay&&typeof s.checklistByDay==='object'&&!Array.isArray(s.checklistByDay)){
    Object.entries(s.checklistByDay).forEach(([k,v])=>{
@@ -40,7 +44,7 @@ function normalizeData(source){
      }
    });
  }
- return {schema:2,completed:uniqueDays(s.completed),favorites:uniqueDays(s.favorites),notesByDay:notes,answersByDay:answers,
+ return {schema:2,completed:uniqueDays(s.completed),favorites:uniqueDays(s.favorites),notesByDay:notes,answersByDay:answers,extendedAnswersByDay:extendedAnswers,
    checklistByDay:checklist,verses:(Array.isArray(s.verses)?s.verses:[]).filter(v=>typeof v==='string').slice(0,500).map(s=>s.slice(0,200)),
    lastDay:Math.max(1,Math.min(365,Number(s.lastDay)||1))};
 }
@@ -96,6 +100,20 @@ function selectDay(n,{switchTab=true,scroll=false}={}){
 }
 function refsHtml(s){return '<p class="refs" data-charon-anchor="crossReferences"><b>Referências para aprofundar:</b> '+h(s)+'</p>'}
 function checkItems(){return selectedDay===1?[['read','Reli Gênesis 1 com calma.'],['john','Li João 1:1–14.'],['thanks','Agradeci a Deus por três coisas.'],['care','Demonstrei respeito e amor a alguém.']]:[['read','Li a passagem principal (ONBV no aplicativo ou NVI na minha Bíblia).'],['cross','Consultei ao menos uma referência complementar.'],['reflect','Registrei uma descoberta ou aplicação pessoal.'],['pray','Reservei tempo para orar sobre o texto.']]}
+// As perguntas do aprofundamento são independentes da reflexão geral.
+function extendedPrompts(root){
+ const items=[];
+ root?.querySelectorAll('h3,h4').forEach(heading=>{
+  if(!/^(?:\d+\.\s*)?(?:Reflexão pessoal|Exercício de estudo e transformação|Estudo pessoal e prática da Palavra)$/i.test(heading.textContent.trim()))return;
+  let list=heading.nextElementSibling;
+  while(list&&list.matches('p'))list=list.nextElementSibling;
+  if(list?.matches('ol,ul'))Array.from(list.children).filter(li=>li.tagName==='LI').forEach(li=>items.push(li));
+ });
+ return items;
+}
+function extendedQuestions(s){const root=document.createElement('div');root.innerHTML=s.extendedHtml||'';return extendedPrompts(root).map(li=>li.textContent.trim());}
+function saveExtended(index,value){const arr=data.extendedAnswersByDay[selectedDay]||[];arr[index]=value;data.extendedAnswersByDay[selectedDay]=arr;return persist();}
+function syncAnswer(selector,value){document.querySelectorAll(selector).forEach(el=>{if(el.value!==value)el.value=value;});}
 function renderStudy(){
  const s=study(selectedDay);if(!s)return;
  const completed=data.completed.includes(selectedDay),fav=data.favorites.includes(selectedDay);
@@ -154,11 +172,15 @@ function renderStudy(){
   nodes.forEach(text=>{if(text.parentElement?.closest('a,button'))return;const source=text.nodeValue;let match,last=0,frag=document.createDocumentFragment(),changed=false;while((match=re.exec(source))){const ref=match[0];if(!window.DevocionalBible?.parseReference?.(ref)?.length)continue;frag.append(document.createTextNode(source.slice(last,match.index)));const btn=document.createElement('button');btn.type='button';btn.className='scripture-link';btn.textContent=ref;btn.dataset.bibleRef=ref;frag.append(btn);last=re.lastIndex;changed=true}if(changed){frag.append(document.createTextNode(source.slice(last)));text.replaceWith(frag)}});
  });
 
+ extendedPrompts(extra).forEach((li,i)=>{
+  const field=document.createElement('textarea');field.className='extended-answer';field.rows=3;field.dataset.extendedAnswer=String(i);field.placeholder='Minha resposta...';field.setAttribute('aria-label','Resposta: '+li.textContent.trim());field.value=data.extendedAnswersByDay[selectedDay]?.[i]||'';
+  li.append(field);field.addEventListener('input',()=>{const ok=saveExtended(i,field.value);syncAnswer(`[data-journal-extended="${i}"]`,field.value);$('#studySaveStatus').textContent=ok?'✓ Respostas salvas':'Não foi possível salvar. Exporte uma cópia de segurança.';});
+ });
  $('#favoriteStudy').addEventListener('click',()=>{data.favorites=fav?data.favorites.filter(x=>x!==selectedDay):uniqueDays([...data.favorites,selectedDay]);persist();renderStudy()});
  $('#openJournal').addEventListener('click',()=>showTab('journal'));
- $('#studyNotes')?.addEventListener('input',e=>{data.notesByDay[selectedDay]=e.target.value;const ok=persist();$('#studySaveStatus').textContent=ok?'✓ Anotações salvas':'Não foi possível salvar. Exporte uma cópia de segurança.';});
+ $('#studyNotes')?.addEventListener('input',e=>{data.notesByDay[selectedDay]=e.target.value;syncAnswer('#notes',e.target.value);const ok=persist();$('#studySaveStatus').textContent=ok?'✓ Anotações salvas':'Não foi possível salvar. Exporte uma cópia de segurança.';});
  $('#studyContent').querySelectorAll('[data-answer-index]').forEach(el=>el.addEventListener('input',()=>{
-  const arr=data.answersByDay[selectedDay]||[];arr[Number(el.dataset.answerIndex)]=el.value;data.answersByDay[selectedDay]=arr;
+  const arr=data.answersByDay[selectedDay]||[];arr[Number(el.dataset.answerIndex)]=el.value;data.answersByDay[selectedDay]=arr;syncAnswer(`[data-journal-answer="${el.dataset.answerIndex}"]`,el.value);
   const ok=persist();$('#studySaveStatus').textContent=ok?'✓ Respostas salvas':'Não foi possível salvar. Exporte uma cópia de segurança.';
  }));
  $$('[data-task]').forEach(el=>el.addEventListener('change',()=>{data.checklistByDay[selectedDay]={...(data.checklistByDay[selectedDay]||{}),[el.dataset.task]:el.checked};persist()}));
@@ -176,10 +198,14 @@ function renderJournal(){
  $('#notes').value=data.notesByDay[selectedDay]||'';
  $('#savedMsg').textContent='';
  const answerArea=$('#journalAnswers');
- if(answerArea){const questions=s.questions||[];answerArea.innerHTML=questions.map((q,i)=>`<label class="answer-field"><span>${i+1}. ${h(q)}</span><textarea rows="3" data-journal-answer="${i}">${h(data.answersByDay[selectedDay]?.[i]||'')}</textarea></label>`).join('');
- answerArea.querySelectorAll('textarea').forEach(el=>el.addEventListener('input',()=>{const arr=data.answersByDay[selectedDay]||[];arr[Number(el.dataset.journalAnswer)]=el.value;data.answersByDay[selectedDay]=arr;persist();}));}
+ if(answerArea){const questions=s.questions||[],extended=extendedQuestions(s);
+ const render=(qs,values,attr)=>qs.map((q,i)=>`<label class="answer-field"><span>${i+1}. ${h(q)}</span><textarea rows="3" ${attr}="${i}" placeholder="Minha resposta...">${h(values?.[i]||'')}</textarea></label>`).join('');
+ answerArea.innerHTML=(extended.length?'<h3>Aprofundamento especial</h3>'+render(extended,data.extendedAnswersByDay[selectedDay],'data-journal-extended'):'')+'<h3>Reflexão pessoal</h3>'+render(questions,data.answersByDay[selectedDay],'data-journal-answer');
+ answerArea.querySelectorAll('[data-journal-answer]').forEach(el=>el.addEventListener('input',()=>{const i=Number(el.dataset.journalAnswer),arr=data.answersByDay[selectedDay]||[];arr[i]=el.value;data.answersByDay[selectedDay]=arr;syncAnswer(`[data-answer-index="${i}"]`,el.value);persist();}));
+ answerArea.querySelectorAll('[data-journal-extended]').forEach(el=>el.addEventListener('input',()=>{const i=Number(el.dataset.journalExtended);saveExtended(i,el.value);syncAnswer(`[data-extended-answer="${i}"]`,el.value);}));}
+
 }
-function storeNotes(){data.notesByDay[selectedDay]=$('#notes').value;const okay=persist();$('#savedMsg').textContent=okay?'Anotações deste dia salvas neste aparelho.':'Não foi possível salvar. Exporte uma cópia de segurança.';return okay}
+function storeNotes(){data.notesByDay[selectedDay]=$('#notes').value;syncAnswer('#studyNotes',$('#notes').value);const okay=persist();$('#savedMsg').textContent=okay?'Anotações deste dia salvas neste aparelho.':'Não foi possível salvar. Exporte uma cópia de segurança.';return okay}
 function renderVerses(){
  const ul=$('#verseList');ul.replaceChildren();
  if(!data.verses.length){const p=document.createElement('p');p.className='empty-state';p.textContent='Você ainda não adicionou referências favoritas.';ul.replaceWith(ul);const li=document.createElement('li');li.textContent=p.textContent;ul.append(li);return}
@@ -385,7 +411,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  const applyTheme=()=>{const choice=theme.value;const resolved=choice==='auto'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):choice;document.documentElement.dataset.theme=resolved;document.querySelector('meta[name=theme-color]')?.setAttribute('content',resolved==='dark'?'#000000':'#173d32')};
  theme.value=localStorage.getItem('devocional.theme')||'auto';applyTheme();theme.addEventListener('change',()=>{localStorage.setItem('devocional.theme',theme.value);applyTheme()});
  const media=matchMedia('(prefers-color-scheme: dark)');media.addEventListener?.('change',()=>{if(theme.value==='auto')applyTheme()});
- const setFont=n=>{n=Math.max(14,Math.min(26,Number(n)||17));font.value=n;value.textContent=n+' px';document.documentElement.style.setProperty('--bible-font',n+'px')};
+ const setFont=n=>{n=Math.max(14,Math.min(26,Number(n)||17));font.value=n;value.textContent=n+' px';document.documentElement.style.setProperty('--bible-font',n+'px');document.documentElement.style.setProperty('--study-font',n+'px')};
  setFont(localStorage.getItem('devocional.bibleFont')||17);font.addEventListener('input',()=>{setFont(font.value);localStorage.setItem('devocional.bibleFont',font.value)});
  document.getElementById('fontReset').addEventListener('click',()=>{setFont(17);localStorage.setItem('devocional.bibleFont','17')});
  document.addEventListener('click',e=>{const btn=e.target.closest('[data-bible-ref]');if(btn){window.DevocionalCharon?.pause?.();window.DevocionalAudio?.pause?.();window.DevocionalBible?.openReference?.(btn.dataset.bibleRef)}});
@@ -433,7 +459,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  function afterTab(name){refresh();if(name==='study'&&savedScroll?.day===selectedDay){const y=savedScroll.y;savedScroll=null;requestAnimationFrame(()=>{if(page==='study')window.scrollTo({top:y,behavior:'instant'})})}}
  window.DevocionalMiniPlayer={refresh,beforeTab,afterTab};
  document.addEventListener('DOMContentLoaded',()=>{
-  const isNote=el=>el?.matches?.('#studyNotes,#notes,textarea[data-answer-index],textarea[data-journal-answer]');
+  const isNote=el=>el?.matches?.('#studyNotes,#notes,textarea[data-answer-index],textarea[data-journal-answer],textarea[data-extended-answer],textarea[data-journal-extended]');
   for(const type of ['focusin','click'])document.addEventListener(type,event=>{if(isNote(event.target))pauseAll()});
   const button=document.getElementById('miniToggle');
   button.addEventListener('pointerdown',e=>{if(!e.isPrimary||e.button!==0)return;suppressClick=false;const el=panel();drag={id:e.pointerId,x:e.clientX,y:e.clientY,left:parseFloat(el.style.left)||el.offsetLeft,top:parseFloat(el.style.top)||el.offsetTop,moved:false};button.setPointerCapture(e.pointerId)});

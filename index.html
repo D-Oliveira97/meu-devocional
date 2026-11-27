@@ -8,7 +8,7 @@
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="icon-192.png" type="image/png">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=22.0">
+  <link rel="stylesheet" href="styles.css?v=23.0">
   <title>Meu Devocional · 365 estudos</title>
 </head>
 <body>
@@ -197,7 +197,8 @@
         <p>Não é necessário compartilhar suas anotações ou conceder acesso ao aplicativo à sua conta Google. O botão apenas abre a tela de criação de evento da sua agenda.</p>
       </article>
     </section>
-    <section id="news" class="panel hidden" aria-label="Novidades"><article class="card"><h2>✦ Novidades</h2><p class="current-version">VERSÃO ATUAL · 3.5.2</p>
+    <section id="news" class="panel hidden" aria-label="Novidades"><article class="card"><h2>✦ Novidades</h2><p class="current-version">VERSÃO ATUAL · 3.5.3</p>
+<h3>Versão 3.5.3 — 26/11/2026</h3><ul><li>Respostas nos exercícios e perguntas do aprofundamento especial, integradas às anotações e ao backup.</li><li>Ajuste do tamanho da fonte tanto na Bíblia quanto nos estudos.</li><li>Realce de áudio com estimativa por unidades de fala e pausas, sem invalidar as gravações existentes. A sincronização ainda é aproximada.</li></ul>
 <h3>Versão 3.5.2 — 26/11/2026</h3><ul><li>Roteiro de narração corrigido: preparação completa e primeiro parágrafo da interpretação, na ordem do estudo.</li><li>Os áudios dos estudos serão gerados novamente sob demanda; as orações salvas e as anotações permanecem intactas. A geração continua sujeita à cota gratuita.</li></ul>
 <h3>Versão 3.5.1 — 26/11/2026</h3><ul><li>Controle flutuante circular, compacto e levemente translúcido: toque para pausar ou retomar e arraste para reposicionar.</li><li>A posição é lembrada neste aparelho. Os controles completos continuam disponíveis nas áreas de áudio.</li></ul>
 <h3>Versão 3.5 — 26/11/2026</h3><ul><li>Pausa automática ao escrever anotações ou respostas e ao consultar a Bíblia.</li><li>Controle flutuante para pausar, retomar e parar a narração, com retorno ao estudo.</li><li>Tema OLED com preto puro e contornos discretos; realce sem preenchimento no modo escuro.</li><li>Preservação da faixa gerada e do cache; sem alteração no roteiro da voz.</li></ul>
@@ -208,7 +209,7 @@
 <h3>Versão 3.1</h3><ul><li>Índice por livro, capítulo e versículo, dividido entre Antigo e Novo Testamento.</li><li>Referências clicáveis na área de acompanhamento da narração.</li><li>Aba Novidades e controles de áudio Android compactos.</li><li>Melhorias de contraste no modo noturno.</li></ul>
 <h3>Versão 3.0</h3><ul><li>Seção Estudo em áudio simplificada e ajustes da voz em Configurações.</li><li>Navegação bíblica compacta e referências clicáveis.</li><li>Modo claro, escuro e automático e ajuste do tamanho do texto bíblico.</li></ul>
 <h3>Versão 2.9</h3><ul><li>Narração contínua, acompanhamento sincronizado aproximado do texto e opção de avançar para o próximo estudo.</li></ul></article></section>
-    <section id="settings" class="panel hidden" aria-label="Configurações"><article class="card"><h2>⚙ Configurações</h2><p>Personalize sua leitura e o áudio do aplicativo.</p><label for="startDateChoice">Data de início da jornada</label><input type="date" id="startDateChoice" value="2026-11-23"><button type="button" class="outline" id="startToday">Começar hoje</button><p class="small-note" id="startDateStatus" role="status"></p><p class="small-note">A mudança reorganiza o calendário do plano, mas não apaga anotações nem estudos concluídos. Os registros permanecem associados ao número de cada estudo.</p><label for="themeChoice">Aparência</label><select id="themeChoice"><option value="auto">Automático (Android)</option><option value="light">Claro</option><option value="dark">Escuro</option></select><label for="fontChoice">Tamanho do texto bíblico</label><input type="range" id="fontChoice" min="14" max="26" step="1" value="17"><output id="fontValue" for="fontChoice">17 px</output><button type="button" class="outline" id="fontReset">Restaurar tamanho</button></article><article class="card"><h2>🔊 Voz do Android</h2><div class="audio-settings">
+    <section id="settings" class="panel hidden" aria-label="Configurações"><article class="card"><h2>⚙ Configurações</h2><p>Personalize sua leitura e o áudio do aplicativo.</p><label for="startDateChoice">Data de início da jornada</label><input type="date" id="startDateChoice" value="2026-11-23"><button type="button" class="outline" id="startToday">Começar hoje</button><p class="small-note" id="startDateStatus" role="status"></p><p class="small-note">A mudança reorganiza o calendário do plano, mas não apaga anotações nem estudos concluídos. Os registros permanecem associados ao número de cada estudo.</p><label for="themeChoice">Aparência</label><select id="themeChoice"><option value="auto">Automático (Android)</option><option value="light">Claro</option><option value="dark">Escuro</option></select><label for="fontChoice">Tamanho do texto (Bíblia e estudo)</label><input type="range" id="fontChoice" min="14" max="26" step="1" value="17"><output id="fontValue" for="fontChoice">17 px</output><button type="button" class="outline" id="fontReset">Restaurar tamanho</button></article><article class="card"><h2>🔊 Voz do Android</h2><div class="audio-settings">
           <div><label for="audioSpeed">Velocidade</label><select id="audioSpeed"><option value="0.8">0,8× · devagar</option><option value="1" selected>1× · normal</option><option value="1.15">1,15×</option><option value="1.3">1,3×</option><option value="1.5">1,5× · rápido</option></select></div>
           <div><label for="audioVoice">Voz em português</label><select id="audioVoice"><option value="auto">Automática (voz do aparelho)</option></select></div>
           <div class="audio-profile-field"><label for="audioTone">Tom da narração</label><select id="audioTone"><option value="sereno" selected>Grave e sereno (voz do aparelho)</option><option value="normal">Tom original</option></select></div>
@@ -234,10 +235,10 @@
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path id="miniPlayIcon" d="M8 5l12 7-12 7z" fill="currentColor"/><path id="miniPauseIcon" d="M7 5h4v14H7zM14 5h4v14h-4z" fill="currentColor" hidden/></svg>
     </button>
   </aside>
-  <script src="app.js?v=22.0" defer></script>
-  <script src="audio.js?v=22.0" defer></script>
-  <script type="module" src="charon-firebase.js?v=22.0"></script>
-  <script src="jszip.min.js?v=22.0" defer></script>
-  <script src="bible.js?v=22.0" defer></script>
+  <script src="app.js?v=23.0" defer></script>
+  <script src="audio.js?v=23.0" defer></script>
+  <script type="module" src="charon-firebase.js?v=23.0"></script>
+  <script src="jszip.min.js?v=23.0" defer></script>
+  <script src="bible.js?v=23.0" defer></script>
 </body>
 </html>

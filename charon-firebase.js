@@ -1,4 +1,4 @@
-/* Meu Devocional 3.5.2 · roteiro integral dos comentários e realce aproximado */
+/* Meu Devocional 3.5.3 · roteiro integral dos comentários e realce aproximado */
 'use strict';
 const STORAGE_KEY = 'meuDevocional.charon.firebase.v1';
 const CONTINUOUS_PREF_KEY = 'meuDevocional.charon.continuous.v1';
@@ -11,6 +11,7 @@ let activeDay=1, runId=0, configured=null, model=null, player=null, audioURL=nul
 let parts=[], partIndex=0, preparing=false, paused=false, playingContinuous=false;
 let narration=null, partOffsets=[], partDurations=[], timeline=[], highlightedKey=null;
 let cacheDB=null;
+let partSpeechWeights=[];
 const clean=t=>String(t??'').replace(/\s+/g,' ').trim();
 const notify=()=>window.DevocionalMiniPlayer?.refresh();
 const status=t=>{byId('charonStatus').textContent=t;notify();};
@@ -89,14 +90,39 @@ function showSegmentAt(pos){
 function clearHighlights(){highlightedKey=null;window.DevocionalFollow?.clear('charon');byId('charonFollowLabel').textContent='';}
 function prepareOffsets(){
  const all=clean(narration?.text||'');let cursor=0;partOffsets=parts.map(p=>{const found=all.indexOf(p,cursor);const start=found>=0?found:cursor;cursor=start+p.length;return start});
+ partSpeechWeights=parts.map(speechWeights);
+}
+// Estimativa por unidades de fala: referências numéricas e pausas não custam
+// o mesmo tempo que caracteres comuns. Não altera roteiro, WAV ou cache.
+function speechWeights(text){
+ const points=[{offset:0,weight:0}];let weight=0;
+ const tokens=/\d+|[\p{L}\p{M}]+|[^\s]/gu;
+ for(const m of text.matchAll(tokens)){
+  const token=m[0];let cost;
+  if(/^\d+$/.test(token))cost=1.8+token.length*1.25;
+  else if(/^\p{L}/u.test(token))cost=Math.max(1,(token.normalize('NFD').replace(/\p{M}/gu,'').match(/[aeiouy]+/gi)||[]).length)+0.25;
+  else cost=/[.!?]/.test(token)?1.5:/[,;:–—]/.test(token)?0.8:0.15;
+  weight+=cost;points.push({offset:m.index+token.length,weight});
+ }
+ return {points,total:weight};
+}
+function weightedOffset(profile,fraction){
+ if(!profile?.total)return 0;
+ const target=profile.total*fraction,points=profile.points;
+ let lo=0,hi=points.length-1;
+ while(lo<hi){const mid=Math.ceil((lo+hi)/2);if(points[mid].weight<=target)lo=mid;else hi=mid-1;}
+ const a=points[lo],b=points[lo+1];return b?Math.floor(a.offset+(b.offset-a.offset)*(target-a.weight)/(b.weight-a.weight)):a.offset;
 }
 function positionAtAudioTime(t){
  if(!parts.length)return null;
  let i=partIndex, elapsed=t, duration=Number.isFinite(player?.duration)?player.duration:0;
  if(playingContinuous&&timeline.length){i=timeline.findIndex(x=>t<x.end);if(i<0)i=timeline.length-1;elapsed=Math.max(0,t-timeline[i].start);duration=timeline[i].duration;}
  if(!duration||duration<=0)return partOffsets[i]||0;
- const fraction=Math.max(0,Math.min(1,elapsed/duration));
- return (partOffsets[i]||0)+Math.floor((parts[i]?.length||0)*fraction);
+ // Pequeno atraso conservador reduz o avanço antes da fala; a duração real
+ // de cada faixa continua sendo a âncora, inclusive ao buscar/retomar.
+ const delay=Math.min(1.4,duration*0.025);
+ const fraction=Math.max(0,Math.min(1,(elapsed-delay)/(duration-delay)));
+ return (partOffsets[i]||0)+weightedOffset(partSpeechWeights[i],fraction);
 }
 function syncTranscript(){if(preparing||!player?.src||!narration)return;const pos=positionAtAudioTime(player.currentTime);if(pos!==null)showSegmentAt(pos);}
 function nextButtonVisible(on){const btn=byId('charonNextDay');if(!btn)return;btn.hidden=!on||activeDay>=365;btn.disabled=preparing;btn.textContent=`▶ Ouvir o Dia ${String(Math.min(activeDay+1,365)).padStart(3,'0')}`;}
